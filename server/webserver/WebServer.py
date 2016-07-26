@@ -1,16 +1,16 @@
 import tornado.ioloop
 import tornado.websocket
-from Attendee import Attendee
+from server.User import Attendee
 
 from server.Room import Room
-
+from server.playerserver.GameServer import GameServer
 import json
-from m_format import *
+from server.m_format import *
 
 
 class WebServer(tornado.websocket.WebSocketHandler):
 
-    def initialize(self, web_client_list=set(), battle_ai_list=dict(), player_server=None):
+    def initialize(self, web_client_list=dict(), battle_ai_list=dict(), player_server=None):
         self.web_client_list = web_client_list  # dict() - key : conn
         self.battle_ai_list = battle_ai_list  # dict() - key : user_id
         self.player_server = player_server  # PlayerServer
@@ -20,7 +20,6 @@ class WebServer(tornado.websocket.WebSocketHandler):
         # make attendee
         new_attendee = Attendee(self)
         self.web_client_list.add(new_attendee)
-        pass
 
     def on_message(self, message):
 
@@ -37,8 +36,8 @@ class WebServer(tornado.websocket.WebSocketHandler):
             else:
                 pass
         except KeyError as e:
-            print e
-            print "WRONG MESSAGE"
+            print(e)
+            print("WRONG MESSAGE")
 
     def __response_user_list(self):
         # battle_ai_list's key is user id
@@ -53,8 +52,9 @@ class WebServer(tornado.websocket.WebSocketHandler):
         players = [self.battle_ai_list[pid] for pid in pid_list]
 
         room = Room(players, self)
+        game_server = GameServer(room)
 
-        # tornado.ioloop.IOLoop.spawn_callback(self.player_server.__gamehandler, room)
+        tornado.ioloop.IOLoop.spawn_callback(game_server.__game_handler)
         msg = {MSG: RESPONSE+MATCH, ERROR: 0, USERS: pid_list}
         json_msg = json.dumps(msg)
         self.write(json_msg)
