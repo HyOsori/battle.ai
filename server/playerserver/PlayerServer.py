@@ -12,7 +12,7 @@ from tornado import gen
 
 class PlayerServer(tornado.tcpserver.TCPServer):
     def __init__(self, web_client_list, battle_ai_list):
-        tornado.TCPServer.__init__(self)
+        tornado.tcpserver.TCPServer.__init__(self)
         self.battle_ai_list = battle_ai_list
         self.web_client_list = web_client_list
 

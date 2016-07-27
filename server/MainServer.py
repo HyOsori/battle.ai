@@ -1,6 +1,6 @@
 import tornado.ioloop
-from server.playerserver import PlayerServer
 
+from server.playerserver.PlayerServer import PlayerServer
 from server.webserver.WebServer import WebServer
 
 

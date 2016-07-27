@@ -1,7 +1,7 @@
 #-*- coding:utf-8 -*-
 
 import json
-import GameLogic
+# import GameLogic
 
 from tornado import gen
 
