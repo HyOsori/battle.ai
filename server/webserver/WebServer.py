@@ -1,5 +1,6 @@
 import tornado.ioloop
 import tornado.websocket
+import tornado.web
 from server.User import Attendee
 
 from server.Room import Room
@@ -8,7 +9,11 @@ import json
 from server.m_format import *
 
 
-class WebServer(tornado.websocket.WebSocketHandler):
+class WebServer(tornado.web.RequestHandler):
+    def get(self):
+        self.render("sample.html")
+
+class WebSocketServer(tornado.websocket.WebSocketHandler):
 
     def initialize(self, web_client_list=dict(), battle_ai_list=dict(), player_server=None):
         self.web_client_list = web_client_list  # dict() - key : conn

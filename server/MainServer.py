@@ -1,7 +1,9 @@
 import tornado.ioloop
+import os.path
 
 from server.playerserver.PlayerServer import PlayerServer
 from server.webserver.WebServer import WebServer
+from server.webserver.WebServer import WebSocketServer
 
 
 class MainServer:
@@ -10,9 +12,15 @@ class MainServer:
         self.web_client_list = dict()
 
         self.tcp_server = PlayerServer(self.web_client_list, self.battle_ai_list)
-        self.app = tornado.web.Application([
-            (r"/", WebServer, dict(battle_ai_list=self.battle_ai_list, web_client_list=self.web_client_list, player_server=self.tcp_server)),
-        ])
+
+        self.app = tornado.web.Application(
+            [
+                (r"/websocket", WebSocketServer, dict(battle_ai_list=self.battle_ai_list, web_client_list=self.web_client_list, player_server=self.tcp_server)),
+                (r"/", WebServer),
+            ],
+            template_path=os.path.join(os.path.dirname(__file__), "../templates"),
+            static_path=os.path.join(os.path.dirname(__file__), "../static"),
+        )
 
     def run(self):
         io_loop = tornado.ioloop.IOLoop.current()
