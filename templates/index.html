@@ -1,0 +1,204 @@
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <style type="text/css">
+            #navigation li {
+                list-style:none;
+				width:100px;
+                padding:5px;
+            }
+            #navigation {
+                cursor:pointer;
+            }
+            #navigation .selected {
+                background-color:red;
+                color:white;
+            }
+        </style>
+    </head>
+    <body>
+        <canvas id="id_board_canvas" width="450" height="450"></canvas>
+        <br><br>
+        <input type="button" id="id_conn_btn" value="connect websocket" />
+        <input type="text" id="id_conn_id" />
+        <br>
+        <ul id="navigation">
+        </ul>
+        <br>
+        <button id="id_match_btn" disabled="">submit</button>
+        <br>
+        <div id="id_messages" style="height:200px;width:500px;background:black;color:white;overflow-y:auto;"></div>
+        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+        <script type="text/javascript">
+            var list = [];
+            var messageContainer = document.getElementById('id_messages');
+            function checkSelected(){
+				var count = 0;
+				var nav = document.getElementById('navigation');
+				for(var i=0; i<nav.childNodes.length; i++){
+					var child = nav.childNodes[i];
+					if (child.className == 'selected')
+						count++;
+				}
+				return count;
+			}
+            function clickHandler(event) {
+                var nav = document.getElementById('navigation');
+                var button = document.getElementById('id_match_btn');
+                button.disabled='true';
+                if (event.target.className == 'selected'){
+                    event.target.className = '';
+                }
+                else {
+                    if (checkSelected()<2){
+                        event.target.className = 'selected';
+                    }
+                }
+                if (checkSelected()>=2)
+                    button.removeAttribute('disabled');
+            }
+            function getSelected(){
+                var nav = document.getElementById('navigation');
+                var selectedUser = [];
+                for (var i=0; i<nav.childNodes.length; i++){
+                    var child = nav.childNodes[i];
+                    if (child.className == 'selected'){
+                        selectedUser.push(child.innerText);
+                    }
+                }
+                var json = new Object();
+                json.msg = "request_match";
+                json.users = selectedUser;
+                var req = JSON.stringify(json);
+                ws.send( req );
+            }
+            var canvas = $("#id_board_canvas")[0];
+            var ctx = canvas.getContext("2d");
+            //draw lines of board
+            ctx.beginPath();
+            for (var i=0; i<9; i++){
+                ctx.moveTo(10,10+(50*i));
+                ctx.lineTo(410,10+(50*i));
+                ctx.stroke();
+            }
+            for (var i=0; i<9; i++){
+                ctx.moveTo(10+(50*i),10);
+                ctx.lineTo(10+(50*i),410);
+                ctx.stroke();
+            }
+            ctx.closePath();
+            function drawCircle(x,y,color){//draw stone
+                ctx.beginPath();
+                //arc(x_center,y_center,radius,startAngle,endAngle,anticlockwise)
+                var endAngle = Math.PI * 2;
+                if (color == 1){
+                    ctx.arc(35+(50*x),35+(50*y),20,0,endAngle);
+                    ctx.fillStyle = "black"
+                    ctx.fill();
+                }
+                else {
+                    if (color == 2){
+                        ctx.arc(35+(50*x),35+(50*y),20,0,endAngle);
+                        ctx.fillStyle = "white"
+                        ctx.fill();
+                        ctx.strokeStyle = "black"
+                        ctx.stroke();
+                    }
+                    else {//erase stone by drawing rect filled with background color
+                        if (color == 0)
+                            ctx.clearRect(11+(50*x),11+(50*y),48,48);
+                    }
+                }
+                ctx.closePath();
+            }
+            if ("WebSocket" in window) {
+                var btnConn = document.getElementById('id_conn_btn');
+                var textID = document.getElementById('id_conn_id');
+                var message = "";
+                messageContainer.innerHTML = "WebSocket is supported by your Browser!";
+                var ws = new WebSocket("ws://localhost:8888/websocket");
+                ws.onmessage = function (evt) {
+                    var received_msg = evt.data;
+                    message += ">> " + received_msg + "<br>";
+                    messageContainer.innerHTML = message;
+                    var data = jQuery.parseJSON(received_msg);
+                    if (data.msg == "response_user_list") {
+                        $.each(data.users, function (key) {
+                            var nav = document.getElementById('navigation');
+                            var text = data.users[key];
+                            for (var i = 0; i < nav.childNodes.length; i++) {
+                                var child = nav.childNodes[i];
+                                if (text == child.innerText)
+                                    return;
+                            }
+                            if (text.length) {
+                                $('<li />', {html: text}).bind('click', clickHandler).appendTo('#navigation')
+                                list.push(text);
+                            }
+                        })
+                    }
+                    else {
+                        if (data.msg == "notice_user_added") {
+                            var nav = document.getElementById('navigation');
+                            var text = data.id;
+                            for (var i = 0; i < nav.childNodes.length; i++) {
+                                var child = nav.childNodes[i];
+                                if (text == child.innerText)
+                                    return;
+                            }
+                            if (text.length) {
+                                $('<li />', {html: text}).bind('click', clickHandler).appendTo('#navigation')
+                                list.push(text);
+                            }
+                        }
+                        else {
+                            if (data.msg == "notice_user_removed") {
+                                var nav = document.getElementById('navigation');
+                                var button = document.getElementById('id_match_btn');
+                                var text = data.id;
+                                for (var i = 0; i < nav.childNodes.length; i++) {
+                                    var child = nav.childNodes[i];
+                                    if (text == child.innerText) {
+                                        child.remove();
+                                        list.splice((i - 1), 1);
+                                        if (checkSelected()<2)
+							                button.disabled='true';
+                                    }
+                                }
+                            }
+                            else {
+                                if (data.msg == "notice_board"){
+                                    var y=0;
+                                    $.each(data.board,function(){
+                                        for (var x=0; x<8; x++) {
+                                            drawCircle(x,y,this[x]);
+                                        }
+                                        y++;
+                                    })
+                                }
+                            }
+                        }
+                    }
+                }
+                $('#id_match_btn').bind('click',getSelected);
+                <!-- connect websocket button handler -->
+                btnConn.addEventListener('click', function(){
+                    var json = new Object();
+                    json.msg = "request_user_list";
+                    json.id = textID.value;
+                    var req = JSON.stringify(json);
+                    ws.send( req );
+                });
+                ws.onclose = function() {
+                        message = "";
+                        messageContainer.innerHTML = "Connection is closed...";
+                }
+            }
+            else
+            {
+                messageContainer.innerHTML = "WebSocket NOT supported by your Browser!";
+            }
+        </script>
+    </body>
+</html>

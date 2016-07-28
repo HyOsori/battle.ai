@@ -11,7 +11,9 @@ from server.m_format import *
 
 class WebServer(tornado.web.RequestHandler):
     def get(self):
-        self.render("sample.html")
+        # self.render("sample.html")
+        self.render("index.html")
+
 
 class WebSocketServer(tornado.websocket.WebSocketHandler):
 
@@ -24,7 +26,7 @@ class WebSocketServer(tornado.websocket.WebSocketHandler):
     def open(self, *args, **kwargs):
         # make attendee
         new_attendee = Attendee(self)
-        self.web_client_list.add(new_attendee)
+        self.web_client_list[self] = new_attendee
 
     def on_message(self, message):
 
@@ -33,7 +35,7 @@ class WebSocketServer(tornado.websocket.WebSocketHandler):
         try:
             msg = request[MSG]
             if msg == REQUEST+MATCH:
-                self.__response_match(msg[USERS])
+                self.__response_match(request[USERS])
                 pass
             elif msg == REQUEST+USER_LIST:
                 self.__response_user_list()
@@ -46,10 +48,15 @@ class WebSocketServer(tornado.websocket.WebSocketHandler):
 
     def __response_user_list(self):
         # battle_ai_list's key is user id
-        players = self.battle_ai_list.keys()
-        msg = {MSG: RESPONSE+USER_LIST, USERS: players}
+        players = list(self.battle_ai_list.keys())
+
+        if players:
+            msg = {MSG: RESPONSE+USER_LIST, USERS: players}
+        else:
+            msg = {MSG: RESPONSE+USER_LIST, USERS: []}
+
         json_msg = json.dumps(msg)
-        self.write(json_msg)
+        self.write_message(json_msg)
         pass
 
     def __response_match(self, pid_list):
@@ -59,10 +66,11 @@ class WebSocketServer(tornado.websocket.WebSocketHandler):
         room = Room(players, self)
         game_server = GameServer(room)
 
-        tornado.ioloop.IOLoop.spawn_callback(game_server.__game_handler)
+        tornado.ioloop.IOLoop.current().spawn_callback(game_server.game_handler)
+        # tornado.ioloop.IOLoop.spawn_callback(game_server.game_handler)
         msg = {MSG: RESPONSE+MATCH, ERROR: 0, USERS: pid_list}
         json_msg = json.dumps(msg)
-        self.write(json_msg)
+        self.write_message(json_msg)
 
     def on_close(self):
         pass

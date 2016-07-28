@@ -23,7 +23,7 @@ class GameServer:
     def __init__(self, room):
         self.room = room
         self.current_msgtype = -1
-
+        self.GameLogic = None
 
     def selectTurn(self):
         turn = []
@@ -34,17 +34,17 @@ class GameServer:
         pass
 
     @gen.coroutine
-    def __game_handler(self):
+    def game_handler(self):
         try:
-            turn = self.selectTurn(self.room.players)
-            GameLogic.onStart(turn)
+            turn = self.selectTurn()
+            self.GameLogic.onStart(turn)
             for player in self.room.players:
                 self.__player_handler(player)
         except:
-            GameLogic.onError()
+            self.GameLogic.onError()
             print('[ERROR] GAME SET FAILED')
         finally:
-            GameLogic.onEnd()
+            self.GameLogic.onEnd()
 
 
     def request(self, player, msg, gameData):

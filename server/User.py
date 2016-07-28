@@ -10,7 +10,7 @@ class User:
 
 class Player(User):
     def __init__(self, pid, conn):
-        User.__init__(conn)
+        User.__init__(self, conn)
         self.pid = pid
 
     def read(self):
@@ -24,12 +24,12 @@ class Attendee(User):
     def notice_user_added(self, added_player):
         msg = {MSG: NOTICE+USER_ADDED, USER: added_player}
         json_msg = json.dumps(msg)
-        self.conn().write(json_msg)
+        self.conn().write_message(json_msg)
 
     def notice_user_removed(self, removed_player):
         msg = {MSG: NOTICE + USER_REMOVED, USER: removed_player}
         json_msg = json.dumps(msg)
-        self.conn().write(json_msg)
+        self.conn().write_message(json_msg)
 
     def send(self, data):
         self.conn.write(data)
