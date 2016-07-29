@@ -61,10 +61,10 @@ class WebSocketServer(tornado.websocket.WebSocketHandler):
 
     def __response_match(self, pid_list):
         # be care for concurrent access
-        players = [self.battle_ai_list[pid] for pid in pid_list]
+        players = [self.battle_ai_list.pop(pid) for pid in pid_list]
 
         room = Room(players, self)
-        game_server = GameServer(room)
+        game_server = GameServer(room, self.battle_ai_list)
 
         tornado.ioloop.IOLoop.current().spawn_callback(game_server.game_handler)
         # tornado.ioloop.IOLoop.spawn_callback(game_server.game_handler)

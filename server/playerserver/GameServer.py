@@ -4,7 +4,7 @@ import json
 # import GameLogic
 
 from tornado import gen
-
+from gameLogic.baseClass.dummy_GameLogic import dummy_GameLogic
 """
 GAMESERVER
 
@@ -20,10 +20,11 @@ GAMESERVER
 """
 
 class GameServer:
-    def __init__(self, room):
+    def __init__(self, room, battle_ai_list):
         self.room = room
         self.current_msgtype = -1
-        self.GameLogic = None
+        self.GameLogic = dummy_GameLogic(room)
+        self.battle_ai_list = battle_ai_list
 
     def selectTurn(self):
         turn = []
@@ -36,7 +37,8 @@ class GameServer:
     @gen.coroutine
     def game_handler(self):
         try:
-            turn = self.selectTurn()
+            # turn = self.selectTurn()
+            turn = self.room.player_list
             self.GameLogic.onStart(turn)
             for player in self.room.players:
                 self.__player_handler(player)
@@ -46,12 +48,16 @@ class GameServer:
         finally:
             self.GameLogic.onEnd()
 
+            for player in self.room.players:
+                self.battle_ai_list[player.pid] = player
+                for attendee in self.web_client_list.values():
+                    attendee.notice_user_added(player.pid)
 
     def request(self, player, msg, gameData):
         self.current_msgtype = msg
 
-        ##send
-        data = { "msg_type" : msg , "game" : gameData}
+        # send
+        data = {"msg_type": msg, "game": gameData}
         json_data = json.dumps(data)
         player.send(json_data)
         for attendee in self.room.attendee_list:
@@ -64,7 +70,7 @@ class GameServer:
             message = yield player.read()
             res = yield json.loads(message)
             if res["msg_type"] == self.current_msgtype:
-                recv = yield GameLogic.onAction(player, message)
+                recv = self.GameLogic.onAction(player, message)
                 if not recv:
                     raise Exception
                 else:
