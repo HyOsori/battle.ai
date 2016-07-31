@@ -50,14 +50,14 @@ class WebSocketServer(tornado.websocket.WebSocketHandler):
         # battle_ai_list's key is user id
         players = list(self.battle_ai_list.keys())
 
-        if players:
-            msg = {MSG: RESPONSE+USER_LIST, USERS: players}
-        else:
-            msg = {MSG: RESPONSE+USER_LIST, USERS: []}
-
+        msg = {MSG: RESPONSE+USER_LIST, USERS: players}
         json_msg = json.dumps(msg)
-        self.write_message(json_msg)
-        pass
+
+        try:
+            self.write_message(json_msg)
+        except Exception as e:
+            print(e)
+            self.web_client_list.pop(self)
 
     def __response_match(self, pid_list):
         # be care for concurrent access
@@ -67,11 +67,16 @@ class WebSocketServer(tornado.websocket.WebSocketHandler):
         game_server = GameServer(room, self.battle_ai_list)
 
         tornado.ioloop.IOLoop.current().spawn_callback(game_server.game_handler)
-        # tornado.ioloop.IOLoop.spawn_callback(game_server.game_handler)
+
         msg = {MSG: RESPONSE+MATCH, ERROR: 0, USERS: pid_list}
         json_msg = json.dumps(msg)
-        self.write_message(json_msg)
+
+        try:
+            self.write_message(json_msg)
+        except Exception as e:
+            print(e)
+            self.web_client_list.pop(self)
 
     def on_close(self):
-        pass
+        self.web_client_list.pop(self)
 

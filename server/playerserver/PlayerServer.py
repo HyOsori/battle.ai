@@ -5,10 +5,10 @@ import tornado.ioloop
 import tornado.web
 import tornado.websocket
 import tornado.tcpserver
+
 from server.User import Player
 
 from tornado import gen
-
 
 class PlayerServer(tornado.tcpserver.TCPServer):
     def __init__(self, web_client_list, battle_ai_list):

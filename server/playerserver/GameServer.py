@@ -42,7 +42,8 @@ class GameServer:
             self.GameLogic.onStart(turn)
             for player in self.room.players:
                 self.__player_handler(player)
-        except:
+        except Exception as e:
+            print(e)
             self.GameLogic.onError()
             print('[ERROR] GAME SET FAILED')
         finally:

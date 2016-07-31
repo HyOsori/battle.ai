@@ -1,26 +1,25 @@
-import abc
+from gameLogic.baseClass.TurnGameLogic import TurnGameLogic
 
-class TurnGameLogic:
-    __metaclass__ = abc.ABCMeta
+class dummy_GameLogic(TurnGameLogic):
+
     def __init__(self, room, args):
         self.room = room
         self.phaseList = []
         self.messageList = []
         self.currentPhase = None
 
+
     def onStart(self, args):
         self.playerList = args
         self.turnNum = -1
         self.changeTurn()
 
-    def onAction(self,pid,args):
+    def onAction(self, pid, args):
         self.currentPhase.doAction(args)
 
-    @abc.abstractmethod
     def onEnd(self):
         pass
 
-    @abc.abstractmethod
     def onError(self, pid):
         pass
 
@@ -39,7 +38,7 @@ class TurnGameLogic:
 
     def nowTurn(self):
         length = len(self.playerList)
-        return self.playerList[self.turnNum%length]
+        return self.playerList[self.turnNum % length]
 
     def requset(self, pid, messageType, JSON):
         self.room.requset(pid, messageType, JSON)
