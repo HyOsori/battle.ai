@@ -43,9 +43,7 @@ class DiceGame(TurnGameLogic):
             ## 1. play DiceGame
             game_msg = [0, 1]
             TurnGameLogic.messageList = game_msg
-            game_data = {"msg" : "game_data",
-                         "msg_type" : 1 ,
-                         "game_data" : None}
+            game_data = {"1":0}
             self.play_game(player, game_msg, game_data)
         elif choice == 0:
             self.__result(TurnGameLogic.phaseList)
