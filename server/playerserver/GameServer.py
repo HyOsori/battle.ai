@@ -1,7 +1,7 @@
 
 #-*- coding:utf-8 -*-
 
-from gameLogic.baseClass import TurnGameLogic
+from gameLogic.baseClass.dummy_game import DiceGame
 from tornado import gen
 
 """
@@ -20,33 +20,32 @@ GAMESERVER
 
 class GameServer:
     def __init__(self, room, battle_ai_list):
+        self.game_logic = DiceGame
         self.room = room
         self.battle_ai_list = battle_ai_list
         self.current_msgtype = -1
 
-    def selectTurn(self):
-        turn = []
-        self.perm(0)
-        return turn
+    def selectTurn(self, list):
+        # turn =
+        # self.perm(0)
+        return list
 
     def perm(self, num):
-        num =1
         pass
 
     @gen.coroutine
-    def __game_handler(self):
+    def game_handler(self):
         try:
-            turn = self.selectTurn(self.room.players)   #TODO : ~해야댐
-            TurnGameLogic.onStart(turn)
+            turn = self.selectTurn(self.room.player_list)   #
+            self.game_logic.onStart(turn)
 
-            for player in self.room.players:
+            for player in self.room.player_list:
                 turn.__player_handler(player)
-
         except:
-            TurnGameLogic.onError()
+            self.game_logic.onError()
             print('[ERROR] GAME SET FAILED')
         finally:
-            TurnGameLogic.onEnd()
+            self.game_logic.onEnd()
 
     def save_game_data(self):
         pass

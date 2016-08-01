@@ -5,7 +5,7 @@ from gameLogic.baseClass import TurnGameLogic
 
 class TurnGameServer(GameServer):
     def __init__(self, room, battle_ai_list):
-        GameServer.__init__(room, battle_ai_list)
+        GameServer.__init__(self, room, battle_ai_list)
 
     def request(self, player, msg, gameData):
         self.current_msgtype = msg

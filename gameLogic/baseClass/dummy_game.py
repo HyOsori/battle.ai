@@ -29,7 +29,7 @@ class DiceGame(TurnGameLogic):
         # ## 0. abstention
         ## 1. play DiceGame
         self.msg_type = [0, 1]
-        TurnGameLogic.__init__(room)
+        TurnGameLogic.__init__(self, room)
 
         # first_msg = [0, 1]  ## First MsgType
         # TurnGameLogic.messageList = first_msg
@@ -53,11 +53,11 @@ class DiceGame(TurnGameLogic):
         #     TurnGameLogic.onEnd()
 
 
-    def onStart(self, args):
-        TurnGameLogic.onStart(args)
+    def onStart(self, turn):
+        TurnGameLogic.onStart(turn)
         TurnGameLogic.messageList = self.msg_type
         game_data = {"score" : self.phaseList}
-        self.play_game(args[0], 1, game_data)
+        self.play_game(turn[0], 1, game_data)
 
     #####
     #### 재정의 부분 ####
