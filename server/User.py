@@ -13,6 +13,8 @@ class Player(User):
     def read(self):
         return self.conn.read_bytes(256, partial=True)
 
+    def send(self, data):
+        self.conn.write(data)
 
 class Attendee(User):
     def __init__(self, conn):

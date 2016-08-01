@@ -3,7 +3,6 @@
 
 from gameLogic.baseClass.dummy_game import DiceGame
 from tornado import gen
-from server.playerserver import TurnGameServer
 
 """
 GAMESERVER
