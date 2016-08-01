@@ -1,10 +1,9 @@
+
 #-*- coding:utf-8 -*-
 
-import json
-# import GameLogic
-
+from gameLogic.baseClass import TurnGameLogic
 from tornado import gen
-from gameLogic.baseClass.dummy_GameLogic import dummy_GameLogic
+
 """
 GAMESERVER
 
@@ -20,11 +19,9 @@ GAMESERVER
 """
 
 class GameServer:
-    def __init__(self, room, battle_ai_list):
+    def __init__(self, room):
         self.room = room
         self.current_msgtype = -1
-        self.GameLogic = dummy_GameLogic(room)
-        self.battle_ai_list = battle_ai_list
 
     def selectTurn(self):
         turn = []
@@ -35,56 +32,19 @@ class GameServer:
         pass
 
     @gen.coroutine
-    def game_handler(self):
+    def __game_handler(self):
         try:
-            # turn = self.selectTurn()
-            turn = self.room.player_list
-            self.GameLogic.onStart(turn)
+            turn = self.selectTurn(self.room.players)   #TODO : ~해야댐
+            TurnGameLogic.onStart(turn)
+
             for player in self.room.players:
-                self.__player_handler(player)
-        except Exception as e:
-            print(e)
-            self.GameLogic.onError()
+                turn.__player_handler(player)
+
+        except:
+            TurnGameLogic.onError()
             print('[ERROR] GAME SET FAILED')
         finally:
-            self.GameLogic.onEnd()
-
-            for player in self.room.players:
-                self.battle_ai_list[player.pid] = player
-                for attendee in self.web_client_list.values():
-                    attendee.notice_user_added(player.pid)
-
-    def request(self, player, msg, gameData):
-        self.current_msgtype = msg
-
-        # send
-        data = {"msg_type": msg, "game": gameData}
-        json_data = json.dumps(data)
-        player.send(json_data)
-        for attendee in self.room.attendee_list:
-            attendee.send(json_data)
-
-
-    @gen.coroutine
-    def __player_handler(self, player):
-        while True:
-            message = yield player.read()
-            res = yield json.loads(message)
-            if res["msg_type"] == self.current_msgtype:
-                recv = self.GameLogic.onAction(player, message)
-                if not recv:
-                    raise Exception
-                else:
-                    for attendee in self.room.attendee_list:
-                        attendee.send(message)
-            elif res["msg_type"] == "end":  ## end는 종료 메세지 타입
-                break
-            else:
-                raise Exception
-
+            TurnGameLogic.onEnd()
 
     def save_game_data(self):
         pass
-
-
-
