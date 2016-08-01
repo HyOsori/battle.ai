@@ -19,8 +19,9 @@ GAMESERVER
 """
 
 class GameServer:
-    def __init__(self, room):
+    def __init__(self, room, battle_ai_list):
         self.room = room
+        self.battle_ai_list = battle_ai_list
         self.current_msgtype = -1
 
     def selectTurn(self):

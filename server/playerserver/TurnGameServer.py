@@ -1,12 +1,11 @@
-
 import json
 from tornado import gen
-from server.playerserver import GameServer
+from server.playerserver.GameServer import GameServer
 from gameLogic.baseClass import TurnGameLogic
 
-class Turn(GameServer):
-    def __init__(self):
-        pass
+class TurnGameServer(GameServer):
+    def __init__(self, room, battle_ai_list):
+        GameServer.__init__(room, battle_ai_list)
 
     def request(self, player, msg, gameData):
         self.current_msgtype = msg
@@ -24,7 +23,6 @@ class Turn(GameServer):
     @gen.coroutine
     def __player_handler(self, player):
         while True:
-            m = 1
             message = yield player.read()
             res = yield json.loads(message)
             if res["msg_type"] == self.current_msgtype:

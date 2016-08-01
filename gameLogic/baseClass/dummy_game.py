@@ -24,50 +24,70 @@ from tornado import gen
 #
 
 class DiceGame(TurnGameLogic):
-    TurnGameLogic.phaseList = [0, 0]  ## Default Phase
+    def __init__(self, room):
+        self.phaseList = [0, 0]  ## Default Phase
+        # ## 0. abstention
+        ## 1. play DiceGame
+        self.msg_type = [0, 1]
+        TurnGameLogic.__init__(room)
 
-    def __init__(self, player):
-        first_msg = [0, 1]  ## First MsgType
-        TurnGameLogic.messageList = first_msg
-
-        print("=====[INFO] GAME READY======")
-        print("1. START")
-        print("0. EXIT")
+        # first_msg = [0, 1]  ## First MsgType
+        # TurnGameLogic.messageList = first_msg
+        # #
+        # print("=====[INFO] GAME READY======")
+        # print("1. PLAY")
+        # print("0. EXIT")
 
         # def requset(self, pid, messageType, JSON):
         #     self.room.requset(pid, messageType, JSON)
+        #
+        # choice = int(raw_input("CHOOSE NUMBER >> "))
+        # if choice == 1:
+        #
+        #     game_msg = [0, 1]
+        #     TurnGameLogic.messageList = game_msg
+        #     game_data = {}
+        #     self.play_game(player, game_msg, game_data)
+        # elif choice == 0:
+        #     self.__result(TurnGameLogic.phaseList)
+        #     TurnGameLogic.onEnd()
 
-        choice = int(raw_input("CHOOSE NUMBER >> "))
-        if choice == 1:
-            ## 0. abstention
-            ## 1. play DiceGame
-            game_msg = [0, 1]
-            TurnGameLogic.messageList = game_msg
-            game_data = {"1":0}
-            self.play_game(player, game_msg, game_data)
-        elif choice == 0:
-            self.__result(TurnGameLogic.phaseList)
-            TurnGameLogic.onEnd()
 
+    def onStart(self, args):
+        TurnGameLogic.onStart(args)
+        TurnGameLogic.messageList = self.msg_type
+        game_data = {"score" : self.phaseList}
+        self.play_game(args[0], 1, game_data)
 
     #####
     #### 재정의 부분 ####
     ## TurnGameLogic의 onAction 재정의
     def onAction(self,pid,args):
-        self.play_game(pid, args)
+        data = json.loads(args)
+        if pid == self.playerList[self.turnNum]:
+            if data["msg"] == "game_data":
+                if data["game_data"]["num"] < 6:
+                    self.calculate_score(self.turnNum, data["num"])
+                    msg = {"msg": "game_data", "msg_type" : 1 , "game_data": {"score": self.phaseList}}
+                    self.play_game(pid, 1, msg)
+                else:
+                    ## 잘못됬다고 서버에 알려주기
+                    pass
+            else:
+                pass
+        else:
+            ## 잘못됬다고 서버에 알려주기
+            pass
 
     ## TurnGameLogic을 재정의
     def onEnd(self):
-        self.result(TurnGameLogic.phaseList)
+        self.result(self.phaseList)
 
     def play_game(self, player, msg, data):
         TurnGameLogic.request(player, msg, data)
-        self.calculate_score(player)  ## TODO: put in turn_num
-        pass
 
-    def calculate_score(self, player, turn_num):
-        # TurnGameLogic.phaseList += player.score  ## TODO: keep adding player score
-        pass
+    def calculate_score(self, turn_num, game_data):
+        TurnGameLogic.phaseList[turn_num] += game_data
 
     def result(self, score_list):
         if score_list[0] > score_list[1]:
