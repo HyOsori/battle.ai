@@ -29,6 +29,7 @@ class GameServer:
         return turn
 
     def perm(self, num):
+        num =1
         pass
 
     @gen.coroutine

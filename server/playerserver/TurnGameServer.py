@@ -24,6 +24,7 @@ class Turn(GameServer):
     @gen.coroutine
     def __player_handler(self, player):
         while True:
+            m = 1
             message = yield player.read()
             res = yield json.loads(message)
             if res["msg_type"] == self.current_msgtype:
