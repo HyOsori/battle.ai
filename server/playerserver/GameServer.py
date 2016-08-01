@@ -2,7 +2,7 @@
 #-*- coding:utf-8 -*-
 
 from gameLogic.baseClass.dummy_game import DiceGame
-from tornado import gen
+from tornado import gen, queues
 
 """
 GAMESERVER
@@ -24,6 +24,8 @@ class GameServer:
         self.room = room
         self.battle_ai_list = battle_ai_list
         self.current_msgtype = -1
+        self.q = queues.Queue()
+
 
     def selectTurn(self, list):
         # turn =
@@ -43,7 +45,10 @@ class GameServer:
             self.game_logic.onStart(turn)
 
             for player in self.room.player_list:
+                self.q.put()
                 self.__player_handler(player)
+            yield self.q.join()
+
         except:
             self.game_logic.onError()
             print('[ERROR] GAME SET FAILED')

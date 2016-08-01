@@ -72,7 +72,6 @@ class DiceGame(TurnGameLogic):
                     self.play_game(pid, 1, msg)
                 else:
                     ## 잘못됬다고 서버에 알려주기
-                    msg = 1
                     pass
             else:
                 pass

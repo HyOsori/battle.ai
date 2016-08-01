@@ -37,6 +37,8 @@ class TurnGameServer(GameServer):
                     for attendee in self.room.attendee_list:
                         attendee.send(message)
             elif res["msg_type"] == "end":  ## end는 종료 메세지 타입
+                self.q.get()
+                self.q.task_done()
                 break
             else:
                 raise Exception
