@@ -79,6 +79,9 @@ class DiceGame(TurnGameLogic):
             ## 잘못됬다고 서버에 알려주기
             pass
 
+    def onError(self, pid):
+        pass
+
     ## TurnGameLogic을 재정의
     def onEnd(self):
         self.result(self.phaseList)

@@ -13,12 +13,19 @@ class TurnGameServer(GameServer):
     def request(self, player, msg, gameData):
         self.current_msgtype = msg
 
+        print "check0"
+
         ##send
         data = { "msg" : "game_data", "msg_type" : msg , "game_data" : gameData }
         json_data = json.dumps(data)
         player.send(json_data)
+
+        print "check 1"
+        '''
         for attendee in self.room.attendee_list:
             attendee.send(json_data)
+        '''
+        print "request is done"
 
         # self.__player_handler(player)
 

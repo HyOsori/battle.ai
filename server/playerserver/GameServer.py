@@ -1,8 +1,7 @@
-
 #-*- coding:utf-8 -*-
-
 from gameLogic.baseClass.dummy_game import DiceGame
 from tornado import gen, queues
+
 
 """
 GAMESERVER
@@ -35,7 +34,8 @@ class GameServer:
     def perm(self, num):
         pass
 
-    def __player_handler(self):
+    def __player_handler(self, player):
+        print player.pid
         pass
 
     @gen.coroutine
@@ -44,8 +44,9 @@ class GameServer:
             turn = self.selectTurn(self.room.player_list)
             self.game_logic.onStart(turn)
 
+            print "on start is done"
             for player in self.room.player_list:
-                self.q.put()
+                self.q.put(player)
                 self.__player_handler(player)
             yield self.q.join()
 
@@ -53,6 +54,7 @@ class GameServer:
             self.game_logic.onError()
             print('[ERROR] GAME SET FAILED')
         finally:
+            print "END"
             self.game_logic.onEnd()
 
     def save_game_data(self):
