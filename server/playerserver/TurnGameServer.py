@@ -1,12 +1,12 @@
-
 import json
 from tornado import gen
-from server.playerserver import GameServer
+from server.playerserver.GameServer import GameServer
 from gameLogic.baseClass import TurnGameLogic
 
-class Turn(GameServer):
-    def __init__(self):
-        pass
+
+class TurnGameServer(GameServer):
+    def __init__(self, room):
+        GameServer.__init__(room)
 
     def request(self, player, msg, gameData):
         self.current_msgtype = msg
@@ -34,7 +34,7 @@ class Turn(GameServer):
                 else:
                     for attendee in self.room.attendee_list:
                         attendee.send(message)
-            elif res["msg_type"] == "end":  ## end는 종료 메세지 타입
+            elif res["msg_type"] == "end":
                 break
             else:
                 raise Exception

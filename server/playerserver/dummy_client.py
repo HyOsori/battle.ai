@@ -22,7 +22,7 @@ class Client:
 
             if msg == "game_data":
                 if msg_type == 1:
-                    s = {"msg": "game_data", "game_data": self.pattern[0]}
+                    s = {"msg": "game_data", "game_data": {"num": 6}}
                     s_data = json.dumps(s)
                     self.client_sock.send(s_data)
                     pass
@@ -46,8 +46,8 @@ class Client:
         self.client_sock.connect(('127.0.0.1', 8000))
 
         print("input your name")
-        msg = input()
-        self.client_sock.send(msg.encode())
+        msg = raw_input()
+        self.client_sock.send(msg)
 
         self.__response()
 

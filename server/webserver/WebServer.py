@@ -5,6 +5,7 @@ from server.User import Attendee
 
 from server.Room import Room
 from server.playerserver.GameServer import GameServer
+from server.playerserver.TurnGameServer import TurnGameServer
 import json
 from server.m_format import *
 
@@ -64,7 +65,7 @@ class WebSocketServer(tornado.websocket.WebSocketHandler):
         players = [self.battle_ai_list.pop(pid) for pid in pid_list]
 
         room = Room(players, self)
-        game_server = GameServer(room, self.battle_ai_list)
+        game_server = TurnGameServer(room, self.battle_ai_list)
 
         tornado.ioloop.IOLoop.current().spawn_callback(game_server.game_handler)
 
