@@ -46,7 +46,6 @@ class TurnGameServer(GameServer):
         '''
         print "request is done"
 
-        # self.__player_handler(player)
 
 
     @gen.coroutine
@@ -54,14 +53,18 @@ class TurnGameServer(GameServer):
         while True:
             print "Player handler running"
             message = yield player.read()
-            res = yield json.loads(message)
+            res = json.loads(message)
+            print res
             if res["msg_type"] == self.current_msgtype:
-                recv = TurnGameLogic.onAction(player, message)
+                recv = self.game_logic.onAction(player, message)
+                print "onAction is done"
+                print recv
                 if not recv:
                     raise Exception
                 else:
-                    for attendee in self.room.attendee_list:
-                        attendee.send(message)
+                    # for attendee in self.room.attendee_list:
+                    #     attendee.send(message)
+                    print "Attendee recv"
             elif res["msg_type"] == "end":  ## end는 종료 메세지 타입
                 self.q.get()
                 self.q.task_done()

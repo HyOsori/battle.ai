@@ -23,7 +23,7 @@ class Client:
 
             if msg == "game_data":
                 if msg_type == 1:
-                    s = {"msg": "game_data", "game_data": {"num": 6}}
+                    s = {"msg": "game_data", "msg_type" : msg_type, "game_data": {"num": 6}}
                     s_data = json.dumps(s)
                     self.client_sock.send(s_data)
                     pass

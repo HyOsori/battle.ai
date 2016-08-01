@@ -25,16 +25,16 @@ from tornado import gen
 
 class DiceGame(TurnGameLogic):
     def __init__(self, GameServer):
-        self.phaseList = [0, 0]  ## Default Phase
         # ## 0. abstention
         ## 1. play DiceGame
         self.msg_type = [0, 1]
         TurnGameLogic.__init__(self, GameServer)
-
+        self.phaseList = [0, 0]
 
     def onStart(self, turn):
         TurnGameLogic.onStart(self, turn)
         TurnGameLogic.messageList = self.msg_type
+        print self.phaseList
         game_data = {"game_data" : self.phaseList}
         self.play_game(turn[0], 1, game_data)
 
@@ -45,13 +45,21 @@ class DiceGame(TurnGameLogic):
         data = json.loads(args)
         if pid == self.playerList[self.turnNum]:
             if data["msg"] == "game_data":
-                if data["game_data"]["num"] < 6:
-                    self.calculate_score(self.turnNum, data["num"])
-                    msg = {"msg": "game_data", "msg_type" : 1 , "game_data": {"score": self.phaseList}}
+                print data["game_data"]
+                print type(data["game_data"])
+                if data["game_data"]["num"] <= 6:
+                    self.calculate_score(self.turnNum, data["game_data"]["num"])
+                    msg = {"score": self.phaseList}
+
+                    print "before ", self.turnNum
+                    self.turnNum = (self.turnNum + 1) % 2
+                    print "after ", self.turnNum
+                    pid = self.playerList[self.turnNum]
+
                     self.play_game(pid, 1, msg)
+                    return True
                 else:
-                    ## 잘못됬다고 서버에 알려주기
-                    pass
+                    return False
             else:
                 pass
         else:
@@ -72,7 +80,7 @@ class DiceGame(TurnGameLogic):
         self.request(player, msg, data)
 
     def calculate_score(self, turn_num, game_data):
-        TurnGameLogic.phaseList[turn_num] += game_data
+        self.phaseList[turn_num] += game_data
 
     def result(self, score_list):
         if score_list[0] > score_list[1]:

@@ -32,7 +32,7 @@ class TurnGameLogic:
         self.message = self.messageList[index]
 
     def changeTurn(self):
-        self.turnNum = self.turnNum + 1
+        self.turnNum = (self.turnNum + 1) % 2  ## player number instead 2
 
     # def changeTurn(self, index):
     #     self.turnNum = index
@@ -42,4 +42,5 @@ class TurnGameLogic:
         return self.playerList[self.turnNum%length]
 
     def request(self, pid, messageType, JSON):
+        print pid
         self.game_server.request(pid, messageType, JSON)
