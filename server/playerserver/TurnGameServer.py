@@ -2,10 +2,12 @@ import json
 from tornado import gen
 from server.playerserver.GameServer import GameServer
 from gameLogic.baseClass import TurnGameLogic
+from gameLogic.baseClass.dummy_game import DiceGame
 
 class TurnGameServer(GameServer):
     def __init__(self, room, battle_ai_list):
-        GameServer.__init__(self, room, battle_ai_list)
+        game_logic = DiceGame(self)
+        GameServer.__init__(self, room, battle_ai_list, game_logic)
 
     def request(self, player, msg, gameData):
         self.current_msgtype = msg

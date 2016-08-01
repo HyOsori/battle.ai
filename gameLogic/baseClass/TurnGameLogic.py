@@ -2,8 +2,8 @@ import abc
 
 class TurnGameLogic:
     __metaclass__ = abc.ABCMeta
-    def __init__(self, room, args):
-        self.room = room
+    def __init__(self, GameServer):
+        self.game_server = GameServer
         self.phaseList = []
         self.messageList = []
         self.currentPhase = None
@@ -34,12 +34,12 @@ class TurnGameLogic:
     def changeTurn(self):
         self.turnNum = self.turnNum + 1
 
-    def changeTurn(self, index):
-        self.turnNum = index
+    # def changeTurn(self, index):
+    #     self.turnNum = index
 
     def nowTurn(self):
         length = len(self.playerList)
         return self.playerList[self.turnNum%length]
 
-    def requset(self, pid, messageType, JSON):
-        self.room.requset(pid, messageType, JSON)
+    def request(self, pid, messageType, JSON):
+        self.game_server.request(pid, messageType, JSON)

@@ -24,12 +24,12 @@ from tornado import gen
 #
 
 class DiceGame(TurnGameLogic):
-    def __init__(self, room):
+    def __init__(self, GameServer):
         self.phaseList = [0, 0]  ## Default Phase
         # ## 0. abstention
         ## 1. play DiceGame
         self.msg_type = [0, 1]
-        TurnGameLogic.__init__(self, room)
+        TurnGameLogic.__init__(self, GameServer)
 
         # first_msg = [0, 1]  ## First MsgType
         # TurnGameLogic.messageList = first_msg
@@ -54,7 +54,7 @@ class DiceGame(TurnGameLogic):
 
 
     def onStart(self, turn):
-        TurnGameLogic.onStart(turn)
+        TurnGameLogic.onStart(self, turn)
         TurnGameLogic.messageList = self.msg_type
         game_data = {"score" : self.phaseList}
         self.play_game(turn[0], 1, game_data)
@@ -85,7 +85,7 @@ class DiceGame(TurnGameLogic):
         self.result(self.phaseList)
 
     def play_game(self, player, msg, data):
-        TurnGameLogic.request(player, msg, data)
+        self.request(player, msg, data)
 
     def calculate_score(self, turn_num, game_data):
         TurnGameLogic.phaseList[turn_num] += game_data
