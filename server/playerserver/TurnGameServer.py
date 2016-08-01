@@ -1,3 +1,4 @@
+#-*- coding:utf-8 -*-
 import json
 from tornado import gen
 from server.playerserver.GameServer import GameServer
@@ -13,7 +14,7 @@ class TurnGameServer(GameServer):
         self.current_msgtype = msg
 
         ##send
-        data = { "msg_type" : msg , "game" : gameData}
+        data = { "msg" : "game_data", "msg_type" : msg , "game_data" : gameData }
         json_data = json.dumps(data)
         player.send(json_data)
         for attendee in self.room.attendee_list:
@@ -25,6 +26,7 @@ class TurnGameServer(GameServer):
     @gen.coroutine
     def __player_handler(self, player):
         while True:
+            print "Player handler running"
             message = yield player.read()
             res = yield json.loads(message)
             if res["msg_type"] == self.current_msgtype:

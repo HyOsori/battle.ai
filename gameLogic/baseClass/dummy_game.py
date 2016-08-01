@@ -56,7 +56,7 @@ class DiceGame(TurnGameLogic):
     def onStart(self, turn):
         TurnGameLogic.onStart(self, turn)
         TurnGameLogic.messageList = self.msg_type
-        game_data = {"score" : self.phaseList}
+        game_data = {"game_data" : self.phaseList}
         self.play_game(turn[0], 1, game_data)
 
     #####
@@ -83,6 +83,9 @@ class DiceGame(TurnGameLogic):
     ## TurnGameLogic을 재정의
     def onEnd(self):
         self.result(self.phaseList)
+
+    def onError(self, pid):
+        pass
 
     def play_game(self, player, msg, data):
         self.request(player, msg, data)

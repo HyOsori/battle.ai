@@ -14,6 +14,7 @@ class Client:
     def __response(self):
         while True:
             received = self.client_sock.recv(256)
+            print received
 
             message = json.loads(received)
             msg = message["msg"]
@@ -42,7 +43,6 @@ class Client:
                     break
 
     def run(self):
-
         self.client_sock.connect(('127.0.0.1', 8000))
 
         print("input your name")

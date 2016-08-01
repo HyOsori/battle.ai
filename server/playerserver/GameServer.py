@@ -33,6 +33,9 @@ class GameServer:
     def perm(self, num):
         pass
 
+    def __player_handler(self):
+        pass
+
     @gen.coroutine
     def game_handler(self):
         try:
@@ -40,7 +43,7 @@ class GameServer:
             self.game_logic.onStart(turn)
 
             for player in self.room.player_list:
-                turn.__player_handler(player)
+                self.__player_handler(player)
         except:
             self.game_logic.onError()
             print('[ERROR] GAME SET FAILED')
