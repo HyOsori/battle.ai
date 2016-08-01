@@ -38,24 +38,25 @@ class GameServer:
         print player.pid
         pass
 
-    @gen.coroutine
-    def game_handler(self):
-        try:
-            turn = self.selectTurn(self.room.player_list)
-            self.game_logic.onStart(turn)
-
-            print "on start is done"
-            for player in self.room.player_list:
-                self.q.put(player)
-                self.__player_handler(player)
-            yield self.q.join()
-
-        except:
-            self.game_logic.onError()
-            print('[ERROR] GAME SET FAILED')
-        finally:
-            print "END"
-            self.game_logic.onEnd()
+    #
+    # @gen.coroutine
+    # def game_handler(self):
+    #     try:
+    #         turn = self.selectTurn(self.room.player_list)
+    #         self.game_logic.onStart(turn)
+    #
+    #         print "on start is done"
+    #         for player in self.room.player_list:
+    #             self.q.put(player)
+    #             self.__player_handler(player)
+    #         yield self.q.join()
+    #
+    #     except:
+    #         self.game_logic.onError()
+    #         print('[ERROR] GAME SET FAILED')
+    #     finally:
+    #         print "END"
+    #         self.game_logic.onEnd()
 
     def save_game_data(self):
         pass

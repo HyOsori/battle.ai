@@ -31,27 +31,6 @@ class DiceGame(TurnGameLogic):
         self.msg_type = [0, 1]
         TurnGameLogic.__init__(self, GameServer)
 
-        # first_msg = [0, 1]  ## First MsgType
-        # TurnGameLogic.messageList = first_msg
-        # #
-        # print("=====[INFO] GAME READY======")
-        # print("1. PLAY")
-        # print("0. EXIT")
-
-        # def requset(self, pid, messageType, JSON):
-        #     self.room.requset(pid, messageType, JSON)
-        #
-        # choice = int(raw_input("CHOOSE NUMBER >> "))
-        # if choice == 1:
-        #
-        #     game_msg = [0, 1]
-        #     TurnGameLogic.messageList = game_msg
-        #     game_data = {}
-        #     self.play_game(player, game_msg, game_data)
-        # elif choice == 0:
-        #     self.__result(TurnGameLogic.phaseList)
-        #     TurnGameLogic.onEnd()
-
 
     def onStart(self, turn):
         TurnGameLogic.onStart(self, turn)

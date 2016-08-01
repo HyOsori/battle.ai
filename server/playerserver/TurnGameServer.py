@@ -8,7 +8,26 @@ from gameLogic.baseClass.dummy_game import DiceGame
 class TurnGameServer(GameServer):
     def __init__(self, room, battle_ai_list):
         game_logic = DiceGame(self)
+        self.room = room
         GameServer.__init__(self, room, battle_ai_list, game_logic)
+
+    @gen.coroutine
+    def game_handler(self):
+        try:
+            turn = self.selectTurn(self.room.player_list)
+            self.game_logic.onStart(turn)
+
+            print "on start is done"
+            for player in turn:
+                self.q.put(player)
+                self.__player_handler(player)
+            yield self.q.join()
+        except:
+            self.game_logic.onError()
+            print('[ERROR] GAME SET FAILED')
+        finally:
+            print "END"
+            self.game_logic.onEnd()
 
     def request(self, player, msg, gameData):
         self.current_msgtype = msg
