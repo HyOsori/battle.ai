@@ -1,5 +1,4 @@
 #-*- coding:utf-8 -*-
-from gameLogic.baseClass.dummy_game import DiceGame
 from tornado import gen, queues
 
 
