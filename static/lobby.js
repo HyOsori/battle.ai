@@ -104,6 +104,10 @@ if ("WebSocket" in window) {
                 }
             }
         }
+        else if (data.msg == "response_match") {
+            $(".class_lobby").css("display","none");
+            $(".class_ingame").css("display","");
+        }
         else if (data.msg == "game_data") {
             recvGameMsg(data.game_data);
         }
