@@ -14,21 +14,23 @@ from gameLogic.baseClass.TurnGameLogic import TurnGameLogic
 """
 
 class DiceGame(TurnGameLogic):
-    def __init__(self, GameServer):  ## GameServer == TurnGameServer??
+    def __init__(self, GameServer):
         # ## 0. 기권 1. 플레이
         TurnGameLogic.__init__(self, GameServer)
         self.msg_type = [0, 1]
         self.phaseList = [0, 0]
 
     def onStart(self, turn):
-        print "Before changeTurn: ", self.turnNum
+        print "Before onStart"
         TurnGameLogic.onStart(self, turn)
-        print "After changeTurn: ", self.turnNum
+        print "After onStart"
 
         #self.messageList = self.msg_type
         print "Current phaseList: ", self.phaseList
         game_data = {"game_data" : self.phaseList}
+        print "Before request"
         self.request(turn[0], 1, game_data)
+        print "After request"
 
     def onAction(self, pid, json_data):
         try:
@@ -58,7 +60,8 @@ class DiceGame(TurnGameLogic):
             print e
             return False
 
-    def onError(self, pid):
+    def onError(self):
+        print "Error!!"
         pass
 
     def onEnd(self):
