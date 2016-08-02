@@ -77,7 +77,7 @@ if ("WebSocket" in window) {
         }
         else if (data.msg == "notice_user_added") {
             var nav = document.getElementById('id_list_ul');
-            var text = data.id;
+            var text = data.user;
             for (var i = 0; i < nav.childNodes.length; i++) {
                 var child = nav.childNodes[i];
                 if (text == child.innerText)
@@ -93,7 +93,7 @@ if ("WebSocket" in window) {
         else if (data.msg == "notice_user_removed") {
             var nav = document.getElementById('id_list_ul');
             var button = document.getElementById('id_match_btn');
-            var text = data.id;
+            var text = data.user;
             for (var i = 0; i < nav.childNodes.length; i++) {
                 var child = nav.childNodes[i];
                 if (text == child.innerText) {
