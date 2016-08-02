@@ -1,9 +1,6 @@
 # -*- coding:utf-8 -*-
 import json
-
-from pip._vendor.distlib.compat import raw_input
 from gameLogic.baseClass.TurnGameLogic import TurnGameLogic
-from tornado import gen
 
 """
 
@@ -16,68 +13,56 @@ from tornado import gen
 
 """
 
-# TurnGameLogic 생성자에 있는거~.,~
-# self.room = room
-# self.phaseList = [] >> 게임의 룰 (ex. 어떤 좌표에 돌을 놓는거..)
-# self.messageList = []
-# self.currentPhase = None
-#
-
 class DiceGame(TurnGameLogic):
-    def __init__(self, GameServer):
-        # ## 0. abstention
-        ## 1. play DiceGame
-        self.msg_type = [0, 1]
+    def __init__(self, GameServer):  ## GameServer == TurnGameServer??
+        # ## 0. 기권 1. 플레이
         TurnGameLogic.__init__(self, GameServer)
+        self.msg_type = [0, 1]
         self.phaseList = [0, 0]
 
     def onStart(self, turn):
+        print "Before changeTurn: ", self.turnNum
         TurnGameLogic.onStart(self, turn)
-        TurnGameLogic.messageList = self.msg_type
-        print self.phaseList
+        print "After changeTurn: ", self.turnNum
+
+        #self.messageList = self.msg_type
+        print "Current phaseList: ", self.phaseList
         game_data = {"game_data" : self.phaseList}
-        self.play_game(turn[0], 1, game_data)
+        self.request(turn[0], 1, game_data)
 
-    #####
-    #### 재정의 부분 ####
-    ## TurnGameLogic의 onAction 재정의
-    def onAction(self,pid,args):
-        data = json.loads(args)
-        if pid == self.playerList[self.turnNum]:
-            if data["msg"] == "game_data":
-                print data["game_data"]
-                print type(data["game_data"])
-                if data["game_data"]["num"] <= 6:
-                    self.calculate_score(self.turnNum, data["game_data"]["num"])
-                    msg = {"score": self.phaseList}
+    def onAction(self, pid, json_data):
+        try:
+            if not pid == self.playerList[self.turnNum]:
+                return False
 
-                    print "before ", self.turnNum
-                    self.turnNum = (self.turnNum + 1) % 2
-                    print "after ", self.turnNum
-                    pid = self.playerList[self.turnNum]
+            message = json.loads(json_data)
+            msg = message["msg"]
+            if not msg == "game_data":
+                return False
 
-                    self.play_game(pid, 1, msg)
-                    return True
-                else:
-                    return False
-            else:
-                pass
-        else:
-            ## 잘못됬다고 서버에 알려주기
-            pass
+            game_data = message["game_data"]
+            # in dice game, game_data = {"num": (num)}
+            # check rule, calculate score and change turn
+            if game_data["num"] > 6 | game_data["num"] < 1:
+                return False
+
+            self.game_data[self.turnNum] += game_data["num"]
+            self.changeTurn()
+
+            # send next request
+            self.request(self.playerList[self.turnNum], 1, self.game_data)
+
+            return True
+
+        except Exception as e:
+            print e
+            return False
 
     def onError(self, pid):
         pass
 
-    ## TurnGameLogic을 재정의
     def onEnd(self):
         self.result(self.phaseList)
-
-    def onError(self, pid):
-        pass
-
-    def play_game(self, player, msg, data):
-        self.request(player, msg, data)
 
     def calculate_score(self, turn_num, game_data):
         self.phaseList[turn_num] += game_data
@@ -92,5 +77,3 @@ class DiceGame(TurnGameLogic):
         else:
             print("DRAW")
             pass
-        ##request로 결과 전달???
-

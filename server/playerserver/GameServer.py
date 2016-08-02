@@ -18,9 +18,7 @@ class GameServer:
 
 
     def selectTurn(self, list):
-        # turn =
-        # self.perm(0)
-        return list
+        return [p.get_pid() for p in list]
 
     def perm(self, num):
         pass

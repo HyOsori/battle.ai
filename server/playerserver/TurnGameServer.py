@@ -10,6 +10,7 @@ class TurnGameServer(GameServer):
         game_logic = DiceGame(self)
         self.room = room
         GameServer.__init__(self, room, battle_ai_list, game_logic)
+        self.num = 0
 
     @gen.coroutine
     def game_handler(self):
@@ -17,14 +18,14 @@ class TurnGameServer(GameServer):
             turn = self.selectTurn(self.room.player_list)
             self.game_logic.onStart(turn)
 
-            print "on start is done"
+            print "START"
             for player in turn:
                 self.q.put(player)
                 self.__player_handler(player)
             yield self.q.join()
         except:
             self.game_logic.onError()
-            print('[ERROR] GAME SET FAILED')
+            print "[!] ERROR"
         finally:
             print "END"
             self.game_logic.onEnd()
@@ -32,19 +33,14 @@ class TurnGameServer(GameServer):
     def request(self, player, msg, gameData):
         self.current_msgtype = msg
 
-        print "check0"
-
-        ##send
         data = { "msg" : "game_data", "msg_type" : msg , "game_data" : gameData }
         json_data = json.dumps(data)
         player.send(json_data)
 
-        print "check 1"
         '''
         for attendee in self.room.attendee_list:
             attendee.send(json_data)
         '''
-        print "request is done"
 
 
 
@@ -57,15 +53,14 @@ class TurnGameServer(GameServer):
             print res
             if res["msg_type"] == self.current_msgtype:
                 recv = self.game_logic.onAction(player, message)
-                print "onAction is done"
                 print recv
                 if not recv:
                     raise Exception
                 else:
+                    pass
                     # for attendee in self.room.attendee_list:
                     #     attendee.send(message)
-                    print "Attendee recv"
-            elif res["msg_type"] == "end":  ## end는 종료 메세지 타입
+            elif res["msg_type"] == 0:  ## end는 종료 메세지 타입
                 self.q.get()
                 self.q.task_done()
                 break

@@ -14,7 +14,7 @@ class Client:
     def __response(self):
         while True:
             received = self.client_sock.recv(256)
-            print received
+            print "Client received: ", received
 
             message = json.loads(received)
             msg = message["msg"]
@@ -39,8 +39,9 @@ class Client:
                     pass
                 elif msg_type == "start":
                     print("Game start")
-                elif msg_type == "end":
-                    break
+                elif msg_type == 0:
+                    print("Game Over")
+                    continue
 
     def run(self):
         self.client_sock.connect(('127.0.0.1', 8000))

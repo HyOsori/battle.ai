@@ -13,6 +13,9 @@ class Player(User):
     def read(self):
         return self.conn.read_bytes(256, partial=True)
 
+    def get_pid(self):
+        return self.pid
+
     def send(self, data):
         self.conn.write(data)
 
