@@ -24,7 +24,7 @@ class Attendee(User):
         msg = {MSG: NOTICE+USER_ADDED, USER: added_player}
         json_msg = json.dumps(msg)
         self.conn.write_message(json_msg)
-        self.conn.write_message("notice_message send")
+        print json_msg
 
     def notice_user_removed(self, removed_player):
         msg = {MSG: NOTICE + USER_REMOVED, USER: removed_player}
