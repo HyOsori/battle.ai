@@ -85,5 +85,5 @@ class RandomAI(AI):
 			return json.dumps({'response' : 'OK'})
 
 if __name__ == '__main__':
-	x = SampleRoom([SayOneAI('Bob')])
+	x = SampleRoom([SayOneAI('Foo'), SayThreeAI('Bar'), RandomAI('Alice')])
 	x.start()
