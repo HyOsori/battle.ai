@@ -8,7 +8,7 @@ class Phase(object):
 		pass
 
 	def doAction(self,pid, args):
-		pass
+		return True
 
 	def onEnd(self):
 		pass

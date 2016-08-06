@@ -14,7 +14,7 @@ class TurnGameLogic(object):
 		self.changeTurn()
 
 	def onAction(self,pid,JSON):
-		self._currentPhase.doAction(pid, JSON)
+		return self._currentPhase.doAction(pid, JSON)
 
 	@abc.abstractmethod
 	def onError(self, pid):
