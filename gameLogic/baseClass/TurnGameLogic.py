@@ -18,7 +18,6 @@ class TurnGameLogic:
 
     @abc.abstractmethod
     def onError(self):
-
         pass
 
     def changePhase(self, index):

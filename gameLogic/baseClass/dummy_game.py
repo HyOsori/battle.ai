@@ -44,12 +44,14 @@ class DiceGame(TurnGameLogic):
 
             # send next request
             self.request(self.playerList[self.turnNum], 1, self.game_data)
-
             return True
 
         except Exception as e:
             print e
             return False
+
+    def onError(self):
+        pass
 
     def onEnd(self):
         self.result(self.phaseList)
@@ -58,12 +60,4 @@ class DiceGame(TurnGameLogic):
         self.phaseList[turn_num] += game_data
 
     def result(self, score_list):
-        if score_list[0] > score_list[1]:
-            print("P1 WIN")
-            pass
-        elif score_list[0] < score_list[1]:
-            print("P2 WIN")
-            pass
-        else:
-            print("DRAW")
-            pass
+        pass

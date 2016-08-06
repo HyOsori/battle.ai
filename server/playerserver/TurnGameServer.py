@@ -17,7 +17,6 @@ class TurnGameServer(GameServer):
         try:
             turn = self.selectTurn(self.room.player_list)
             self.game_logic.onStart(turn)
-
             print "START"
             for player in turn:
                 self.q.put(player)
