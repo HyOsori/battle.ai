@@ -1,35 +1,21 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <style type="text/css">
-            #id_list_ul li {
-                list-style:none;
-				width:100px;
-                padding:5px;
-            }
-            #id_list_ul {
-                cursor:pointer;
-            }
-            #id_list_ul .class_selected {
-                background-color:red;
-                color:white;
-            }
-        </style>
+        <link rel="stylesheet" type="text/css" href="{{ static_url('design.css')}}" >
     </head>
     <body>
-        <canvas id="id_board_canvas" class="class_ingame" width="450" height="450" style="display:none"></canvas>
-        <br><br>
+        <canvas id="id_board_canvas" class="class_ingame" width="450" height="450"></canvas>
+        <ul id="id_gameResults_ul" class="class_gameResult"></ul>
+        <button id="id_goToLobby_btn" class="class_gameResult">home</button>
         <input type="button" id="id_conn_btn" class="class_lobby" value="connect websocket" />
         <input type="text" id="id_conn_id" class="class_lobby" />
-        <br>
-        <ul id="id_list_ul" class="class_lobby">
-        </ul>
-        <br>
+        <ul id="id_list_ul" class="class_lobby"></ul>
         <button id="id_match_btn" class="class_lobby" disabled="true">submit</button>
         <br>
-        <div id="id_messages" class="class_lobby" style="height:200px;width:500px;background:black;color:white;overflow-y:auto;"></div>
+        <div id="id_messages"></div>
         <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
         <script type="text/javascript" src="{{ static_url('lobby.js') }}"></script>
         <script type="text/javascript" src="{{ static_url('ingame_othello.js') }}"></script>
+        <script type="text/javascript" src="{{ static_url('game_result.js') }}"></script>
     </body>
 </html>

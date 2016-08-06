@@ -2,6 +2,10 @@
 var list = [];
 var messageContainer = document.getElementById('id_messages');
 
+$(".class_lobby").css("display","");
+$(".class_ingame").css("display","none");
+$(".class_gameResult").css("display","none");
+
 function checkSelected(){
     var count = 0;
     var nav = document.getElementById('id_list_ul');
@@ -89,7 +93,7 @@ if ("WebSocket" in window) {
                 list.push(text);
             }
         }
-            // hi
+
         else if (data.msg == "notice_user_removed") {
             var nav = document.getElementById('id_list_ul');
             var button = document.getElementById('id_match_btn');
@@ -107,9 +111,18 @@ if ("WebSocket" in window) {
         else if (data.msg == "response_match") {
             $(".class_lobby").css("display","none");
             $(".class_ingame").css("display","");
+            $(".class_gameResult").css("display","none");
         }
         else if (data.msg == "game_data") {
             recvGameMsg(data.game_data);
+
+            setTimeout(function(){
+                $(".class_lobby").css("display","none");
+                $(".class_ingame").css("display","none");
+                $(".class_gameResult").css("display","");
+                $("#id_board_canvas").css("display","");
+            },2000);
+
         }
     }
     $('#id_match_btn').bind('click',getSelected);

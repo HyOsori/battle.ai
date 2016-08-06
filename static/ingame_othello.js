@@ -1,8 +1,7 @@
 
-
 var canvas = $("#id_board_canvas")[0];
 var ctx = canvas.getContext("2d");
-// bye
+
 //draw lines of board
 ctx.beginPath();
 for (var i=0; i<9; i++){
