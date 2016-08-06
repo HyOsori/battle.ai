@@ -1,9 +1,9 @@
 #-*- coding:utf-8 -*-
 import json
 from tornado import gen
-from server.playerserver.GameServer import GameServer
-from gameLogic.baseClass import TurnGameLogic
+from gameLogic.baskin.baskinServer import BaskinServer
 from gameLogic.baseClass.dummy_game import DiceGame
+from server.playerserver.GameServer import GameServer
 
 class TurnGameServer(GameServer):
     def __init__(self, room, battle_ai_list):
@@ -27,7 +27,7 @@ class TurnGameServer(GameServer):
             print "[!] ERROR"
         finally:
             print "END"
-            self.game_logic.onEnd()
+            # self.game_logic.onEnd()
 
     def request(self, player, msg, gameData):
         self.current_msgtype = msg
@@ -40,8 +40,6 @@ class TurnGameServer(GameServer):
         for attendee in self.room.attendee_list:
             attendee.send(json_data)
         '''
-
-
 
     @gen.coroutine
     def __player_handler(self, player):
@@ -71,4 +69,15 @@ class TurnGameServer(GameServer):
         ## 0. 비정상 종료
         ## 1. 정상 종료
         ## result = {"player_pid" : "승패" ... }
-        self.result(self.phaseList)
+
+        print "onEnd is running"
+        data = { "msg" : "game_result", "msg_type" : "normal", "game_data" : result }
+
+        if isValidEnd == 0:
+            data["msg_type"] = "abnormal"
+
+        for player in self.battle_ai_list:
+            json_data = json.dumps(data)
+            player.send(json_data)
+
+        print "onEnd is end"

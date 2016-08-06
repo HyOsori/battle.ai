@@ -51,10 +51,8 @@ class DiceGame(TurnGameLogic):
             return False
 
     def onError(self):
-        pass
 
-    def onEnd(self):
-        self.result(self.phaseList)
+        pass
 
     def calculate_score(self, turn_num, game_data):
         self.phaseList[turn_num] += game_data

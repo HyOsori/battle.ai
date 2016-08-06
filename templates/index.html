@@ -17,6 +17,7 @@
         </style>
     </head>
     <body>
+<<<<<<< HEAD
         <canvas id="id_board_canvas" class="class_ingame" width="450" height="450" style="display:none"></canvas>
         <br><br>
         <input type="button" id="id_conn_btn" class="class_lobby" value="connect websocket" />
@@ -31,5 +32,21 @@
         <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
         <script type="text/javascript" src="{{ static_url('lobby.js') }}"></script>
         <script type="text/javascript" src="{{ static_url('ingame_othello.js') }}"></script>
+=======
+        <canvas id="id_board_canvas" width="450" height="450"></canvas>
+        <br><br>
+        <input type="button" id="id_conn_btn" value="connect websocket" />
+        <input type="text" id="id_conn_id" />
+        <br>
+        <ul id="id_list_ul">
+        </ul>
+        <br>
+        <button id="id_match_btn" disabled="true">submit</button>
+        <br>
+        <div id="id_messages" style="height:200px;width:500px;background:black;color:white;overflow-y:auto;"></div>
+        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+        <script type="text/javascript" src="{{ static_url('scripts/lobby.js') }}"></script>
+        <script type="text/javascript" src="{{ static_url('scripts/ingame_othello.js') }}"></script>
+>>>>>>> master
     </body>
 </html>

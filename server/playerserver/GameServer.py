@@ -15,16 +15,16 @@ class GameServer:
         self.current_msgtype = -1
         self.q = queues.Queue()
 
-
     def selectTurn(self, list):
         return [p.get_pid() for p in list]
 
     def perm(self, num):
         pass
 
-    def __player_handler(self, player):
-        print player.pid
-        pass
+    #
+    # def __player_handler(self, player):
+    #     print player.pid
+    #     pass
 
 
     def save_game_data(self):
