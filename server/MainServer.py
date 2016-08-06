@@ -1,9 +1,12 @@
 import tornado.ioloop
 import os.path
+import sys
 
-from server.playerserver.PlayerServer import PlayerServer
-from server.webserver.WebServer import WebServer
-from server.webserver.WebServer import WebSocketServer
+sys.path.insert(0,'../')
+
+from playerserver.PlayerServer import PlayerServer
+from webserver.WebServer import WebServer
+from webserver.WebServer import WebSocketServer
 
 
 class MainServer:
@@ -24,7 +27,7 @@ class MainServer:
 
     def run(self):
         io_loop = tornado.ioloop.IOLoop.current()
-        self.tcp_server.listen(8000)
+        self.tcp_server.listen(8001)
         self.app.listen(8888)
 
         print("IO LOOP START !!")
