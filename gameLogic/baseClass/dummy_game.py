@@ -3,34 +3,25 @@ import json
 from gameLogic.baseClass.TurnGameLogic import TurnGameLogic
 
 """
-
 <Dice Game 순서>
-0. firstPhase = [0,0] >> p1, p2 모두 0으로 초기화
-1. GameServer에서 onStart() 호출 >> 1. 시작, 0. 종료
+0. game_data = [0,0] >> p1, p2 모두 0으로 초기화
+1. GameServer에서 onStart() 호출 >> msg_type: 0-exit 1-play
 2. 시작하면 TurnGameLogic.request() 호출
 3. 그 뒤에 GameServer에서 onAction 호출할 때마다 request 호출 >> 재정의
 4. 종료되어 onEnd() 호출 시 result() 호출하여 결과 전달
-
 """
 
 class DiceGame(TurnGameLogic):
-    def __init__(self, GameServer):
-        # ## 0. 기권 1. 플레이
-        TurnGameLogic.__init__(self, GameServer)
-        self.msg_type = [0, 1]
-        self.phaseList = [0, 0]
+    def __init__(self, game_server):
+        TurnGameLogic.__init__(self, game_server)
+        self.game_data = [0, 0]
+        self.all_round = 3
+        self.cur_round = 0
 
-    def onStart(self, turn):
-        print "Before onStart"
-        TurnGameLogic.onStart(self, turn)
-        print "After onStart"
-
-        #self.messageList = self.msg_type
-        print "Current phaseList: ", self.phaseList
-        game_data = {"game_data" : self.phaseList}
-        print "Before request"
-        self.request(turn[0], 1, game_data)
-        print "After request"
+    def onStart(self, players):
+        TurnGameLogic.onStart(self, players)
+        game_data = {"game_data": self.game_data}
+        self.request(players[self.turnNum], 1, game_data)
 
     def onAction(self, pid, json_data):
         try:
@@ -59,10 +50,6 @@ class DiceGame(TurnGameLogic):
         except Exception as e:
             print e
             return False
-
-    def onError(self):
-        print "Error!!"
-        pass
 
     def onEnd(self):
         self.result(self.phaseList)

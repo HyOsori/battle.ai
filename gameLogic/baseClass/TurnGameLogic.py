@@ -17,11 +17,8 @@ class TurnGameLogic:
         self.currentPhase.doAction(args)
 
     @abc.abstractmethod
-    def onEnd(self):
-        pass
+    def onError(self):
 
-    @abc.abstractmethod
-    def onError(self, pid):
         pass
 
     def changePhase(self, index):
@@ -34,8 +31,8 @@ class TurnGameLogic:
     def changeTurn(self):
         self.turnNum = (self.turnNum + 1) % 2  ## player number instead 2
 
-    # def changeTurn(self, index):
-    #     self.turnNum = index
+    def changeTurn(self, index):
+        self.turnNum = index
 
     def nowTurn(self):
         length = len(self.playerList)

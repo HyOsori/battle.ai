@@ -8,7 +8,6 @@ class Client:
 
     def __init__(self, pattern):
         self.client_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
         self.pattern = pattern
 
     def __response(self):

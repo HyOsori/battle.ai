@@ -66,3 +66,10 @@ class TurnGameServer(GameServer):
                 break
             else:
                 raise Exception
+
+    def onEnd(self, isValidEnd, result):
+        ## isValidEnd
+        ## 0. 비정상 종료
+        ## 1. 정상 종료
+        ## result = {"player_pid" : "승패" ... }
+        self.result(self.phaseList)
