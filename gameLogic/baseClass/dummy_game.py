@@ -56,13 +56,6 @@ class DiceGame(TurnGameLogic):
     def onError(self, pid):
         pass
 
-    ## TurnGameLogic을 재정의
-    def onEnd(self):
-        self.result(self.phaseList)
-
-    def onError(self, pid):
-        pass
-
     def calculate_score(self, turn_num, game_data):
         self.phaseList[turn_num] += game_data
 
