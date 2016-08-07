@@ -15,7 +15,7 @@ class TurnGameServer(GameServer):
     @gen.coroutine
     def game_handler(self):
         try:
-            turns = [self.selectTurn(self.room.player_list)]+[self.selectTurn(self.room.player_list)]
+            turns = [self.selectTurn(self.room.player_list)] + [self.selectTurn(self.room.player_list)]
             for turn in turns:
                 self.game_logic.onStart(turn)
                 print "START"
@@ -53,7 +53,6 @@ class TurnGameServer(GameServer):
 
 
 
-    ## front에 Logic이 전달
     def notify(self, msg, game_data):
         data = { "msg" : "game_data", "msg_type" : msg, "game_data" : game_data }
         json_data = json.dumps(data)
@@ -105,17 +104,13 @@ class TurnGameServer(GameServer):
         for attendee in self.room.attendee_list:
             attendee.send(json_data)
 
-        ## push
-
-
 
     def destroy_room(self):
 
-        data = { "msg" : "game_result" , "msg_type" : self.isValidEnd, "game_data" : None }
+        data = {"msg": "game_result", "error": self.isValidEnd, "error_msg": self.error_msg, "game_data": self.result}
 
         json_data = json.dumps(data)
-        # for player in self.room.player_list:
-        #     player.send(json_data)
+
         for attendee in self.room.attendee_list:
             attendee.send(json_data)
 

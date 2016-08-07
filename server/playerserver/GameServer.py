@@ -6,7 +6,6 @@ from tornado import queues
 GAMESERVER(모든게임용)
 TurnGameServer(턴게임용)
 
-
 """
 
 class GameServer:
@@ -20,6 +19,7 @@ class GameServer:
 
     def selectTurn(self, list):
         return [p.get_pid() for p in list]
+
 
     def perm(self, num):
         pass
