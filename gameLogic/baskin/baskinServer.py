@@ -41,6 +41,7 @@ class InitPhase(Phase):
 
 				self.changeTurn()
 				self.sendConfig()
+				return True
 
 			else:
 				logging.error(pid + ' responsed incorrect message;' + response)
