@@ -12,7 +12,6 @@ class TurnGameServer(GameServer):
         GameServer.__init__(self, room, battle_ai_list, game_logic)
         self.num = 0
 
-
     @gen.coroutine
     def game_handler(self):
         try:
@@ -33,6 +32,7 @@ class TurnGameServer(GameServer):
 
     def request(self, pid, msg, gameData):
         # print 'request', player, msg, gameData
+
         for p in self.room.player_list:
             if p.get_pid() == pid:
                 player = p
@@ -42,7 +42,7 @@ class TurnGameServer(GameServer):
         print player
         print "-----------------------"
 
-        data = { "msg" : "game_data", "msg_type" : msg , "game_data" : json.loads(gameData) }
+        data = { "msg" : "game_data", "msg_type" : msg , "game_data" : gameData }
         json_data = json.dumps(data)
 
         try:
@@ -73,7 +73,7 @@ class TurnGameServer(GameServer):
             res = json.loads(message)
             print res
             if res["msg_type"] == self.current_msgtype:
-                self.game_logic.onAction(player.get_pid(), json.dumps(res['game_data']))
+                self.game_logic.onAction(player.get_pid(), res['game_data'])
                 if res["msg_type"] == 'finish':
                     print res
                     self.q.get()
@@ -81,9 +81,7 @@ class TurnGameServer(GameServer):
                     break
             else:
                 raise Exception
-
         print "player END!!!!!"
-
 
     def onEnd(self, isValidEnd, result, error_msg="none"):
         self.isValidEnd = isValidEnd
