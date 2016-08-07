@@ -74,6 +74,7 @@ class WebSocketServer(tornado.websocket.WebSocketHandler):
 
         try:
             self.write_message(json_msg)
+            self.web_client_list[self].room_enter()
         except Exception as e:
             print(e)
             self.web_client_list.pop(self)

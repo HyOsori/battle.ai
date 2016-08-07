@@ -22,6 +22,7 @@ class Player(User):
 class Attendee(User):
     def __init__(self, conn):
         User.__init__(self, conn)
+        self.attendee_flag = False
 
     def notice_user_added(self, added_player):
         msg = {MSG: NOTICE+USER_ADDED, USER: added_player}
@@ -38,6 +39,12 @@ class Attendee(User):
 
     def send(self, data):
         self.conn.write_message(data)
+
+    def room_enter(self):
+        self.attendee_flag = True
+
+    def room_out(self):
+        self.attendee_flag = False
 
         # What TO DO when Attendee exit, room send msg to Attendee
         # try - catch : solve it
