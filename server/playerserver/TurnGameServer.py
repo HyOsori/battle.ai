@@ -6,10 +6,10 @@ from gameLogic.baseClass.dummy_game import DiceGame
 from server.playerserver.GameServer import GameServer
 
 class TurnGameServer(GameServer):
-    def __init__(self, room, battle_ai_list):
+    def __init__(self, room, battle_ai_list, web_client_list):
         game_logic = BaskinServer(self)
         self.room = room
-        GameServer.__init__(self, room, battle_ai_list, game_logic)
+        GameServer.__init__(self, room, battle_ai_list, web_client_list ,game_logic)
         self.num = 0
 
     @gen.coroutine
@@ -121,10 +121,5 @@ class TurnGameServer(GameServer):
 
         for player in self.room.player_list:
             self.battle_ai_list[player.get_pid()] = player
-            for attendee in self.room.attendee_list:
+            for attendee in self.web_client_list.values():
                 attendee.notice_user_added(player.get_pid())
-
-        for attendee in self.room.attendee_list:
-            attendee.room_out()
-
-

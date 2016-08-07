@@ -22,7 +22,7 @@ class Player(User):
 class Attendee(User):
     def __init__(self, conn):
         User.__init__(self, conn)
-        self.attendee_flag = False
+        self.attendee_flag = True
 
     def notice_user_added(self, added_player):
         print "notice user added ##"

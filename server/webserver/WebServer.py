@@ -49,6 +49,8 @@ class WebSocketServer(tornado.websocket.WebSocketHandler):
 
     def __response_user_list(self):
         # battle_ai_list's key is user id
+        self.web_client_list[self].attendee_flag = False
+
         players = list(self.battle_ai_list.keys())
 
         msg = {MSG: RESPONSE+USER_LIST, USERS: players}
@@ -64,10 +66,11 @@ class WebSocketServer(tornado.websocket.WebSocketHandler):
         # be care for concurrent access
         players = [self.battle_ai_list.pop(pid) for pid in pid_list]
         for pid in pid_list:
-            self.web_client_list[self].notice_user_removed(pid)
+            for attendee in self.web_client_list.values():
+                attendee.notice_user_removed(pid)
 
         room = Room(players, self.web_client_list[self])
-        game_server = TurnGameServer(room, self.battle_ai_list)
+        game_server = TurnGameServer(room, self.battle_ai_list, self.web_client_list)
 
         tornado.ioloop.IOLoop.current().spawn_callback(game_server.game_handler)
 
