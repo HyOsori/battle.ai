@@ -1,4 +1,3 @@
-
 var list = [];
 var messageContainer = document.getElementById('id_messages');
 
@@ -21,6 +20,7 @@ function clickHandler(event) {
     var nav = document.getElementById('id_list_ul');
     var button = document.getElementById('id_match_btn');
     button.disabled='true';
+    $('#id_test_btn').attr('disabled', true).attr({ src : 'static/test_button_disabled.png'});
     if (event.target.className == 'class_selected'){
         event.target.className = '';
     }
@@ -30,8 +30,10 @@ function clickHandler(event) {
         }
     }
 
-    if (checkSelected()>=2)
+    if (checkSelected()>=2) {
         button.removeAttribute('disabled');
+        $('#id_test_btn').removeAttr('disabled').attr({ src : 'static/test_button.png'});
+    }
 }
 
 function getSelected(){
@@ -103,8 +105,10 @@ if ("WebSocket" in window) {
                 if (text == child.innerText) {
                     child.remove();
                     list.splice((i - 1), 1);
-                    if (checkSelected()<2)
-                        button.disabled='true';
+                    if (checkSelected()<2) {
+                        button.disabled = 'true';
+                        $('#id_test_btn').attr('disabled', true).attr({ src : 'static/test_button_disabled.png'});
+                    }
                 }
             }
         }
@@ -116,13 +120,15 @@ if ("WebSocket" in window) {
         else if (data.msg == "game_data") {
             recvGameMsg(data.game_data);
 
-            setTimeout(function(){
-                $(".class_lobby").css("display","none");
-                $(".class_ingame").css("display","none");
-                $(".class_gameResult").css("display","");
-                $("#id_board_canvas").css("display","");
-            },2000);
-
+            // setTimeout(function(){
+            //     $(".class_lobby").css("display","none");
+            //     $(".class_ingame").css("display","none");
+            //     $(".class_gameResult").css("display","");
+            //     $("#id_board_canvas").css("display","");
+            // },2000);
+        }
+        else if (data.msg == "round_result") {
+            recvGameMsg(data.game_data);
         }
     }
     $('#id_match_btn').bind('click',getSelected);

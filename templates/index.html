@@ -4,6 +4,8 @@
         <link rel="stylesheet" type="text/css" href="{{ static_url('design.css')}}" >
     </head>
     <body>
+        <div id="id_baskin_message" class="class_ingame"></div>
+        <br>
         <canvas id="id_board_canvas" class="class_ingame" width="450" height="450"></canvas>
         <ul id="id_gameResults_ul" class="class_gameResult"></ul>
         <button id="id_goToLobby_btn" class="class_gameResult">home</button>
@@ -15,7 +17,7 @@
         <div id="id_messages"></div>
         <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
         <script type="text/javascript" src="{{ static_url('lobby.js') }}"></script>
-        <script type="text/javascript" src="{{ static_url('ingame_othello.js') }}"></script>
+        <script type="text/javascript" src="{{ static_url('ingame_baskin.js') }}"></script>
         <script type="text/javascript" src="{{ static_url('game_result.js') }}"></script>
     </body>
 </html>
