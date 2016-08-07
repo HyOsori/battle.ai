@@ -117,6 +117,8 @@ if ("WebSocket" in window) {
             $(".class_lobby").css("display","none");
             $(".class_ingame").css("display","");
             $(".class_gameResult").css("display","none");
+
+            alertify.success("게임 시작!");
         }
         else if (data.msg == "game_data") {
             recvGameMsg(data);

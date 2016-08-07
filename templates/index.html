@@ -2,6 +2,8 @@
 <html>
     <head>
         <link rel="stylesheet" type="text/css" href="{{ static_url('design.css')}}" >
+        <link rel="stylesheet" type="text/css" href="{{ static_url('alertify.core.css')}}" />
+        <link rel="stylesheet" type="text/css" href="{{ static_url('alertify.default.css')}}" />
     </head>
     <body>
         <div id="id_baskin_message" class="class_ingame"></div>
@@ -15,6 +17,7 @@
         <br>
         <div id="id_messages"></div>
         <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+        <script type="text/javascript" src="{{ static_url('alertify.min.js') }}"></script>
         <script type="text/javascript" src="{{ static_url('lobby.js') }}"></script>
         <script type="text/javascript" src="{{ static_url('ingame_baskin.js') }}"></script>
         <script type="text/javascript" src="{{ static_url('game_result.js') }}"></script>
