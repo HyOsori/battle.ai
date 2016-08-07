@@ -1,3 +1,5 @@
+var MIN_MATCH_USER_CNT = 2;
+var MAX_MATCH_USER_CNT = 4;
 
 var list = [];
 var messageContainer = document.getElementById('id_messages');
@@ -21,12 +23,12 @@ function clickHandler(event) {
         event.target.className = '';
     }
     else {
-        if (checkSelected()<2){
+        if (checkSelected()<MAX_MATCH_USER_CNT){
             event.target.className = 'class_selected';
         }
     }
 
-    if (checkSelected()>=2)
+    if (checkSelected()>=MIN_MATCH_USER_CNT)
         button.removeAttribute('disabled');
 }
 
@@ -99,7 +101,7 @@ if ("WebSocket" in window) {
                 if (text == child.innerText) {
                     child.remove();
                     list.splice((i - 1), 1);
-                    if (checkSelected()<2)
+                    if (checkSelected()<MIN_MATCH_USER_CNT)
                         button.disabled='true';
                 }
             }
