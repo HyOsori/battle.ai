@@ -15,7 +15,7 @@ class TurnGameServer(GameServer):
     @gen.coroutine
     def game_handler(self):
         try:
-            turns = [self.selectTurn(self.room.player_list)]
+            turns = [self.selectTurn(self.room.player_list)]+[self.selectTurn(self.room.player_list)]
             for turn in turns:
                 self.game_logic.onStart(turn)
                 print "START"
