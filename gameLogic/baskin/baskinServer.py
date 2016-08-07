@@ -26,7 +26,7 @@ class InitPhase(Phase):
 		logging.debug('Receive response from ' + pid  + '. Processing...')
 		if pid != self.nowTurn():
 			logging.error(pid + ' is not equal to current turn player;' + self.nowTurn())
-			self.end(False, dict(zip(self.playerList, ['Draw']*len(self.playerList))))
+			self.end(False, dict(zip(self.playerList, ['draw']*len(self.playerList))))
 			return False
 
 		try:
@@ -44,12 +44,12 @@ class InitPhase(Phase):
 
 			else:
 				logging.error(pid + ' responsed incorrect message;' + response)
-				self.end(False, dict(zip(self.playerList, ['Draw']*len(self.playerList))))
+				self.end(False, dict(zip(self.playerList, ['draw']*len(self.playerList))))
 				return False
 		except Exception, e:
 			logging.debug(e)
 			logging.error(pid + ' causes Exception during init')
-			self.end(False, dict(zip(self.playerList, ['Draw']*len(self.playerList))))
+			self.end(False, dict(zip(self.playerList, ['draw']*len(self.playerList))))
 			return False
 		
 	def onEnd(self):
@@ -87,8 +87,8 @@ class GameLoopPhase(Phase):
 	def doAction(self, pid, JSON):
 		logging.debug('Receive response from ' + pid  + '. Processing...')
 		if pid != self.nowTurn():
-			result = dict(zip(self.playerList, ['Win']*len(self.playerList)))
-			result[pid] = 'Lose'
+			result = dict(zip(self.playerList, ['win']*len(self.playerList)))
+			result[pid] = 'lose'
 			logging.error(pid + ' is not equal to current turn player;' + self.nowTurn())
 			self.end(False, result)
 			return False
@@ -97,8 +97,8 @@ class GameLoopPhase(Phase):
 			args = json.loads(JSON)
 			num = int(args['num'])
 			if num < self.minCnt or num > self.maxCnt:
-				result = dict(zip(self.playerList, ['Win']*len(self.playerList)))
-				result[pid] = 'Lose'
+				result = dict(zip(self.playerList, ['win']*len(self.playerList)))
+				result[pid] = 'lose'
 				logging.error(pid + ' responsed invalid range number')
 				self.end(False, result)
 				return False
@@ -117,8 +117,8 @@ class GameLoopPhase(Phase):
 		except Exception, e:
 			logging.debug(e)
 			logging.error(pid + ' causes Exception during gameloop')
-			result = dict(zip(self.playerList, ['Win']*len(self.playerList)))
-			result[pid] = 'Lose'
+			result = dict(zip(self.playerList, ['win']*len(self.playerList)))
+			result[pid] = 'lose'
 			self.end(False, result)
 			return False
 
@@ -155,8 +155,8 @@ class ResultPhase(Phase):
 				self.cntPlayer -= 1
 				if self.cntPlayer == 0:
 					logging.debug('All users know that game is over. end the game...')
-					result = dict(zip(self.playerList, ['Win']*len(self.playerList)))
-					result[self.losePlayer] = 'Lose'
+					result = dict(zip(self.playerList, ['win']*len(self.playerList)))
+					result[self.losePlayer] = 'lose'
 					self.end(True, result)
 					return True
 
@@ -165,15 +165,15 @@ class ResultPhase(Phase):
 				return True
 			else:
 				logging.error(pid + ' responsed incorrect message;' + response)
-				result = dict(zip(self.playerList, ['Win']*len(self.playerList)))
-				result[pid] = 'Lose'
+				result = dict(zip(self.playerList, ['win']*len(self.playerList)))
+				result[pid] = 'lose'
 				self.end(False, result)
 				return False
 		except Exception, e:
 			logging.debug(e)
 			logging.error(pid + ' causes Exception during result')
-			result = dict(zip(self.playerList, ['Win']*len(self.playerList)))
-			result[pid] = 'Lose'
+			result = dict(zip(self.playerList, ['win']*len(self.playerList)))
+			result[pid] = 'lose'
 			self.end(False, result)
 			return False
 
