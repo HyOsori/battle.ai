@@ -31,8 +31,6 @@ class TurnGameServer(GameServer):
             print "END"
             self.destroy_room()
 
-
-
     def request(self, pid, msg, gameData):
         # print 'request', player, msg, gameData
         for p in self.room.player_list:
@@ -84,6 +82,8 @@ class TurnGameServer(GameServer):
             else:
                 raise Exception
 
+        print "player END!!!!!"
+
 
     def onEnd(self, isValidEnd, result, error_msg="none"):
         self.isValidEnd = isValidEnd
@@ -113,12 +113,6 @@ class TurnGameServer(GameServer):
         #     player.send(json_data)
         for attendee in self.room.attendee_list:
             attendee.send(json_data)
-
-
-        for player in self.room.player_list:
-            self.battle_ai_list[player.get_pid()] = player
-            for attendee in self.room.attendee_list:
-                attendee.notice_user_added(player.get_pid())
 
         for player in self.room.player_list:
             self.battle_ai_list[player.get_pid()] = player

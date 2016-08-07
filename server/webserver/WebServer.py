@@ -63,6 +63,8 @@ class WebSocketServer(tornado.websocket.WebSocketHandler):
     def __response_match(self, pid_list):
         # be care for concurrent access
         players = [self.battle_ai_list.pop(pid) for pid in pid_list]
+        for pid in pid_list:
+            self.web_client_list[self].notice_user_removed(pid)
 
         room = Room(players, self.web_client_list[self])
         game_server = TurnGameServer(room, self.battle_ai_list)
