@@ -114,6 +114,7 @@ if ("WebSocket" in window) {
             }
         }
         else if (data.msg == "response_match") {
+            gameStart(data.users);
             $(".class_lobby").css("display","none");
             $(".class_ingame").css("display","");
             $(".class_gameResult").css("display","none");
