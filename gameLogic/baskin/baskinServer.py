@@ -102,7 +102,13 @@ class GameLoopPhase(Phase):
 				logging.error(pid + ' responsed invalid range number')
 				self.end(False, result)
 				return False
-			elif self.cnt + num > self.goal:
+
+			self.notify(json.dumps({
+				'pid' : pid,
+				'num' : num
+			}))
+
+			if self.cnt + num > self.goal:
 				sd = self.getSharedDict()
 				sd['losePlayer'] = pid
 				logging.debug('Game is over. ' + pid + ' said ' + str(self.goal) + '. Go to the next phase...')

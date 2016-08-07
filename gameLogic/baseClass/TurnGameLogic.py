@@ -56,3 +56,6 @@ class TurnGameLogic(object):
 
 	def getPlayerList(self):
 		return self._playerList
+
+	def notify(self, messageType, JSON):
+		self._room.notify(messageType, JSON)
