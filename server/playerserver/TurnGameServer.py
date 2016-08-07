@@ -1,9 +1,11 @@
 #-*- coding:utf-8 -*-
 import json
+import time
 from tornado import gen
 from gameLogic.baskin.baskinServer import BaskinServer
 from gameLogic.baseClass.dummy_game import DiceGame
 from server.playerserver.GameServer import GameServer
+
 
 class TurnGameServer(GameServer):
     def __init__(self, room, battle_ai_list, web_client_list):
@@ -33,6 +35,7 @@ class TurnGameServer(GameServer):
 
     def request(self, pid, msg, gameData):
         # print 'request', player, msg, gameData
+        time.sleep(1.5)
 
         for p in self.room.player_list:
             if p.get_pid() == pid:
@@ -86,15 +89,16 @@ class TurnGameServer(GameServer):
 
 
     def onEnd(self, isValidEnd, result, error_msg="none"):
-        self.isValidEnd = isValidEnd
         self.result = result
         self.error_msg = error_msg
+        self.isValidEnd = 0  # abnormal end
 
         # isValidEnd = normal_end
         if isValidEnd == True:
+            self.isValidEnd = 1  # normal end
             data = { "msg": "game_data", "msg_type": "round_result", "game_data": result }
-        elif isValidEnd == False:
-            data = { "msg" : "game_result", "error" : isValidEnd, "error_msg" : error_msg, "game_data" : result }
+        # elif isValidEnd == False:
+        #     data = { "msg" : "game_result", "error" : isValidEnd, "error_msg" : error_msg, "game_data" : result }
 
         json_data = json.dumps(data)
 
@@ -110,7 +114,6 @@ class TurnGameServer(GameServer):
         data = {"msg": "game_result", "error": self.isValidEnd, "error_msg": self.error_msg, "game_data": self.result}
 
         json_data = json.dumps(data)
-
         for attendee in self.room.attendee_list:
             attendee.send(json_data)
 
