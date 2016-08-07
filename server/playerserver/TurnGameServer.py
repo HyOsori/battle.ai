@@ -35,7 +35,7 @@ class TurnGameServer(GameServer):
 
     def request(self, pid, msg, gameData):
         # print 'request', player, msg, gameData
-        time.sleep(1.5)
+        time.sleep(0.5)
 
         for p in self.room.player_list:
             if p.get_pid() == pid:
@@ -91,11 +91,11 @@ class TurnGameServer(GameServer):
     def onEnd(self, isValidEnd, result, error_msg="none"):
         self.result = result
         self.error_msg = error_msg
-        self.isValidEnd = 0  # abnormal end
+        self.isValidEnd = 1  # abnormal end
 
         # isValidEnd = normal_end
         if isValidEnd == True:
-            self.isValidEnd = 1  # normal end
+            self.isValidEnd = 0  # normal end
             data = { "msg": "game_data", "msg_type": "round_result", "game_data": result }
         # elif isValidEnd == False:
         #     data = { "msg" : "game_result", "error" : isValidEnd, "error_msg" : error_msg, "game_data" : result }
