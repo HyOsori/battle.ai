@@ -7,7 +7,7 @@ from server.playerserver.GameServer import GameServer
 
 class TurnGameServer(GameServer):
     def __init__(self, room, battle_ai_list):
-        game_logic = DiceGame(self)
+        game_logic = BaskinServer(self)
         self.room = room
         GameServer.__init__(self, room, battle_ai_list, game_logic)
         self.num = 0
@@ -18,38 +18,50 @@ class TurnGameServer(GameServer):
             turn = self.selectTurn(self.room.player_list)
             self.game_logic.onStart(turn)
             print "START"
-            for player in turn:
-                self.q.put(player)
-                self.__player_handler(player)
+            for pid in turn:
+                self.q.put(pid)
+                self.__player_handler(pid)
             yield self.q.join()
         except:
-            self.game_logic.onError()
+            self.game_logic.onError('test')
             print "[!] ERROR"
         finally:
             print "END"
             # self.game_logic.onEnd()
 
-    def request(self, player, msg, gameData):
+    def request(self, pid, msg, gameData):
+
+        # print 'request', player, msg, gameData
+        for p in self.room.player_list:
+            if p.get_pid() == pid:
+                player = p
         self.current_msgtype = msg
 
         data = { "msg" : "game_data", "msg_type" : msg , "game_data" : gameData }
         json_data = json.dumps(data)
-        player.send(json_data)
 
+        try:
+            player.send(json_data)
+        except:
+            print 'request : ', 'send error'
         '''
         for attendee in self.room.attendee_list:
             attendee.send(json_data)
         '''
 
     @gen.coroutine
-    def __player_handler(self, player):
+    def __player_handler(self, pid):
         while True:
             print "Player handler running"
+            for p in self.room.player_list:
+                if p.get_pid() == pid:
+                    player = p
+            print player
             message = yield player.read()
             res = json.loads(message)
             print res
             if res["msg_type"] == self.current_msgtype:
-                recv = self.game_logic.onAction(player, message)
+                recv = self.game_logic.onAction(pid, json.dumps(res['game_data']))
                 print recv
                 if not recv:
                     raise Exception

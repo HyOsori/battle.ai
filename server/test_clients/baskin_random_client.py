@@ -5,9 +5,9 @@ from random import random
 
 
 
-def request(msg_type, gmae_data):
+def request(msg_type, game_data):
 	send_msg = {"msg" : "game_data"}
-	send_msg["msg_data"] = msg_type
+	send_msg["msg_type"] = msg_type
 	send_msg["game_data"] = game_data
 	sock.send(json.dumps(send_msg))
 
@@ -26,7 +26,8 @@ print("연결 되었습니다.")
 
 #send pid
 print "username : "
-username = raw_input()
+# username = raw_input()
+username = "tester"+ str(random())
 sock.send(username)
 
 min_n = 0
@@ -36,17 +37,18 @@ finish_n = 0
 while True : 
 	data = sock.recv(1024)
 	json_data = json.loads(data)
+	print json_data
 	msg = json_data['msg']
 	msg_type = json_data['msg_type'] 
-	game_data = json_data['game_data']
+	game_data = json.loads(json_data['game_data'])
 
 	if(msg == 'game_result'):
 		print msg_type, game_data[username]
 
 	if msg_type == 'init':
-		min_n = int(game_data['min'])
-		max_n = int(game_data['max'])
-		finish_n = int(game_data[finish_n])
+		min_n = game_data['min']
+		max_n = game_data['max']
+		finish_n = game_data['finish']
 		request(msg_type, {'response' : 'OK'})
 	elif msg_type == 'gameloop':
 		start_n = game_data['start']

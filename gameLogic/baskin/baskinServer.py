@@ -29,7 +29,7 @@ class InitPhase(Phase):
 		if pid != self.nowTurn():
 			logging.error(pid + ' is not equal to current turn player;' + self.nowTurn())
 			self.end(False, dict(zip(self.playerList, ['Draw']*len(self.playerList))))
-			return
+			return False
 
 		try:
 			args = json.loads(JSON)
@@ -39,19 +39,21 @@ class InitPhase(Phase):
 				if self.cntPlayer == 0:
 					logging.debug('All users responsed OK. Go to the next phase...')
 					self.changePhase(self.nextPhase)
-					return
+					return True
 
 				self.changeTurn()
 				self.sendConfig()
-
+				return True
 			else:
 				logging.error(pid + ' responsed incorrect message;' + response)
 				self.end(False, dict(zip(self.playerList, ['Draw']*len(self.playerList))))
+				return False
 		except Exception, e:
 			logging.debug(e)
-			logging.error(pid + ' causes Exception during init')
+			logging.error(pid + ' causese Exception during init')
 			self.end(False, dict(zip(self.playerList, ['Draw']*len(self.playerList))))
-		
+			return False
+
 	def onEnd(self):
 		super(InitPhase, self).onEnd()
 		logging.debug('===InitPhase End===')
@@ -60,8 +62,8 @@ class InitPhase(Phase):
 		logging.debug('Send configure data to ' + self.nowTurn())
 		self.request(self.nowTurn(), json.dumps(
 			{
-				'min' : self.minCnt, 
-				'max' : self.maxCnt, 
+				'min' : self.minCnt,
+				'max' : self.maxCnt,
 				'finish' : self.goal
 			}
 		))
@@ -94,7 +96,7 @@ class GameLoopPhase(Phase):
 			result[pid] = 'Lose'
 			logging.error(pid + ' is not equal to current turn player;' + self.nowTurn())
 			self.end(False, result)
-			return
+			return False
 
 		try:
 			args = json.loads(JSON)
@@ -104,25 +106,25 @@ class GameLoopPhase(Phase):
 				result[pid] = 'Lose'
 				logging.error(pid + ' responsed invalid range number')
 				self.end(False, result)
-				return
+				return False
 			elif self.cnt + num > self.goal:
 				sd = self.getSharedDict()
 				sd['losePlayer'] = pid
 				logging.debug('Game is over. ' + pid + ' said ' + str(self.goal) + '. Go to the next phase...')
 				self.changePhase(self.nextPhase)
-				return
+				return True
 			self.cnt += num
 			logging.debug(pid + ' counted ' + str(num) + '. So next player start from ' + str(self.cnt))
 			self.changeTurn()
 			self.requestDecision()
-
+			return True
 		except Exception, e:
 			logging.debug(e)
 			logging.error(pid + ' causes Exception during gameloop')
 			result = dict(zip(self.playerList, ['Win']*len(self.playerList)))
 			result[pid] = 'Lose'
 			self.end(False, result)
-
+			return False
 
 	def onEnd(self):
 		super(GameLoopPhase, self).onEnd()
@@ -162,25 +164,28 @@ class ResultPhase(Phase):
 					result = dict(zip(self.playerList, ['Win']*len(self.playerList)))
 					result[self.losePlayer] = 'Lose'
 					self.end(True, result)
-					return
+					return True
 
 				self.changeTurn()
 				self.sendGameOver()
+				return True
 			else:
 				logging.error(pid + ' responsed incorrect message;' + response)
 				result = dict(zip(self.playerList, ['Win']*len(self.playerList)))
 				result[pid] = 'Lose'
 				self.end(False, result)
+				return False
 		except Exception, e:
 			logging.debug(e)
 			logging.error(pid + ' causes Exception during result')
 			result = dict(zip(self.playerList, ['Win']*len(self.playerList)))
 			result[pid] = 'Lose'
 			self.end(False, result)
+			return False
 
 	def onEnd(self):
 		super(ResultPhase, self).onEnd()
-		logging.debug('===ResultPhase End===')
+		logging.debug('=======ResultPhase End======')
 
 	def sendGameOver(self):
 		logging.debug('Send gameover message to ' + self.nowTurn())
@@ -214,4 +219,5 @@ class BaskinServer(TurnGameLogic):
 		self.changePhase(0)
 
 	def onError(self, pid):
-		super(BaskinServer, self).onError(pid)
+         pass
+		# super(Bas
