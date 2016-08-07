@@ -213,3 +213,6 @@ class BaskinServer(TurnGameLogic):
 
 	def onError(self, pid):
 		super(BaskinServer, self).onError(pid)
+		result = dict(zip(self.playerList, ['win']*len(self.playerList)))
+		result[pid] = 'lose'
+		self.end(False, result)
