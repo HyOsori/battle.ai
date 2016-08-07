@@ -2,7 +2,6 @@ import sys
 sys.path.insert(0,'../')
 from baseClass.TurnGameLogic import TurnGameLogic
 from baseClass.Phase import Phase
-import json
 import logging
 logging.basicConfig(level=logging.DEBUG)
 
@@ -22,7 +21,7 @@ class InitPhase(Phase):
 
 		self.sendConfig()
 
-	def doAction(self, pid, JSON):
+	def doAction(self, pid, dictData):
 		logging.debug('Receive response from ' + pid  + '. Processing...')
 		if pid != self.nowTurn():
 			logging.error(pid + ' is not equal to current turn player;' + self.nowTurn())
@@ -30,7 +29,7 @@ class InitPhase(Phase):
 			return False
 
 		try:
-			args = json.loads(JSON)
+			args = dictData
 			response = args['response']
 			if response == 'OK':
 				self.cntPlayer -= 1
@@ -58,13 +57,13 @@ class InitPhase(Phase):
 
 	def sendConfig(self):
 		logging.debug('Send configure data to ' + self.nowTurn())
-		self.request(self.nowTurn(), json.dumps(
+		self.request(self.nowTurn(),
 			{
 				'min' : self.minCnt, 
 				'max' : self.maxCnt, 
 				'finish' : self.goal
 			}
-		))
+		)
 
 
 class GameLoopPhase(Phase):
@@ -85,7 +84,7 @@ class GameLoopPhase(Phase):
 		logging.debug('Game start! First number is ' + str(self.cnt) + '.')
 		self.requestDecision()
 
-	def doAction(self, pid, JSON):
+	def doAction(self, pid, dictData):
 		logging.debug('Receive response from ' + pid  + '. Processing...')
 		if pid != self.nowTurn():
 			result = dict(zip(self.playerList, ['win']*len(self.playerList)))
@@ -95,7 +94,7 @@ class GameLoopPhase(Phase):
 			return False
 
 		try:
-			args = json.loads(JSON)
+			args = dictData
 			num = int(args['num'])
 			if num < self.minCnt or num > self.maxCnt:
 				result = dict(zip(self.playerList, ['win']*len(self.playerList)))
@@ -104,10 +103,10 @@ class GameLoopPhase(Phase):
 				self.end(False, result)
 				return False
 
-			self.notify(json.dumps({
+			self.notify({
 				'pid' : pid,
 				'num' : num
-			}))
+			})
 
 			if self.cnt + num > self.goal:
 				sd = self.getSharedDict()
@@ -135,11 +134,11 @@ class GameLoopPhase(Phase):
 
 	def requestDecision(self):
 		logging.debug('Request ' + self.nowTurn() + '\'s decision')
-		self.request(self.nowTurn(), json.dumps(
+		self.request(self.nowTurn(),
 			{
 				'start' : self.cnt
 			}
-		))
+		)
 
 class ResultPhase(Phase):
 	def __init__(self, logicServer, messageType):
@@ -154,9 +153,9 @@ class ResultPhase(Phase):
 
 		self.sendGameOver()
 
-	def doAction(self, pid, JSON):
+	def doAction(self, pid, dictData):
 		try:
-			args = json.loads(JSON)
+			args = dictData
 			response = args['response']
 			if response == 'OK':
 				self.cntPlayer -= 1
@@ -189,7 +188,7 @@ class ResultPhase(Phase):
 
 	def sendGameOver(self):
 		logging.debug('Send gameover message to ' + self.nowTurn())
-		self.request(self.nowTurn(), json.dumps({ }))
+		self.request(self.nowTurn(), { })
 
 class BaskinServer(TurnGameLogic):
 	def __init__(self, room):

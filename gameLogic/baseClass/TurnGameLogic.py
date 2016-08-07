@@ -13,8 +13,8 @@ class TurnGameLogic(object):
 		self._turnNum = -1
 		self.changeTurn()
 
-	def onAction(self,pid,JSON):
-		return self._currentPhase.doAction(pid, JSON)
+	def onAction(self,pid,dictData):
+		return self._currentPhase.doAction(pid, dictData)
 
 	@abc.abstractmethod
 	def onError(self, pid):
@@ -37,12 +37,12 @@ class TurnGameLogic(object):
 		length = len(self._playerList)
 		return self._playerList[self._turnNum%length]
 
-	def requestAll(self, messageType, JSON):
+	def requestAll(self, messageType, dictData):
 		for pid in self._playerList:
-			self.request(pid, messageType, JSON)
+			self.request(pid, messageType, dictData)
 
-	def request(self, pid, messageType, JSON):
-		self._room.request(pid, messageType, JSON)
+	def request(self, pid, messageType, dictData):
+		self._room.request(pid, messageType, dictData)
 
 	def end(self, isValidEnd, resultList):
 		self._room.onEnd(isValidEnd, resultList)
@@ -57,5 +57,5 @@ class TurnGameLogic(object):
 	def getPlayerList(self):
 		return self._playerList
 
-	def notify(self, messageType, JSON):
-		self._room.notify(messageType, JSON)
+	def notify(self, messageType, dictData):
+		self._room.notify(messageType, dictData)

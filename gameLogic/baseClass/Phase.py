@@ -8,7 +8,7 @@ class Phase(object):
 	def onStart(self):
 		pass
 
-	def doAction(self,pid, args):
+	def doAction(self,pid, dictData):
 		return True
 
 	def onEnd(self):
@@ -23,11 +23,11 @@ class Phase(object):
 	def nowTurn(self):
 		return self._logicServer.nowTurn()
 
-	def request(self, pid, JSON):
-		self._logicServer.request(pid, self.messageType, JSON)
+	def request(self, pid, dictData):
+		self._logicServer.request(pid, self.messageType, dictData)
 
-	def requestAll(self, JSON):
-		self._logicServer.requestAll(self.messageType, JSON)
+	def requestAll(self, dictData):
+		self._logicServer.requestAll(self.messageType, dictData)
 
 	def end(self, isValidEnd, resultList):
 		self._logicServer.end(isValidEnd, resultList)
@@ -38,5 +38,5 @@ class Phase(object):
 	def getPlayerList(self):
 		return self._logicServer.getPlayerList()
 	
-	def notify(self, JSON):
-		self._logicServer.notify(self.nofityMessageType, JSON)
+	def notify(self, dictData):
+		self._logicServer.notify(self.nofityMessageType, dictData)
