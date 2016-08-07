@@ -1,9 +1,12 @@
 import tornado.ioloop
 import os.path
+import sys
 
-from server.playerserver.PlayerServer import PlayerServer
-from server.webserver.WebServer import WebServer
-from server.webserver.WebServer import WebSocketServer
+sys.path.insert(0,'../')
+
+from playerserver.PlayerServer import PlayerServer
+from webserver.WebServer import WebServer
+from webserver.WebServer import WebSocketServer
 
 
 class MainServer:

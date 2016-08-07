@@ -1,73 +1,130 @@
 #-*- coding:utf-8 -*-
 import json
 from tornado import gen
-from server.playerserver.GameServer import GameServer
-from gameLogic.baseClass import TurnGameLogic
+from gameLogic.baskin.baskinServer import BaskinServer
 from gameLogic.baseClass.dummy_game import DiceGame
+from server.playerserver.GameServer import GameServer
 
 class TurnGameServer(GameServer):
     def __init__(self, room, battle_ai_list):
-        game_logic = DiceGame(self)
+        game_logic = BaskinServer(self)
         self.room = room
         GameServer.__init__(self, room, battle_ai_list, game_logic)
+        self.num = 0
 
     @gen.coroutine
     def game_handler(self):
         try:
-            turn = self.selectTurn(self.room.player_list)
-            self.game_logic.onStart(turn)
-
-            print "on start is done"
-            for player in turn:
-                self.q.put(player)
-                self.__player_handler(player)
-            yield self.q.join()
+            turns = [self.selectTurn(self.room.player_list)]
+            for turn in turns:
+                self.game_logic.onStart(turn)
+                print "START"
+                for player in self.room.player_list:
+                    self.q.put(player)
+                    self.__player_handler(player)
+                yield self.q.join()
         except:
-            self.game_logic.onError()
-            print('[ERROR] GAME SET FAILED')
+            self.game_logic.onError('test')
+            print "[!] ERROR"
         finally:
             print "END"
-            self.game_logic.onEnd()
+            self.destroy_room()
 
-    def request(self, player, msg, gameData):
+
+    def request(self, pid, msg, gameData):
+        # print 'request', player, msg, gameData
+
+        for p in self.room.player_list:
+            if p.get_pid() == pid:
+                player = p
         self.current_msgtype = msg
 
-        print "check0"
+        print player.get_pid()
+        print player
+        print "-----------------------"
 
-        ##send
         data = { "msg" : "game_data", "msg_type" : msg , "game_data" : gameData }
         json_data = json.dumps(data)
-        player.send(json_data)
 
-        print "check 1"
-        '''
+        try:
+            player.send(json_data)
+        except:
+            print 'request : ', 'send error'
+
+
+
+    ## front에 Logic이 전달
+    def notify(self, msg, game_data):
+        data = { "msg" : "game_data", "msg_type" : msg, "game_data" : game_data }
+        json_data = json.dumps(data)
+
+        for player in self.room.player_list:
+            player.send(json_data)
+
         for attendee in self.room.attendee_list:
             attendee.send(json_data)
-        '''
-        print "request is done"
-
 
 
     @gen.coroutine
     def __player_handler(self, player):
+        print player.get_pid()
         while True:
             print "Player handler running"
             message = yield player.read()
             res = json.loads(message)
             print res
             if res["msg_type"] == self.current_msgtype:
-                recv = self.game_logic.onAction(player, message)
-                print "onAction is done"
-                print recv
-                if not recv:
-                    raise Exception
-                else:
-                    # for attendee in self.room.attendee_list:
-                    #     attendee.send(message)
-                    print "Attendee recv"
-            elif res["msg_type"] == "end":  ## end는 종료 메세지 타입
-                self.q.get()
-                self.q.task_done()
-                break
+                self.game_logic.onAction(player.get_pid(), res['game_data'])
+                if res["msg_type"] == 'finish':
+                    print res
+                    self.q.get()
+                    self.q.task_done()
+                    break
             else:
                 raise Exception
+        print "player END!!!!!"
+
+
+
+    def onEnd(self, isValidEnd, result, error_msg="none"):
+        self.isValidEnd = isValidEnd
+        self.result = result
+        self.error_msg = error_msg
+
+        # isValidEnd = normal_end
+        if isValidEnd == True:
+            data = { "msg": "game_data", "msg_type": "round_result", "game_data": result }
+        elif isValidEnd == False:
+            data = { "msg" : "game_result", "error" : isValidEnd, "error_msg" : error_msg, "game_data" : result }
+
+        json_data = json.dumps(data)
+
+        for player in self.room.player_list:
+            player.send(json_data)
+
+        for attendee in self.room.attendee_list:
+            attendee.send(json_data)
+
+        ## push
+
+
+
+    def destroy_room(self):
+
+        data = { "msg" : "game_result" , "msg_type" : self.isValidEnd, "game_data" : None }
+
+        json_data = json.dumps(data)
+        # for player in self.room.player_list:
+        #     player.send(json_data)
+        for attendee in self.room.attendee_list:
+            attendee.send(json_data)
+
+        for player in self.room.player_list:
+            self.battle_ai_list[player.get_pid()] = player
+            for attendee in self.room.attendee_list:
+                attendee.notice_user_added(player.get_pid())
+
+        for attendee in self.room.attendee_list:
+            attendee.room_out()
+
+

@@ -5,8 +5,7 @@
     </head>
     <body>
         <div id="id_baskin_message" class="class_ingame"></div>
-        <br>
-        <canvas id="id_board_canvas" class="class_ingame" width="450" height="450"></canvas>
+        <canvas id="id_board_canvas" class="class_ingame" width="450" height="450" style="display:none"></canvas>
         <ul id="id_gameResults_ul" class="class_gameResult"></ul>
         <button id="id_goToLobby_btn" class="class_gameResult">home</button>
         <input type="button" id="id_conn_btn" class="class_lobby" value="connect websocket" />
@@ -19,5 +18,6 @@
         <script type="text/javascript" src="{{ static_url('lobby.js') }}"></script>
         <script type="text/javascript" src="{{ static_url('ingame_baskin.js') }}"></script>
         <script type="text/javascript" src="{{ static_url('game_result.js') }}"></script>
+        <br><br>
     </body>
 </html>
