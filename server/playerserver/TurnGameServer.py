@@ -30,6 +30,7 @@ class TurnGameServer(GameServer):
             print "END"
             self.destroy_room()
 
+
     def request(self, pid, msg, gameData):
         # print 'request', player, msg, gameData
 
@@ -83,6 +84,8 @@ class TurnGameServer(GameServer):
                 raise Exception
         print "player END!!!!!"
 
+
+
     def onEnd(self, isValidEnd, result, error_msg="none"):
         self.isValidEnd = isValidEnd
         self.result = result
@@ -90,9 +93,9 @@ class TurnGameServer(GameServer):
 
         # isValidEnd = normal_end
         if isValidEnd == True:
-            data = {"msg": "round_result", "msg_type": isValidEnd, "game_data": result }
+            data = { "msg": "game_data", "msg_type": "round_result", "game_data": result }
         elif isValidEnd == False:
-            data = { "msg" : "game_result", "msg_type" : isValidEnd, "game_data" : result, "error_msg" : error_msg }
+            data = { "msg" : "game_result", "error" : isValidEnd, "error_msg" : error_msg, "game_data" : result }
 
         json_data = json.dumps(data)
 
@@ -103,9 +106,11 @@ class TurnGameServer(GameServer):
             attendee.send(json_data)
 
 
+
     def destroy_room(self):
 
-        data = { "msg" : "game_result" , "msg_type" : self.isValidEnd, "game_data" : None, "error_msg" : self.error_msg }
+        data = { "msg" : "game_result" , "msg_type" : self.isValidEnd, "game_data" : None }
+
         json_data = json.dumps(data)
         # for player in self.room.player_list:
         #     player.send(json_data)
