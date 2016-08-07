@@ -3,7 +3,9 @@ from tornado import queues
 
 
 """
-GAMESERVER
+GAMESERVER(모든게임용)
+TurnGameServer(턴게임용)
+
 
 """
 
@@ -20,12 +22,6 @@ class GameServer:
 
     def perm(self, num):
         pass
-
-    #
-    # def __player_handler(self, player):
-    #     print player.pid
-    #     pass
-
 
     def save_game_data(self):
         pass

@@ -17,12 +17,13 @@ class TurnGameServer(GameServer):
     def game_handler(self):
         try:
             turns = self.selectTurn(self.room.player_list)
-            self.game_logic.onStart(turns)
-            print "START"
-            for pid in turns:
-                self.q.put(pid)
-                self.__player_handler(pid)
-            yield self.q.join()
+            for turn in turns:
+                self.game_logic.onStart(turn)
+                print "START"
+                for pid in turn:
+                    self.q.put(pid)
+                    self.__player_handler(pid)
+                yield self.q.join()
         except:
             self.game_logic.onError('test')
             print "[!] ERROR"
@@ -74,7 +75,7 @@ class TurnGameServer(GameServer):
             print res
             if res["msg_type"] == self.current_msgtype:
                 self.game_logic.onAction(pid, json.dumps(res['game_data']))
-            elif res["msg_type"] == 0:   #TODO: 빠져나가기 방법
+            elif res["msg_type"] == 'finish':
                 self.q.get()
                 self.q.task_done()
                 break
@@ -83,33 +84,41 @@ class TurnGameServer(GameServer):
 
 
     def onEnd(self, isValidEnd, result, error_msg):
-        self.q.get()
-        self.q.task_done()
+        self.isValidEnd = isValidEnd
+        self.result = result
+        self.error_msg = error_msg
 
-        print "onEnd is running"
-        data = { "msg" : "round_end", "msg_type" : isValidEnd, "game_data" : result }
+        # isValidEnd = normal_end
+        if isValidEnd == True:
+            data = {"msg": "round_result", "msg_type": isValidEnd, "game_data": result }
+        elif isValidEnd == False:
+            data = { "msg" : "game_result", "msg_type" : isValidEnd, "game_data" : result, "error_msg" : error_msg }
 
-        for player in self.room.player_list:
-            json_data = json.dumps(data)
-            player.send(json_data)
-
-        if isValidEnd == 0:
-            data["msg"] = ""
-            pass
-        elif isValidEnd == 1:
-            pass
-
-        data["error_msg"] = error_msg
         json_data = json.dumps(data)
 
-        for attendee in self.room.attend:
+        for player in self.room.player_list:
+            player.send(json_data)
+
+        for attendee in self.room.attendee_list:
             attendee.send(json_data)
 
 
     def destroy_room(self):
 
+        data = { "msg" : "game_result" , "msg_type" : self.isValidEnd, "game_data" : None, "error_msg" : self.error_msg }
+        json_data = json.dumps(data)
+        # for player in self.room.player_list:
+        #     player.send(json_data)
+        for attendee in self.room.attendee_list:
+            attendee.send(json_data)
+
+
+        for player in self.room.player_list:
+            self.battle_ai_list[player.get_pid()] = player
+            for attendee in self.room.attendee_list:
+                attendee.notice_user_added(player.get_pid())
+
         for attendee in self.room.attendee_list:
             attendee.room_out()
-        pass
 
 
