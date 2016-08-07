@@ -2,37 +2,49 @@ import json
 from server.m_format import *
 
 class User:
-    def __init__(self, connect):
-        self.connect = connect
-
-    def conn(self):
-        return self.connect
+    def __init__(self, conn):
+        self.conn = conn
 
 class Player(User):
     def __init__(self, pid, conn):
-        User.__init__(conn)
+        User.__init__(self, conn)
         self.pid = pid
 
     def read(self):
         return self.conn.read_bytes(256, partial=True)
 
+    def get_pid(self):
+        return self.pid
+
+    def send(self, data):
+        self.conn.write(data)
 
 class Attendee(User):
-    def __init__(self, connect):
-        User.__init__(self, connect)
+    def __init__(self, conn):
+        User.__init__(self, conn)
+        self.attendee_flag = False
 
     def notice_user_added(self, added_player):
         msg = {MSG: NOTICE+USER_ADDED, USER: added_player}
         json_msg = json.dumps(msg)
-        self.conn().write(json_msg)
+        self.conn.write_message(json_msg)
+        print json_msg
 
     def notice_user_removed(self, removed_player):
         msg = {MSG: NOTICE + USER_REMOVED, USER: removed_player}
         json_msg = json.dumps(msg)
-        self.conn().write(json_msg)
+        self.conn.write_message(json_msg)
+
+        print("notice message send!")
 
     def send(self, data):
-        self.conn.write(data)
+        self.conn.write_message(data)
+
+    def room_enter(self):
+        self.attendee_flag = True
+
+    def room_out(self):
+        self.attendee_flag = False
 
         # What TO DO when Attendee exit, room send msg to Attendee
         # try - catch : solve it

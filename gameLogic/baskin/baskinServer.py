@@ -1,7 +1,7 @@
 import sys
 sys.path.insert(0,'../')
-from baseClass.TurnGameLogic import TurnGameLogic
-from baseClass.Phase import Phase
+from gameLogic.baseClass.TurnGameLogic import TurnGameLogic
+from gameLogic.baseClass.Phase import Phase
 import logging
 logging.basicConfig(level=logging.DEBUG)
 
@@ -46,6 +46,7 @@ class InitPhase(Phase):
 				logging.error(pid + ' responsed incorrect message;' + response)
 				self.end(False, dict(zip(self.playerList, ['draw']*len(self.playerList))))
 				return False
+
 		except Exception, e:
 			logging.debug(e)
 			logging.error(pid + ' causes Exception during init')
@@ -59,8 +60,8 @@ class InitPhase(Phase):
 		logging.debug('Send configure data to ' + self.nowTurn())
 		self.request(self.nowTurn(),
 			{
-				'min' : self.minCnt, 
-				'max' : self.maxCnt, 
+				'min' : self.minCnt,
+				'max' : self.maxCnt,
 				'finish' : self.goal
 			}
 		)
@@ -128,7 +129,6 @@ class GameLoopPhase(Phase):
 			self.end(False, result)
 			return False
 
-
 	def onEnd(self):
 		logging.debug('===GameLoopPhase End===')
 
@@ -184,7 +184,7 @@ class ResultPhase(Phase):
 			return False
 
 	def onEnd(self):
-		logging.debug('===ResultPhase End===')
+		logging.debug('=======ResultPhase End======')
 
 	def sendGameOver(self):
 		logging.debug('Send gameover message to ' + self.nowTurn())
