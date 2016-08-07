@@ -38,6 +38,7 @@ finish_n = 0
 
 while True : 
 	data = sock.recv(1024)
+	print data.decode()
 	json_data = json.loads(data)
 	msg = json_data['msg']
 	msg_type = json_data['msg_type']
