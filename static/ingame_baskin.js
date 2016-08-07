@@ -27,6 +27,9 @@ function recvGameMsg(data) {
             gameMessage += "<br>";
         }
         gameMessage += "-------------------------" + "<br>";
+        baskinMessgae.innerHTML = gameMessage;
+        
+        cnt = 0;
     }
 }
 function recvGameResult(data) {
