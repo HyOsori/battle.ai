@@ -4,8 +4,8 @@
         <link rel="stylesheet" type="text/css" href="{{ static_url('design.css')}}" >
     </head>
     <body>
+        <canvas id="id_board_canvas" class="class_ingame" width="500" height="450" style="display:none"></canvas>
         <div id="id_baskin_message" class="class_ingame"></div>
-        <canvas id="id_board_canvas" class="class_ingame" width="450" height="450" style="display:none"></canvas>
         <ul id="id_gameResults_ul" class="class_gameResult"></ul>
         <button id="id_goToLobby_btn" class="class_gameResult">home</button>
         <input type="button" id="id_conn_btn" class="class_lobby" value="connect websocket" />

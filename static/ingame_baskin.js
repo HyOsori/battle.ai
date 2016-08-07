@@ -11,7 +11,7 @@ baskinMessgae.innerHTML = gameMessage;
 
 var canvas = $("#id_board_canvas")[0];
 var ctx = canvas.getContext("2d");
-ctx.font = "10px Arial";
+ctx.font = "20px Arial";
 
 function drawCircle(x,y,color){//draw stone
     ctx.beginPath();
@@ -39,18 +39,25 @@ function drawCircle(x,y,color){//draw stone
     ctx.closePath();
 }
 
-for(var i=0; i<6; i++) {
-    for(var j=0; j<5; j++) {
-        drawCircle(j, i, 2);
+
+
+function initBoard(){
+    for(var i=0; i<6; i++) {
+        for(var j=0; j<5; j++) {
+            drawCircle(j, i, 2);
+        }
     }
+    drawCircle(0, 6, 2)
 }
-drawCircle(0, 5, 2)
+initBoard()
 
 function gameStart(user_list) {
     users = user_list;
-    for(var i=0; i< users.length(); i++){
+    for(var i=0; i< users.length; i++){
         drawCircle(8,i, users_color[i]);
-        ctx.fillText(users[i], 430, 50*i);
+        // ctx.fillStyle = "black"
+        // ctx.fill();
+        // ctx.fillText(users[i], 430, 50*i);
     }
     // for(var user in users){
     //     drawCircle(8,0)
@@ -60,7 +67,7 @@ function gameStart(user_list) {
 }
 
 function getIndexFromData(data, l) {
-    for(i=0; i<l.length(); i++) {
+    for(var i=0; i < l.length; i++) {
         if (l[i] == data)
             return i;
     }
@@ -68,16 +75,18 @@ function getIndexFromData(data, l) {
 
 function recvGameMsg(data) {
     if (data.msg_type == "notify_gameloop") {
-        // gameMessage += data.game_data.pid + " : ";
+        gameMessage += data.game_data.pid + " : ";
         user_color = users_color[getIndexFromData(data.game_data.pid, users)]
         for( var i = 0; i < data.game_data.num; i++ )
         {
             cnt++;
-            // gameMessage += cnt + " ";
-            drawCircle(cnt%5+1, cnt/5+1, user_color)
+
+            gameMessage += cnt + " ";
+            drawCircle((cnt-1)%5, parseInt(((cnt-1)/5)), user_color)
+            console.info(((cnt-1)%5+1) + ", " +((cnt-1)/5+1))
         }
-        // gameMessage += "<br>";
-        // baskinMessgae.innerHTML = gameMessage;
+        gameMessage += "<br>";
+        baskinMessgae.innerHTML = gameMessage;
     }
     else if (data.msg_type == "round_result") {
 
@@ -96,6 +105,7 @@ function recvGameMsg(data) {
         baskinMessgae.innerHTML = gameMessage;
 
         cnt = 0;
+        initBoard()
     }
 }
 function recvGameResult(data) {
