@@ -12,13 +12,14 @@ class TurnGameServer(GameServer):
         GameServer.__init__(self, room, battle_ai_list, game_logic)
         self.num = 0
 
+
     @gen.coroutine
     def game_handler(self):
         try:
-            turn = self.selectTurn(self.room.player_list)
-            self.game_logic.onStart(turn)
+            turns = self.selectTurn(self.room.player_list)
+            self.game_logic.onStart(turns)
             print "START"
-            for pid in turn:
+            for pid in turns:
                 self.q.put(pid)
                 self.__player_handler(pid)
             yield self.q.join()
@@ -27,10 +28,11 @@ class TurnGameServer(GameServer):
             print "[!] ERROR"
         finally:
             print "END"
-            # self.game_logic.onEnd()
+            self.destroy_room()
+
+
 
     def request(self, pid, msg, gameData):
-
         # print 'request', player, msg, gameData
         for p in self.room.player_list:
             if p.get_pid() == pid:
@@ -44,10 +46,20 @@ class TurnGameServer(GameServer):
             player.send(json_data)
         except:
             print 'request : ', 'send error'
-        '''
+
+
+
+    ## front에 Logic이 전달
+    def notify(self, msg, game_data):
+        data = { "msg" : "game_data", "msg_type" : msg, "game_data" : game_data }
+        json_data = json.dumps(data)
+
+        for player in self.room.player_list:
+            player.send(json_data)
+
         for attendee in self.room.attendee_list:
             attendee.send(json_data)
-        '''
+
 
     @gen.coroutine
     def __player_handler(self, pid):
@@ -61,35 +73,43 @@ class TurnGameServer(GameServer):
             res = json.loads(message)
             print res
             if res["msg_type"] == self.current_msgtype:
-                recv = self.game_logic.onAction(pid, json.dumps(res['game_data']))
-                print recv
-                if not recv:
-                    raise Exception
-                else:
-                    pass
-                    # for attendee in self.room.attendee_list:
-                    #     attendee.send(message)
-            elif res["msg_type"] == 0:  ## end는 종료 메세지 타입
+                self.game_logic.onAction(pid, json.dumps(res['game_data']))
+            elif res["msg_type"] == 0:   #TODO: 빠져나가기 방법
                 self.q.get()
                 self.q.task_done()
                 break
             else:
                 raise Exception
 
-    def onEnd(self, isValidEnd, result):
-        ## isValidEnd
-        ## 0. 비정상 종료
-        ## 1. 정상 종료
-        ## result = {"player_pid" : "승패" ... }
+
+    def onEnd(self, isValidEnd, result, error_msg):
+        self.q.get()
+        self.q.task_done()
 
         print "onEnd is running"
-        data = { "msg" : "game_result", "msg_type" : "normal", "game_data" : result }
+        data = { "msg" : "round_end", "msg_type" : isValidEnd, "game_data" : result }
 
-        if isValidEnd == 0:
-            data["msg_type"] = "abnormal"
-
-        for player in self.battle_ai_list:
+        for player in self.room.player_list:
             json_data = json.dumps(data)
             player.send(json_data)
 
-        print "onEnd is end"
+        if isValidEnd == 0:
+            data["msg"] = ""
+            pass
+        elif isValidEnd == 1:
+            pass
+
+        data["error_msg"] = error_msg
+        json_data = json.dumps(data)
+
+        for attendee in self.room.attend:
+            attendee.send(json_data)
+
+
+    def destroy_room(self):
+
+        for attendee in self.room.attendee_list:
+            attendee.room_out()
+        pass
+
+
