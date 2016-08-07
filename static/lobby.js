@@ -1,3 +1,6 @@
+var MIN_MATCH_USER_CNT = 2;
+var MAX_MATCH_USER_CNT = 4;
+
 var list = [];
 var messageContainer = document.getElementById('id_messages');
 
@@ -20,19 +23,18 @@ function clickHandler(event) {
     var nav = document.getElementById('id_list_ul');
     var button = document.getElementById('id_match_btn');
     button.disabled='true';
-    $('#id_test_btn').attr('disabled', true).attr({ src : 'static/test_button_disabled.png'});
+
     if (event.target.className == 'class_selected'){
         event.target.className = '';
     }
     else {
-        if (checkSelected()<2){
+        if (checkSelected()<MAX_MATCH_USER_CNT){
             event.target.className = 'class_selected';
         }
     }
 
-    if (checkSelected()>=2) {
+    if (checkSelected()>=MIN_MATCH_USER_CNT) {
         button.removeAttribute('disabled');
-        $('#id_test_btn').removeAttr('disabled').attr({ src : 'static/test_button.png'});
     }
 }
 
@@ -105,10 +107,9 @@ if ("WebSocket" in window) {
                 if (text == child.innerText) {
                     child.remove();
                     list.splice((i - 1), 1);
-                    if (checkSelected()<2) {
-                        button.disabled = 'true';
-                        $('#id_test_btn').attr('disabled', true).attr({ src : 'static/test_button_disabled.png'});
-                    }
+
+                    if (checkSelected()<MIN_MATCH_USER_CNT)
+                        button.disabled='true';
                 }
             }
         }
