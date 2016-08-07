@@ -9,6 +9,8 @@ def request(msg_type, game_data):
 	send_msg = {"msg" : "game_data"}
 	send_msg["msg_type"] = msg_type
 	send_msg["game_data"] = game_data
+	print "sending :"
+	print send_msg
 	sock.send(json.dumps(send_msg))
 
 
@@ -37,13 +39,14 @@ finish_n = 0
 while True : 
 	data = sock.recv(1024)
 	json_data = json.loads(data)
-	print json_data
 	msg = json_data['msg']
-	msg_type = json_data['msg_type'] 
-	game_data = json.loads(json_data['game_data'])
+	msg_type = json_data['msg_type']
+	print type(json_data)
+	print json_data
+	game_data = json_data['game_data']
 
-	if(msg == 'game_result'):
-		print msg_type, game_data[username]
+	if(msg == 'round_result'):
+		print msg_type, game_data
 
 	if msg_type == 'init':
 		min_n = game_data['min']

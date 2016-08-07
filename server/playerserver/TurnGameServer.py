@@ -16,13 +16,13 @@ class TurnGameServer(GameServer):
     @gen.coroutine
     def game_handler(self):
         try:
-            turns = self.selectTurn(self.room.player_list)
+            turns = [self.selectTurn(self.room.player_list)]
             for turn in turns:
                 self.game_logic.onStart(turn)
                 print "START"
-                for pid in turn:
-                    self.q.put(pid)
-                    self.__player_handler(pid)
+                for player in self.room.player_list:
+                    self.q.put(player)
+                    self.__player_handler(player)
                 yield self.q.join()
         except:
             self.game_logic.onError('test')
@@ -40,7 +40,11 @@ class TurnGameServer(GameServer):
                 player = p
         self.current_msgtype = msg
 
-        data = { "msg" : "game_data", "msg_type" : msg , "game_data" : gameData }
+        print player.get_pid()
+        print player
+        print "-----------------------"
+
+        data = { "msg" : "game_data", "msg_type" : msg , "game_data" : json.loads(gameData) }
         json_data = json.dumps(data)
 
         try:
@@ -63,27 +67,25 @@ class TurnGameServer(GameServer):
 
 
     @gen.coroutine
-    def __player_handler(self, pid):
+    def __player_handler(self, player):
+        print player.get_pid()
         while True:
             print "Player handler running"
-            for p in self.room.player_list:
-                if p.get_pid() == pid:
-                    player = p
-            print player
             message = yield player.read()
             res = json.loads(message)
             print res
             if res["msg_type"] == self.current_msgtype:
-                self.game_logic.onAction(pid, json.dumps(res['game_data']))
-            elif res["msg_type"] == 'finish':
-                self.q.get()
-                self.q.task_done()
-                break
+                self.game_logic.onAction(player.get_pid(), json.dumps(res['game_data']))
+                if res["msg_type"] == 'finish':
+                    print res
+                    self.q.get()
+                    self.q.task_done()
+                    break
             else:
                 raise Exception
 
 
-    def onEnd(self, isValidEnd, result, error_msg):
+    def onEnd(self, isValidEnd, result, error_msg="none"):
         self.isValidEnd = isValidEnd
         self.result = result
         self.error_msg = error_msg
@@ -112,6 +114,11 @@ class TurnGameServer(GameServer):
         for attendee in self.room.attendee_list:
             attendee.send(json_data)
 
+
+        for player in self.room.player_list:
+            self.battle_ai_list[player.get_pid()] = player
+            for attendee in self.room.attendee_list:
+                attendee.notice_user_added(player.get_pid())
 
         for player in self.room.player_list:
             self.battle_ai_list[player.get_pid()] = player

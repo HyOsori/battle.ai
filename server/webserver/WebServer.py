@@ -64,7 +64,7 @@ class WebSocketServer(tornado.websocket.WebSocketHandler):
         # be care for concurrent access
         players = [self.battle_ai_list.pop(pid) for pid in pid_list]
 
-        room = Room(players, self)
+        room = Room(players, self.web_client_list[self])
         game_server = TurnGameServer(room, self.battle_ai_list)
 
         tornado.ioloop.IOLoop.current().spawn_callback(game_server.game_handler)
