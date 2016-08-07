@@ -118,7 +118,7 @@ if ("WebSocket" in window) {
             $(".class_gameResult").css("display","none");
         }
         else if (data.msg == "game_data") {
-            recvGameMsg(data.game_data);
+            recvGameMsg(data);
 
             // setTimeout(function(){
             //     $(".class_lobby").css("display","none");
@@ -127,8 +127,8 @@ if ("WebSocket" in window) {
             //     $("#id_board_canvas").css("display","");
             // },2000);
         }
-        else if (data.msg == "round_result") {
-            recvGameMsg(data.game_data);
+        else if (data.msg == "game_result") {
+            recvGameResult(data);
         }
     }
     $('#id_match_btn').bind('click',getSelected);
