@@ -22,15 +22,23 @@ class Player(User):
 class Attendee(User):
     def __init__(self, conn):
         User.__init__(self, conn)
-        self.attendee_flag = False
+        self.attendee_flag = True
 
     def notice_user_added(self, added_player):
+        print "notice user added ##"
+        if self.attendee_flag:
+            return
+
         msg = {MSG: NOTICE+USER_ADDED, USER: added_player}
         json_msg = json.dumps(msg)
         self.conn.write_message(json_msg)
         print json_msg
 
     def notice_user_removed(self, removed_player):
+        print "notice user added ##"
+        if self.attendee_flag:
+            return
+
         msg = {MSG: NOTICE + USER_REMOVED, USER: removed_player}
         json_msg = json.dumps(msg)
         self.conn.write_message(json_msg)
