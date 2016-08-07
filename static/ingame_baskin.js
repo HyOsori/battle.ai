@@ -65,8 +65,21 @@ function recvGameMsg(data) {
             gameMessage += "<br>";
         }
         gameMessage += "-------------------------" + "<br>";
+        baskinMessgae.innerHTML = gameMessage;
+
+        cnt = 0;
     }
 }
 function recvGameResult(data) {
-
+    gameMessage += "<br>";
+    for (var key in data.game_data )
+    {
+        gameMessage += key + " ";
+        if (data.game_data[key] == "win")
+            gameMessage += "최종 승리";
+        else
+            gameMessage += "최종 패배";
+        gameMessage += "<br>";
+    }
+    baskinMessgae.innerHTML = gameMessage;
 }

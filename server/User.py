@@ -34,8 +34,9 @@ class Attendee(User):
         self.conn.write_message(json_msg)
         print json_msg
 
+
     def notice_user_removed(self, removed_player):
-        print "notice user added ##"
+        print "notice user removed ##"
         if self.attendee_flag:
             return
 
