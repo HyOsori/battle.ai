@@ -105,6 +105,8 @@ class TurnGameServer(GameServer):
         for attendee in self.room.attendee_list:
             attendee.send(json_data)
 
+        ## push
+
 
 
     def destroy_room(self):
