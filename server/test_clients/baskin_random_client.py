@@ -28,8 +28,8 @@ print("연결 되었습니다.")
 
 #send pid
 print "username : "
-# username = raw_input()
-username = "tester"+ str(random())
+username = raw_input()
+# username = "tester"+ str(random())
 sock.send(username)
 
 min_n = 0
