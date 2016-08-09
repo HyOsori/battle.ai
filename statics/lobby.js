@@ -55,7 +55,7 @@ if ("WebSocket" in window) {
     var message = "";
 
     messageContainer.innerHTML = "WebSocket is supported by your Browser!";
-    var ws = new WebSocket("ws://localhost:8888/websocket");
+    var ws = new WebSocket("ws://localhost:9000/websocket");
     ws.onmessage = function (evt) {
         var received_msg = evt.data;
         message += ">> " + received_msg + "<br>";
