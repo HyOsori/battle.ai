@@ -1,0 +1,30 @@
+#id_list_ul li {
+    list-style:none;
+    width:100px;
+    padding:5px;
+    cursor:pointer;
+}
+#id_list_ul {
+    height:200px;
+    width:150px;
+    border-style:solid;
+    overflow-y:auto;
+}
+#id_list_ul .class_selected {
+    background-color:red;
+    color:white;
+}
+#id_board_canvas {
+    width:450px;
+    height:450px;
+}
+#id_messages {
+    height:200px;
+    width:500px;
+    background:black;
+    color:white;
+    overflow-y:auto;
+}
+#id_gameResults {
+
+}

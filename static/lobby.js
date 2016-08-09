@@ -4,6 +4,10 @@ var MAX_MATCH_USER_CNT = 4;
 var list = [];
 var messageContainer = document.getElementById('id_messages');
 
+$(".class_lobby").css("display","");
+$(".class_ingame").css("display","none");
+$(".class_gameResult").css("display","none");
+
 function checkSelected(){
     var count = 0;
     var nav = document.getElementById('id_list_ul');
@@ -19,6 +23,7 @@ function clickHandler(event) {
     var nav = document.getElementById('id_list_ul');
     var button = document.getElementById('id_match_btn');
     button.disabled='true';
+
     if (event.target.className == 'class_selected'){
         event.target.className = '';
     }
@@ -28,8 +33,9 @@ function clickHandler(event) {
         }
     }
 
-    if (checkSelected()>=MIN_MATCH_USER_CNT)
+    if (checkSelected()>=MIN_MATCH_USER_CNT) {
         button.removeAttribute('disabled');
+    }
 }
 
 function getSelected(){
@@ -63,6 +69,9 @@ if ("WebSocket" in window) {
         var data = jQuery.parseJSON(received_msg);
 
         if (data.msg == "response_user_list") {
+            // alertify 색깔 바꾸기 시도중..
+            $('.alertify-log-success').css('background', '#333333');
+            alertify.success("게임 시작!", 2000);
             $.each(data.users, function (key) {
                 var nav = document.getElementById('id_list_ul');
                 var text = data.users[key];
@@ -91,7 +100,7 @@ if ("WebSocket" in window) {
                 list.push(text);
             }
         }
-            // hi
+
         else if (data.msg == "notice_user_removed") {
             var nav = document.getElementById('id_list_ul');
             var button = document.getElementById('id_match_btn');
@@ -101,17 +110,32 @@ if ("WebSocket" in window) {
                 if (text == child.innerText) {
                     child.remove();
                     list.splice((i - 1), 1);
+
                     if (checkSelected()<MIN_MATCH_USER_CNT)
                         button.disabled='true';
                 }
             }
         }
         else if (data.msg == "response_match") {
+            gameStart(data.users);
             $(".class_lobby").css("display","none");
             $(".class_ingame").css("display","");
+            $(".class_gameResult").css("display","none");
+
+            alertify.success("게임 시작!", 2000);
         }
         else if (data.msg == "game_data") {
-            recvGameMsg(data.game_data);
+            recvGameMsg(data);
+
+            // setTimeout(function(){
+            //     $(".class_lobby").css("display","none");
+            //     $(".class_ingame").css("display","none");
+            //     $(".class_gameResult").css("display","");
+            //     $("#id_board_canvas").css("display","");
+            // },2000);
+        }
+        else if (data.msg == "game_result") {
+            recvGameResult(data);
         }
     }
     $('#id_match_btn').bind('click',getSelected);
