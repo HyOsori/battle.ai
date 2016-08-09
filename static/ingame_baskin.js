@@ -95,8 +95,10 @@ function recvGameMsg(data) {
         for (var key in data.game_data )
         {
             gameMessage += key + " ";
-            if (data.game_data[key] == "win")
+            if (data.game_data[key] == "win") {
                 gameMessage += "승리";
+                alertify.success(key + " 승리!", 2000);
+            }
             else
                 gameMessage += "패배";
             gameMessage += "<br>";
