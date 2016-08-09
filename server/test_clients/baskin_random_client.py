@@ -34,7 +34,7 @@ sock.send(username)
 
 min_n = 0
 max_n = 0
-finish_n = 0 
+finish_n = 0
 
 while True : 
 	data = sock.recv(1024)
@@ -56,7 +56,11 @@ while True :
 		request(msg_type, {'response' : 'OK'})
 	elif msg_type == 'gameloop':
 		start_n = game_data['start']
-		request(msg_type, {'num' : int(random()*(max_n+1-min_n)+min_n)})
+		r = int(random()*(max_n+1-min_n)+min_n)
+		if start_n-1 + r > finish_n:
+			r = finish_n - start_n + 1
+		print start_n, r
+		request(msg_type, {'num' : r})
 	elif msg_type == 'finish':
 		request(msg_type, {'response' : 'OK'})
 

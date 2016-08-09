@@ -69,6 +69,9 @@ if ("WebSocket" in window) {
         var data = jQuery.parseJSON(received_msg);
 
         if (data.msg == "response_user_list") {
+            // alertify 색깔 바꾸기 시도중..
+            $('.alertify-log-success').css('background', '#333333');
+            alertify.success("게임 시작!", 2000);
             $.each(data.users, function (key) {
                 var nav = document.getElementById('id_list_ul');
                 var text = data.users[key];
@@ -119,7 +122,7 @@ if ("WebSocket" in window) {
             $(".class_ingame").css("display","");
             $(".class_gameResult").css("display","none");
 
-            alertify.success("게임 시작!");
+            alertify.success("게임 시작!", 2000);
         }
         else if (data.msg == "game_data") {
             recvGameMsg(data);
