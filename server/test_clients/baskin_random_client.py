@@ -14,8 +14,8 @@ def request(msg_type, game_data):
 	sock.send(json.dumps(send_msg))
 
 
-HOST = '127.0.0.1'
-PORT = 8000
+HOST = '52.78.89.120'
+PORT = 9001
 
 sock = socket(AF_INET, SOCK_STREAM)
 
