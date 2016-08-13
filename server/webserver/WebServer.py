@@ -4,7 +4,6 @@ import tornado.web
 from server.User import Attendee
 
 from server.Room import Room
-from server.playerserver.GameServer import GameServer
 from server.playerserver.TurnGameServer import TurnGameServer
 import json
 from server.m_format import *
@@ -43,12 +42,10 @@ class WebSocketServer(tornado.websocket.WebSocketHandler):
                 pass
             else:
                 pass
-        except KeyError as e:
-            print(e)
-            print("WRONG MESSAGE")
+        except Exception as e:
+            print "wrong message"+e
 
     def __response_user_list(self):
-        # battle_ai_list's key is user id
         self.web_client_list[self].attendee_flag = False
 
         players = list(self.battle_ai_list.keys())
@@ -86,4 +83,3 @@ class WebSocketServer(tornado.websocket.WebSocketHandler):
 
     def on_close(self):
         self.web_client_list.pop(self)
-
