@@ -1,14 +1,13 @@
 #-*- coding:utf-8 -*-
 import json
-import time
+from server.m_format import *
 from tornado import gen
 from gameLogic.baskin.baskinServer import BaskinServer
-from gameLogic.baseClass.dummy_game import DiceGame
 from server.playerserver.GameServer import GameServer
 
 
 class TurnGameServer(GameServer):
-    def __init__(self, room, battle_ai_list, web_client_list):
+    def __init__(self, room, battle_ai_list, web_client_list, game_logic = None):
         game_logic = BaskinServer(self)
         GameServer.__init__(self, room, battle_ai_list, web_client_list, game_logic)
 
@@ -21,17 +20,17 @@ class TurnGameServer(GameServer):
             message = yield player.read()
             res = json.loads(message)
             print res
-            if res["msg_type"] == self.current_msg_type:
+            if res[MSG_TYPE] == self.current_msg_type:
                 self.delay_action()
-                self.game_logic.onAction(player.get_pid(), res['game_data'])
-                if res["msg_type"] == 'finish':
-                    print res
+                self.game_logic.onAction(player.get_pid(), res[GAME_DATA])
+                if res[MSG_TYPE] == FINISH:
                     self.q.get()
                     self.q.task_done()
                     break
             else:
-                raise Exception
+                self.game_logic.onError(player.get_pid())
+                self.q.get()
+                self.q.task_done()
+                break
+                # raise Exception
         print "player END!!!!!"
-
-
-

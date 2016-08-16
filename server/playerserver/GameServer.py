@@ -43,7 +43,7 @@ class GameServer:
                 yield self.q.join()
         except Exception as e:
             print "[!]ERROR : "+e
-            self.game_logic.onError('test')
+            self.game_logic.onError()
         finally:
             print "END"
             self.destroy_room()
