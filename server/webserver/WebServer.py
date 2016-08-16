@@ -4,7 +4,6 @@ import tornado.web
 from server.User import Attendee
 
 from server.Room import Room
-from server.playerserver.GameServer import GameServer
 from server.playerserver.TurnGameServer import TurnGameServer
 import json
 from server.m_format import *
@@ -23,32 +22,24 @@ class WebSocketServer(tornado.websocket.WebSocketHandler):
         self.battle_ai_list = battle_ai_list  # dict() - key : user_id
         self.player_server = player_server  # PlayerServer
 
-    # accept web_client
     def open(self, *args, **kwargs):
-        # make attendee
         new_attendee = Attendee(self)
         self.web_client_list[self] = new_attendee
 
     def on_message(self, message):
-
         request = json.loads(message)
-
         try:
             msg = request[MSG]
             if msg == REQUEST+MATCH:
-                self.__response_match(request[USERS])
-                pass
+                self._response_match(request[USERS])
             elif msg == REQUEST+USER_LIST:
-                self.__response_user_list()
-                pass
+                self._response_user_list()
             else:
                 pass
-        except KeyError as e:
-            print(e)
-            print("WRONG MESSAGE")
+        except Exception as e:
+            print "wrong message"+e
 
-    def __response_user_list(self):
-        # battle_ai_list's key is user id
+    def _response_user_list(self):
         self.web_client_list[self].attendee_flag = False
 
         players = list(self.battle_ai_list.keys())
@@ -62,9 +53,13 @@ class WebSocketServer(tornado.websocket.WebSocketHandler):
             print(e)
             self.web_client_list.pop(self)
 
-    def __response_match(self, pid_list):
+    def _response_match(self, pid_list):
         # be care for concurrent access
-        players = [self.battle_ai_list.pop(pid) for pid in pid_list]
+        try:
+            players = [self.battle_ai_list.pop(pid) for pid in pid_list]
+        except Exception as e:
+            print e
+
         for pid in pid_list:
             for attendee in self.web_client_list.values():
                 attendee.notice_user_removed(pid)
@@ -86,4 +81,3 @@ class WebSocketServer(tornado.websocket.WebSocketHandler):
 
     def on_close(self):
         self.web_client_list.pop(self)
-
