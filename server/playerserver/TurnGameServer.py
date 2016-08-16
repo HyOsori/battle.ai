@@ -1,5 +1,8 @@
 #-*- coding:utf-8 -*-
 import json
+
+from tornado.iostream import StreamClosedError
+
 from server.m_format import *
 from tornado import gen
 from gameLogic.baskin.baskinServer import BaskinServer

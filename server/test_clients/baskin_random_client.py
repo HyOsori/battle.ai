@@ -29,7 +29,7 @@ print("연결 되었습니다.")
 print "username : "
 # username = raw_input()
 username = "테스터" + str(random())
-tmp = {"username": username}
+tmp = {"msg": "user_info", "msg_type": "init", "user_data": {"username": username}}
 tt = json.dumps(tmp)
 sock.send(tt)
 

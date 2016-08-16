@@ -58,7 +58,7 @@ class GameServer:
 
         data = {MSG: GAME_DATA, MSG_TYPE: msg_type, GAME_DATA: game_data}
         json_data = json.dumps(data)
-        print "send to : "+player.get_pid()
+        print "send to : "+ player.get_pid()
         print json_data
 
         player.send(json_data)
@@ -112,4 +112,8 @@ class GameServer:
         time.sleep(self.time_delay)
 
     def save_game_data(self):
+        pass
+
+    # 초읽기 함수
+    def byo_yomi(self):
         pass
