@@ -36,28 +36,35 @@ class RandomAI(AI):
         super(RandomAI,self).__init__(pid)
 
     def request(self, messageType, JSON):
-        requsetInfo = json.loads(JSON)
-
-        self.board = requsetInfo['board']
-        self.black = requsetInfo['black']
-        self.white = requsetInfo['white']
-        self.none = requsetInfo['none']
-        showTable(self.board)
         if messageType == 'on_turn':
+            requsetInfo = json.loads(JSON)
+
+            self.board = requsetInfo['board']
+            self.black = requsetInfo['black']
+            self.white = requsetInfo['white']
+            self.none = requsetInfo['none']
+
+            showTable(self.board)
+
             validMoves = self.getValidMoves(self.pid)
             if validMoves != []:
                 randomXY = validMoves[random.randrange(0,len(validMoves))]
+#                print randomXY,self.pid
             else:
                 return json.dumps({'x':-1,'y':-1})
             return json.dumps({'x':randomXY[0],'y':randomXY[1]})
 
         elif messageType == 'finish':
+            print self.pid,'finish'
             return json.dumps({'response':'OK'})
 
     def isOnBoard(self, x, y):
         return x >= 0 and x <= 7 and y >= 0 and y <= 7
 
     def isValidMove(self, tile, xstart, ystart):
+        if self.board[xstart][ystart] != self.none or not self.isOnBoard(xstart, ystart):
+            return False
+
         self.board[xstart][ystart] = tile
         if tile == self.black:
             otherTile = self.white
@@ -101,6 +108,7 @@ class RandomAI(AI):
             for y in range(8):
                 if self.isValidMove(tile, x, y) != False:
                     validMoves.append([x, y])
+
         return validMoves
 
 if __name__ == '__main__':
