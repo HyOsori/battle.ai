@@ -1,7 +1,4 @@
-import abc
-
 class TurnGameLogic(object):
-	__metaclass__ = abc.ABCMeta
 	def __init__(self, room):
 		self._room = room
 		self._phaseList = []
@@ -16,8 +13,8 @@ class TurnGameLogic(object):
 	def onAction(self,pid,dictData):
 		return self._currentPhase.doAction(pid, dictData)
 
-	@abc.abstractmethod
 	def onError(self, pid):
+		raise NotImplementedError()
 		pass
 
 	def changePhase(self, index):
