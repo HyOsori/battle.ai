@@ -31,22 +31,17 @@ class GameServer:
 
     @gen.coroutine
     def game_handler(self):
-        try:
-            turns = self._select_turns(self.room.player_list)
-            print turns
-            for turn in turns:
-                self.game_logic.onStart(turn)
-                print "START"
-                for player in self.room.player_list:
-                    self.q.put(player)
-                    self._player_handler(player)
-                yield self.q.join()
-        except Exception as e:
-            print "[!]ERROR : "+e
-            self.game_logic.onError()
-        finally:
-            print "END"
-            self.destroy_room()
+        turns = self._select_turns(self.room.player_list)
+        print turns
+        for turn in turns:
+            self.game_logic.onStart(turn)
+            print "START"
+            for player in self.room.player_list:
+                self.q.put(player)
+                self._player_handler(player)
+            yield self.q.join()
+        print "END"
+        self.destroy_room()
 
     def _select_turns(self, players):
         turn = [player.get_pid() for player in players]

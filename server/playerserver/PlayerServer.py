@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import json
 import tornado.httpserver
 import tornado.ioloop
 import tornado.web
@@ -23,11 +24,12 @@ class PlayerServer(tornado.tcpserver.TCPServer):
 
     @gen.coroutine
     def __accept_handler__(self, stream):
-        pid = yield stream.read_bytes(256, partial=True)
-        pid = pid.decode()
-        player = Player(pid, stream)
-        print(pid+" enter the game")
+        recv = yield stream.read_bytes(256, partial=True)
+        name = json.loads(recv)
+        username = name["username"]
+        player = Player(username, stream)
+        print(username + " enter the game")
 
-        self.battle_ai_list[pid] = player
+        self.battle_ai_list[username] = player
         for attendee in self.web_client_list.values():
-            attendee.notice_user_added(pid)
+            attendee.notice_user_added(username)
