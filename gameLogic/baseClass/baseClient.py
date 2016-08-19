@@ -11,9 +11,9 @@ import gameDataParser
 #사용자는 자신의 게임에 맞는 client와 parser를 구현하는게 아니라
 #자신의 게임의 맞는 parser만 구현하면 되게 만들자!
 class BaseClient:
-    def __init__(self, host, port, parser):
+    def __init__(self, host, port):
         self._sock = socket(AF_INET, SOCK_STREAM)
-        self._parser = parser
+        self._parser = None
 
         try:
             self._sock.connect((host,port))
@@ -22,13 +22,22 @@ class BaseClient:
 
         print '서버에 연결 되었습니다.'
 
+        print '사용할 닉네임을 결정 하세요.'
+        self.sendUserName()
+
     def __del__(self):
         self._sock.close()
 
+    def getUsername(self):
+        return self._username
+
+    def setParser(self,parser):
+        self._parser = parser
+
+    #user name을 룸이 받는 프로토콜을 확인한후에 작성 할것
     def sendUserName(self):
-    #   self._username = raw_input()
-    #  self._sock.send(self._username)
-        pass
+       self._username = raw_input()
+       self._sock.send(self._username)
 
     def recvGameData(self):
         game_data = self._sock.recv(1024)
@@ -47,17 +56,15 @@ class BaseClient:
         print send_msg
         self._sock.send(json.dumps(send_msg))
 
-    def getSocket(self):
-        return self._sock
-
-
     #클라이언트의 실행
     def clientRun(self):
-        self.sendUserName()
+        if self._parser == None:
+            print '파서가 등록이 안되있습니다.'
+            return
 
         while True:
             decoding_data = self.recvGameData()
-            parsing_data = self._parser.parsingGameData(decoding_data)
-            self.sendGameData(parsing_data)
+            send_msg = self._parser.parsingGameData(decoding_data)
+            self.sendGameData(send_msg)
 
     #언제 wihile 루프를 벗어날까? 그런 신호가 하나 필요하겠다.
