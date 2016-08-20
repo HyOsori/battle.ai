@@ -28,6 +28,7 @@ class GameServer:
 
         self.current_msg_type = -1
         self.error_code = 1
+        self.byo_yomi = byo_yomi()
         # end code [0-normal end, 1-abnormal end]
 
     @gen.coroutine
@@ -63,6 +64,7 @@ class GameServer:
         print json_data
 
         player.send(json_data)
+        self.byo_yomi.start_timer()
 
     def notify(self, msg, game_data):
         data = {MSG: GAME_DATA, MSG_TYPE: msg, GAME_DATA: game_data}
@@ -115,5 +117,31 @@ class GameServer:
     def save_game_data(self):
         pass
 
-    def byo_yomi(self):
+
+class byo_yomi:
+    def __init__(self, base_time = 0, turn_time = 30, turn_num = 1):
+        self.base_time = base_time
+        self.turn_time = turn_time
+        self.turn_num = turn_num
+
+    def start_timer(self):
+        if self.base_time > 0:
+            self.start_time = time.clock()  ## time.clock() is affected by time.sleep()
+        elif self.base_time == 0:
+            self.count_time(self.turn_time)
+
+    def stop_timer(self):
+
         pass
+
+    def timeout(self):
+
+        pass
+
+    def count_time(self, time_limit):
+
+        self.current_time = time.clock()
+
+        if self.start_time - self.current_time >  time_limit :
+            self.timeout()
+

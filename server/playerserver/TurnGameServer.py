@@ -1,5 +1,6 @@
 #-*- coding:utf-8 -*-
 import json
+import time
 
 from tornado.iostream import StreamClosedError
 
@@ -7,6 +8,7 @@ from server.m_format import *
 from tornado import gen
 from gameLogic.baskin.baskinServer import BaskinServer
 from server.playerserver.GameServer import GameServer
+from server.playerserver.GameServer import byo_yomi
 
 
 class TurnGameServer(GameServer):
@@ -20,6 +22,7 @@ class TurnGameServer(GameServer):
             print player.get_pid()+": Player handler running"
 
             while True:
+
                 message = yield player.read()
                 res = json.loads(message)
                 print res
@@ -41,4 +44,5 @@ class TurnGameServer(GameServer):
             self.game_logic.onError(player.get_pid())
             self.q.get()
             self.q.task_done()
-            print "[!] ERROR : " + e
+            print "[!] ERROR : "
+            print e
