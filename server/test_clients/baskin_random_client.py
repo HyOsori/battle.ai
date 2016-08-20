@@ -44,6 +44,11 @@ if __name__ == "__main__":
 		print data.decode()
 		json_data = json.loads(data)
 		msg = json_data['msg']
+
+		if msg == "game_result":
+			print json_data
+			continue
+
 		msg_type = json_data['msg_type']
 		print type(json_data)
 		print json_data

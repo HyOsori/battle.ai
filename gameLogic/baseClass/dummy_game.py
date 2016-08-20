@@ -12,8 +12,8 @@ from gameLogic.baseClass.TurnGameLogic import TurnGameLogic
 """
 
 class DiceGame(TurnGameLogic):
-    def __init__(self, game_server):
-        TurnGameLogic.__init__(self, game_server)
+    def __init__(self, gameServer):
+        TurnGameLogic.__init__(self, gameServer)
         self.game_data = [0, 0]
         self.all_round = 3
         self.cur_round = 0

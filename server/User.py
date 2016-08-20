@@ -22,7 +22,8 @@ class Player(User):
         try:
             self.conn.write(data)
         except Exception as e:
-            print "player bye bye"+e
+            print "player bye bye"
+            print e
 
 
 class Attendee(User):

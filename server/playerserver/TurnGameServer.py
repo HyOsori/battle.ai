@@ -41,4 +41,5 @@ class TurnGameServer(GameServer):
             self.game_logic.onError(player.get_pid())
             self.q.get()
             self.q.task_done()
-            print "[!] ERROR : " + e
+            print "[!] ERROR : "
+            print e
