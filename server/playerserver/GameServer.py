@@ -114,6 +114,5 @@ class GameServer:
     def save_game_data(self):
         pass
 
-    # 초읽기 함수
     def byo_yomi(self):
         pass

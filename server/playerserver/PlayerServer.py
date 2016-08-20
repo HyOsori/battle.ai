@@ -21,16 +21,21 @@ class PlayerServer(tornado.tcpserver.TCPServer):
 
     def handle_stream(self, stream, address):
         print("accept client")
-        tornado.ioloop.IOLoop.current().spawn_callback(self._accept_handler__, stream)
+        tornado.ioloop.IOLoop.current().spawn_callback(self._accept_handler, stream)
 
     @gen.coroutine
-    def _accept_handler__(self, stream):
+    def _accept_handler(self, stream):
         recv = yield stream.read_bytes(256, partial=True)
         msg = json.loads(recv)
         """
         msg = {"msg" : "user_info", "msg_type" : "init", "user_data" : {"username" : userid }}
         """
         username = msg["user_data"]["username"]
+
+        if username in self.battle_ai_list.keys():
+            # in case that duplicate id is detected
+            pass
+
         player = Player(username, stream)
         print(username + " enter the game")
 
