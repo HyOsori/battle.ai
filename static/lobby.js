@@ -16,13 +16,6 @@ function goToLobby(){
     $("#id_messages").css("display","");
 
     $("#id_gameMessage").html("Othello");
-
-    $("#id_list_ul").empty();
-
-    var json = new Object();
-    json.msg = "request_user_list";
-    var req = JSON.stringify(json);
-    ws.send( req );
 }
 
 function goToInGame(){
@@ -109,7 +102,6 @@ function getSelected(){
 
 if ("WebSocket" in window) {
     var btnConn = document.getElementById('id_conn_btn');
-    var textID = document.getElementById('id_conn_id');
     var message = "";
 
     messageContainer.innerHTML = "WebSocket is supported by your Browser!";
@@ -191,7 +183,6 @@ if ("WebSocket" in window) {
     btnConn.addEventListener('click', function(){
         var json = new Object();
         json.msg = "request_user_list";
-        json.id = textID.value;
         var req = JSON.stringify(json);
         ws.send( req );
     });
