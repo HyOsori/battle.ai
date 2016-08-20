@@ -26,7 +26,7 @@ function goToInGame(){
     $("#id_conn_id").css("display","none");
     $("#id_list_ul").css("display","none");
     $("#id_match_btn").css("display","none");
-    $("#id_messages").css("display","none");
+    $("#id_messages").css("display","");
 
     for(var i=0; i<8; i++){
         for(var j=0; j<8; j++){
@@ -43,7 +43,7 @@ function goToGameResult(){
     $("#id_conn_id").css("display","none");
     $("#id_list_ul").css("display","none");
     $("#id_match_btn").css("display","none");
-    $("#id_messages").css("display","none");
+    $("#id_messages").css("display","");
 
     for(var i=0; i<8; i++){
         for(var j=0; j<8; j++){
