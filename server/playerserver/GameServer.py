@@ -4,6 +4,7 @@ import json
 import time
 from server.m_format import *
 
+
 """
 GameServer (for all games, abstract class)
 

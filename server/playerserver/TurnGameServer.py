@@ -17,7 +17,7 @@ class TurnGameServer(GameServer):
     @gen.coroutine
     def _player_handler(self, player):
         try:
-            print player.get_pid()+"!! Player handler running"
+            print player.get_pid()+": Player handler running"
 
             while True:
                 message = yield player.read()

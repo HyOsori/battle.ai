@@ -54,7 +54,6 @@ class WebSocketServer(tornado.websocket.WebSocketHandler):
             self.web_client_list.pop(self)
 
     def _response_match(self, pid_list):
-        # be care for concurrent access
         try:
             players = [self.battle_ai_list.pop(pid) for pid in pid_list]
         except Exception as e:

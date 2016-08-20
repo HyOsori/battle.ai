@@ -28,7 +28,7 @@ class PlayerServer(tornado.tcpserver.TCPServer):
         recv = yield stream.read_bytes(256, partial=True)
         msg = json.loads(recv)
         """
-        msg = {"msg" : "user_info", "msg_type" : "init", "user_data" : {"username" : userid }}
+            msg = {"msg" : "user_info", "msg_type" : "init", "user_data" : {"username" : userid }}
         """
         username = msg["user_data"]["username"]
 

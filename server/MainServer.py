@@ -1,7 +1,6 @@
 import tornado.ioloop
 import os.path
 import sys
-
 sys.path.insert(0,'../')
 # TODO : find out how to control path and error
 
