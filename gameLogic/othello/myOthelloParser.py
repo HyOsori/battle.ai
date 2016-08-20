@@ -32,3 +32,8 @@ class MyOthelloParser(OthelloParser):
         elif msg_type == 'finish':
             send_msg = self.makeSendMsg(msg_type, parsing_data)
             return send_msg
+
+        elif msg_type == 'init':
+            parsing_data = {'response': 'OK'}
+            send_msg = self.makeSendMsg(msg_type, parsing_data)
+            return send_msg
