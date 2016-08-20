@@ -8,7 +8,6 @@ from server.m_format import *
 from tornado import gen
 from gameLogic.baskin.baskinServer import BaskinServer
 from server.playerserver.GameServer import GameServer
-from server.playerserver.GameServer import byo_yomi
 
 
 class TurnGameServer(GameServer):
@@ -22,13 +21,13 @@ class TurnGameServer(GameServer):
             print player.get_pid()+": Player handler running"
 
             while True:
-
                 message = yield player.read()
                 res = json.loads(message)
                 print res
                 if res[MSG_TYPE] == self.current_msg_type:
                     self.delay_action()
                     self.game_logic.onAction(player.get_pid(), res[GAME_DATA])
+                    print '_player_handler onAction is done'
                     if res[MSG_TYPE] == FINISH:
                         self.q.get()
                         self.q.task_done()
@@ -42,6 +41,11 @@ class TurnGameServer(GameServer):
             print "player END!!!!!"
         except Exception as e:
             self.game_logic.onError(player.get_pid())
+
+            for turn in self.turns:
+                turn.pop(player.get_pid())
+            print self.turns
+
             self.q.get()
             self.q.task_done()
             print "[!] ERROR : "
