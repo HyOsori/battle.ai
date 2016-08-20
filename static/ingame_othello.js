@@ -48,10 +48,10 @@ function gameStart(user_list) {
     users = user_list;
 }
 
-function recvGameMsg(game_data) {
-    if (game_data.msg == "notice_board"){
+function recvGameMsg(data) {
+    if (data.msg_type == "notify_on_turn") {
         var y=0;
-        $.each(game_data.board,function(){
+        $.each(data.game_data.board,function(){
             for (var x=0; x<8; x++) {
                 drawCircle(x,y,this[x]);
             }
@@ -60,5 +60,8 @@ function recvGameMsg(game_data) {
     }
 }
 function recvGameResult(data) {
-
+    for (var key in data.game_data ) {
+        if (data.game_data[key] == "win")
+            alertify.alert(key + " 승리!")
+    }
 }
