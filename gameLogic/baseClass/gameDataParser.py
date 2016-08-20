@@ -12,6 +12,7 @@ class GameDataParser:
     #그리고 반환형에 맞춰서 정보를 조작한후 리턴한다.
 
     #고로 이 부분이 사용자가 코딩할 부분!
+
     def parsingGameData(self,decoding_data):
         pass
 

@@ -1,9 +1,20 @@
 import sys
 sys.path.insert(0,'../')
-from baseClass import gameDataParser
+from gameLogic.baseClass import gameDataParser
 
 import random
 
+#msg_type -> on_turn 과 finish를 처리해야함
+#on_turn 은 보드의 정보와 black, white에 대한 정보가 dict로 날라옴, 이를 적절히 처리
+#하여 자신이 둘 x,y좌표를 보내면 됨
+3
+#finish메시지에선 별다른 처리가 필요없을 것 같음 아직
+
+#on_turn 의 key = board, black, white, none -> board는 8*8짜리 2차원 배열이며
+#board는 각각 black, white, none 의 정보로 구성되어있으며
+#board에서 자신이 선공이라면 자신의 pid가 black, 아니라면 white
+
+#주어진 보드에서 black, white가 둘 수 있는 리스트를 받아올수 있다.(getValidMoves를 사용하면)
 class OthelloParser(gameDataParser):
     def isOnBoard(self, x, y):
         return x >= 0 and x <= 7 and y >= 0 and y <= 7
@@ -57,3 +68,10 @@ class OthelloParser(gameDataParser):
                     validMoves.append([x, y])
 
         return validMoves
+
+    def showTable(self,board):
+        for y in range(8):
+            for x in range(8):
+                sys.stdout.write(board[x][y] + ' ')
+            print ''
+        print '#' * 39

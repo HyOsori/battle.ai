@@ -10,6 +10,7 @@ def MyOthelloParser(OthelloParser):
         parsing_data = {}
 
         if msg_type == 'on_turn':
+            #on_turn 시에 주어지는 부가 정보 목록이다.
             board = game_data['board']
             black = game_data['black']
             white = game_data['white']

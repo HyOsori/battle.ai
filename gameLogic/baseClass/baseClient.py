@@ -22,7 +22,7 @@ class BaseClient:
 
         print '서버에 연결 되었습니다.'
 
-        print '사용할 닉네임을 결정 하세요.'
+
         self.sendUserName()
 
     def __del__(self):
@@ -36,8 +36,14 @@ class BaseClient:
 
     #user name을 룸이 받는 프로토콜을 확인한후에 작성 할것
     def sendUserName(self):
-       self._username = raw_input()
-       self._sock.send(self._username)
+        print '사용할 닉네임을 결정 하세요.'
+        self._username = raw_input()
+        send_msg = {}
+        send_msg['msg'] = 'user_info'
+        send_msg['msg_tpye'] = 'init'
+        send_msg['user_data'] = {'username' : self._username}
+        json_msg = json.dumps(send_msg)
+        self._sock.send(json_msg)
 
     def recvGameData(self):
         game_data = self._sock.recv(1024)
@@ -50,6 +56,8 @@ class BaseClient:
         send_msg["msg_type"] = msg_type
         send_msg["game_data"] = game_data
         return send_msg
+
+    #인공지능 게임이 끝났을 때 정보를 받아야할까?
 
     def sendGameData(self, send_msg):
         print "sending :"
