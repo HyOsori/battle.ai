@@ -64,13 +64,13 @@ class OthelloOnTurnPhase(Phase):
             validMoves = self.getValidMoves(pid)
             if validMoves != []:
                 self.makeMove(pid,x,y) # change board
-            else:
-                if self.getValidMoves(oppsite) == []: #end Of game
-                    logging.debug('OthelloOnTurnPhase Game End~')
-                    self.changePhase(self.nextPhase)
-                    return
 
-            self.changeTurn()
+            if self.isGameEnd():
+                self.changePhase(self.nextPhase)
+                return
+
+            if self.getValidMoves(oppsite) != []:
+                self.changeTurn()
             self.requestAndSendBoard()
 
         except Exception, e:
@@ -148,6 +148,21 @@ class OthelloOnTurnPhase(Phase):
         super(OthelloOnTurnPhase,self).onEnd()
         logging.debug('##OthelloOnTurnPhase End')
 
+    def isGameEnd(self):
+        bCount = 0
+        wCount = 0
+
+        for x in range(8):
+            for y in range(8):
+                if self.board[x][y] == self.black:
+                    bCount = bCount+1
+                elif self.board[x][y] == self.white:
+                    wCount = wCount+1
+
+        if (bCount == 0) or (wCount == 0) or (bCount+wCount == 64):
+            return True
+        return False
+
 
     def requestAndSendBoard(self):
         logging.debug('Request ' + self.nowTurn() + '\'s decision')
@@ -200,8 +215,8 @@ class OthelloEndPhase(Phase):
             response = args['response']
             if response == 'OK':
                 result = self.getScoreOfBoard()
-                shardDict = self.getShardDict()
-                shardDict['winner'] = result
+                sharedDict = self.getSharedDict()
+                sharedDict['winner'] = result
                 return
 
         except Exception, e:
@@ -217,7 +232,7 @@ class OthelloEndPhase(Phase):
 
     def sendGameOver(self):
         logging.debug('Send gameover message to ' + self.nowTurn())
-        self.request(self.nowTurn(), json.dumps({}))
+        self.requestAll( json.dumps({}))
 
 #######################################
 #######################################

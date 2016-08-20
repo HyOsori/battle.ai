@@ -29,7 +29,7 @@ class Phase(object):
 	def requestAll(self, dictData):
 		self._logicServer.requestAll(self.messageType, dictData)
 
-	def end(self, isValidEnd, resultList):
+	def end(self, isValidEnd, resultList=None):
 		self._logicServer.end(isValidEnd, resultList)
 		
 	def getSharedDict(self):
@@ -37,6 +37,15 @@ class Phase(object):
 
 	def getPlayerList(self):
 		return self._logicServer.getPlayerList()
+
+	def setPlayerResult(self, pid, result):
+		self._logicServer.setPlayerResult(pid, result)
+
+	def setAllPlayerResult(self, result):
+		self._logicServer.setAllPlayerResult(result)
+
+	def getPlayerResult(self, pid):
+		return self._logicServer.getPlayerResult(pid)
 	
 	def notify(self, dictData):
 		self._logicServer.notify(self.nofityMessageType, dictData)

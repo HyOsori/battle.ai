@@ -1,7 +1,9 @@
 import sys
 sys.path.insert(0, '../')
+
 from gameLogic.baseClass.TurnGameLogic import TurnGameLogic
 from gameLogic.baseClass.Phase import Phase
+
 import logging
 logging.basicConfig(level=logging.DEBUG)
 
