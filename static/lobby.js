@@ -123,9 +123,10 @@ if ("WebSocket" in window) {
         var data = jQuery.parseJSON(received_msg);
 
         if (data.msg == "response_user_list") {
-            // alertify 색깔 바꾸기 시도중..
-            $('.alertify-log-success').css('background', '#333333');
-            alertify.success("게임 시작!", 2000);
+            alertify.alert("승리 팝업");
+            alertify.whitewin("흰돌 승리!", 2000);
+            alertify.blackwin("검은돌 승리!", 2000);
+            alertify.draw("비겼다!", 2000);
             $.each(data.users, function (key) {
                 var text = data.users[key];
                 for (var i = 0; i < userList.childNodes.length; i++) {
