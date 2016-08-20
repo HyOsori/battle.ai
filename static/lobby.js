@@ -115,10 +115,6 @@ if ("WebSocket" in window) {
         var data = jQuery.parseJSON(received_msg);
 
         if (data.msg == "response_user_list") {
-            alertify.alert("승리 팝업");
-            alertify.whitewin("흰돌 승리!", 2000);
-            alertify.blackwin("검은돌 승리!", 2000);
-            alertify.draw("비겼다!", 2000);
             $.each(data.users, function (key) {
                 var text = data.users[key];
                 for (var i = 0; i < userList.childNodes.length; i++) {
@@ -160,19 +156,17 @@ if ("WebSocket" in window) {
             }
         }
         else if (data.msg == "response_match") {
-            gameStart(data.users);
-            goToInGame();
-            alertify.success("게임 시작!", 2000);
+            if (data.error == 0) {
+                gameStart(data.users);
+                goToInGame();
+                alertify.success("게임 시작!", 2000);
+            }
+            else {
+                alertify.alert("매칭 실패!");
+            }
         }
         else if (data.msg == "game_data") {
             recvGameMsg(data);
-
-            // setTimeout(function(){
-            //     $(".class_lobby").css("display","none");
-            //     $(".class_ingame").css("display","none");
-            //     $(".class_gameResult").css("display","");
-            //     $("#id_board_canvas").css("display","");
-            // },2000);
         }
         else if (data.msg == "game_result") {
             recvGameResult(data);
