@@ -210,7 +210,6 @@ class BaskinServer(TurnGameLogic):
 		self.changePhase(0)
 
 	def onError(self, pid):
-		super(BaskinServer, self).onError(pid)
 		self.setPlayerResult(pid, 'error')
 		self.end(False)
 		
