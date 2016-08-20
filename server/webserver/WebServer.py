@@ -79,5 +79,9 @@ class WebSocketServer(tornado.websocket.WebSocketHandler):
             print(e)
             self.web_client_list.pop(self)
 
+    #
+    def check_origin(self, origin):
+        return True
+
     def on_close(self):
         self.web_client_list.pop(self)
