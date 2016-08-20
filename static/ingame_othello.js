@@ -1,8 +1,9 @@
-
 var canvas = $("#id_board_canvas")[0];
 var ctx = canvas.getContext("2d");
 
 var interval = (canvas.width-20)/8;
+
+var users;
 
 //draw lines of board
 ctx.beginPath();
@@ -41,6 +42,10 @@ function drawCircle(x,y,color){//draw stone
         }
     }
     ctx.closePath();
+}
+
+function gameStart(user_list) {
+    users = user_list;
 }
 
 function recvGameMsg(game_data) {
