@@ -1,9 +1,7 @@
 import sys
 sys.path.insert(0, '../')
-
 from gameLogic.baseClass.TurnGameLogic import TurnGameLogic
 from gameLogic.baseClass.Phase import Phase
-
 import logging
 logging.basicConfig(level=logging.DEBUG)
 
@@ -184,8 +182,8 @@ class ResultPhase(Phase):
 
 
 class BaskinServer(TurnGameLogic):
-	def __init__(self, room):
-		super(BaskinServer, self).__init__(room)
+	def __init__(self, gameServer):
+		super(BaskinServer, self).__init__(gameServer)
 		sd = self.getSharedDict()
 		sd['goal'] = 31
 		sd['minCnt'] = 1
@@ -212,7 +210,6 @@ class BaskinServer(TurnGameLogic):
 		self.changePhase(0)
 
 	def onError(self, pid):
-		super(BaskinServer, self).onError(pid)
 		self.setPlayerResult(pid, 'error')
 		self.end(False)
 		

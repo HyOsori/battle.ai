@@ -1,7 +1,8 @@
-from othellGameParser import OthelloParser
+#-*-coding:utf-8-*-
+from gameLogic.othello.othellGameParser import OthelloParser
 import random
 
-def MyOthelloParser(OthelloParser):
+class MyOthelloParser(OthelloParser):
     def parsingGameData(self, decoding_data):
         msg = decoding_data['msg']
         msg_type = decoding_data['msg_type']
@@ -10,10 +11,11 @@ def MyOthelloParser(OthelloParser):
         parsing_data = {}
 
         if msg_type == 'on_turn':
+            #on_turn 시에 주어지는 부가 정보 목록이다.
             board = game_data['board']
             black = game_data['black']
             white = game_data['white']
-            none = game_data['none']
+            self.none = game_data['none']
 
             # 이제 이 부가정보들을 가지고 논리를 진행하도록 하자.
             validMoves = self.getValidMoves(board, black, white, self.pid)

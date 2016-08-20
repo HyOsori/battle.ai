@@ -1,6 +1,6 @@
 class TurnGameLogic(object):
-	def __init__(self, room):
-		self._room = room
+	def __init__(self, gameServer):
+		self._room = gameServer
 		self._phaseList = []
 		self._currentPhase = None
 		self._sharedDict = {}
@@ -17,7 +17,6 @@ class TurnGameLogic(object):
 		self._currentPhase.doAction(pid, dictData)
 
 	def onError(self, pid):
-		raise NotImplementedError()
 		pass
 
 	def changePhase(self, index):
