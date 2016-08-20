@@ -1,9 +1,11 @@
 import json
 from server.m_format import *
 
+
 class User:
     def __init__(self, conn):
         self.conn = conn
+
 
 class Player(User):
     def __init__(self, pid, conn):
@@ -17,7 +19,11 @@ class Player(User):
         return self.pid
 
     def send(self, data):
-        self.conn.write(data)
+        try:
+            self.conn.write(data)
+        except Exception as e:
+            print "player bye bye"+e
+
 
 class Attendee(User):
     def __init__(self, conn):
@@ -31,9 +37,9 @@ class Attendee(User):
 
         msg = {MSG: NOTICE+USER_ADDED, USER: added_player}
         json_msg = json.dumps(msg)
-        self.conn.write_message(json_msg)
         print json_msg
 
+        self.send(json_msg)
 
     def notice_user_removed(self, removed_player):
         print "notice user removed ##"
@@ -42,12 +48,14 @@ class Attendee(User):
 
         msg = {MSG: NOTICE + USER_REMOVED, USER: removed_player}
         json_msg = json.dumps(msg)
-        self.conn.write_message(json_msg)
 
-        print("notice message send!")
+        self.send(json_msg)
 
     def send(self, data):
-        self.conn.write_message(data)
+        try:
+            self.conn.write_message(data)
+        except Exception as e:
+            print "attendee bye bye"+e
 
     def room_enter(self):
         self.attendee_flag = True
@@ -55,5 +63,3 @@ class Attendee(User):
     def room_out(self):
         self.attendee_flag = False
 
-        # What TO DO when Attendee exit, room send msg to Attendee
-        # try - catch : solve it
