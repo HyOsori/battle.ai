@@ -62,3 +62,25 @@
 
     HOST 는 서버의 ip를 PORT는 서버가 열어놓은 port를 입력하면 된다.
     그런 후에 Client(HOST,PORT)를 호출하면 서버에 연결되며 username을 입력받는다.
+
+
+
+5. 프론트에게 보내는 정보로는
+    msg_type :  notify_on_turn
+                notify_finish
+    두 가지의 경우가 있고
+
+    notify_on_turn일때 보내는 dict의 key는 다음과 같다
+    -board  : 보드의 정보입니다. 보드는 선공이 둔 곳은 1 후공이 둔 곳은 2, 두지 않은곳은 0으로
+    하였습니다.
+    -x      : 이번턴에 둔 x좌표
+    -y      : 이번턴에 둔 y좌표
+    -black  : 선공의 돌(pid)
+    -white  : 후공의 돌(pid)
+    -now_turn : 현재 턴의 것
+
+    notify_finish일때는 dict의 key로 다음과 같이 보낸다.
+    -winnner        : 승자의 pid를 반환
+    -black_score    : 선공의 점수
+    -white_score    : 후공의 점수
+    -draw           : 무승부 여부를 True, Fasle로 알려준다.
