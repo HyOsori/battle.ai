@@ -1,4 +1,4 @@
-z#-*-coding:utf-8-*-
+#-*-coding:utf-8-*-
 import sys
 sys.path.insert(0,'../')
 from gameLogic.baseClass.gameDataParser import GameDataParser
