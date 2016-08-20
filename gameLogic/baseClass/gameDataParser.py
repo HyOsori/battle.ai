@@ -1,11 +1,11 @@
 
-
+#-*-coding:utf-8-*-
 #인터페이스 로써 작동하도록 하자
 
 class GameDataParser:
-    def __init__(self,client):
+    def initParser(self,client,username):
         self._client = client
-        self.pid = client.getUsername()
+        self.pid = username
 
     #game_data 로는 room에서 보낸 json이 loads된 상태의 dict 자료형이 반환된다.
     #dict자료형에 대한 정보는 문서를 참조하며, 그 dict의 정보를 활용하여 logic을 실행 시킨다.

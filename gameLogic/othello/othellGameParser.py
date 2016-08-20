@@ -1,6 +1,7 @@
+#-*-coding:utf-8-*-
 import sys
 sys.path.insert(0,'../')
-from gameLogic.baseClass import gameDataParser
+from gameLogic.baseClass.gameDataParser import GameDataParser
 
 import random
 
@@ -15,7 +16,13 @@ import random
 #board에서 자신이 선공이라면 자신의 pid가 black, 아니라면 white
 
 #주어진 보드에서 black, white가 둘 수 있는 리스트를 받아올수 있다.(getValidMoves를 사용하면)
-class OthelloParser(gameDataParser):
+class OthelloParser(GameDataParser):
+    def __init__(self):
+        self.none = 'None'
+
+    def parsingGameData(self,decoding_data):
+        pass
+
     def isOnBoard(self, x, y):
         return x >= 0 and x <= 7 and y >= 0 and y <= 7
 

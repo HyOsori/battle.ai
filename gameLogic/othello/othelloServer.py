@@ -62,9 +62,11 @@ class OthelloOnTurnPhase(Phase):
                 oppsite = self.white
 
             validMoves = self.getValidMoves(pid)
+
             if validMoves != []:
                 self.makeMove(pid,x,y) # change board
                 self.notifyBoard(pid, x, y) # notify change board
+
 
             if self.isGameEnd():
                 self.changePhase(self.nextPhase)
@@ -73,13 +75,14 @@ class OthelloOnTurnPhase(Phase):
             if self.getValidMoves(oppsite) != []:
                 self.changeTurn()
 
+
             self.requestAndSendBoard()
 
         except Exception, e:
             logging.debug(e)
             logging.error(pid+' causes Exception during OthelloOnTurnPhase')
-            result = dict(zip(self.playerList, ['Win'] * len(self.playerList)))
-            result[pid] = 'Lose'
+            result = dict(zip(self.playerList, ['win'] * len(self.playerList)))
+            result[pid] = 'lose'
             self.end(False, result)
 
     def isValidMove(self, tile, xstart, ystart):
@@ -166,7 +169,7 @@ class OthelloOnTurnPhase(Phase):
         return False
 
     def changeBoardtoInteger(self):
-        intBoard = []
+        intBoard = [[0 for col in range(8)] for row in range(8)]
         for x in range(8):
             for y in range(8):
                 if self.board[x][y] == self.none:
@@ -193,14 +196,13 @@ class OthelloOnTurnPhase(Phase):
 
     def requestAndSendBoard(self):
         logging.debug('Request ' + self.nowTurn() + '\'s decision')
-        self.request(self.nowTurn(),
-            {
-                'board': self.board,
-                'black': self.black,
-                'white':self.white,
-                'none': self.none
-            }
-        )
+        info_dict = {
+            'board': self.board,
+            'black': self.black,
+            'white': self.white,
+            'none': self.none
+        }
+        self.request(self.nowTurn(),info_dict)
 
 class OthelloEndPhase(Phase):
     def __init__(self, logicServer,messageType):
@@ -282,8 +284,8 @@ class OthelloEndPhase(Phase):
 ##            -> finish = {response}
 ##
 class OthelloTurnGameLogic(TurnGameLogic):
-    def __init__(self, room):
-        super(OthelloTurnGameLogic,self).__init__(room)
+    def __init__(self, gameServer):
+        super(OthelloTurnGameLogic,self).__init__(gameServer)
         self.none = "NONE"
         self.board = [[self.none, self.none, self.none, self.none, self.none, self.none, self.none, self.none],
                       [self.none, self.none, self.none, self.none, self.none, self.none, self.none, self.none],

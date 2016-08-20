@@ -182,8 +182,8 @@ class ResultPhase(Phase):
 
 
 class BaskinServer(TurnGameLogic):
-	def __init__(self, room):
-		super(BaskinServer, self).__init__(room)
+	def __init__(self, gameServer):
+		super(BaskinServer, self).__init__(gameServer)
 		sd = self.getSharedDict()
 		sd['goal'] = 31
 		sd['minCnt'] = 1
