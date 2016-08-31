@@ -61,7 +61,7 @@ class GameServer:
 
         data = {MSG: GAME_DATA, MSG_TYPE: msg_type, GAME_DATA: game_data}
         json_data = json.dumps(data)
-        print "send to : "+ player.get_pid()
+        print "send to : "+player.get_pid()
         print json_data
 
         player.send(json_data)
@@ -78,6 +78,8 @@ class GameServer:
             attendee.send(json_data)
 
     def onEnd(self, is_valid_end, game_data, error_msg="none"):
+        print "On end is called !!!!!! bbbbb"
+
         self.game_result = game_data
         self.error_msg = error_msg
 
@@ -96,13 +98,20 @@ class GameServer:
             for attendee in self.room.attendee_list:
                 attendee.send(json_data)
 
+
+            # TODO : memory lack error must be corrected!!
+
+            for x in range(len(self.turns)):
+                self.q.get()
+
+            '''
             while True:
                 try:
                     self.q.get()
                 except Exception as e:
                     self.q.task_done()
                     return
-
+            '''
         json_data = json.dumps(data)
 
         for player in self.room.player_list:
@@ -119,6 +128,9 @@ class GameServer:
         json_data = json.dumps(data)
         for attendee in self.room.attendee_list:
             attendee.send(json_data)
+
+        print self.room.player_list
+        print "-----------------------------------------------"
 
         for player in self.room.player_list:
             self.battle_ai_list[player.get_pid()] = player

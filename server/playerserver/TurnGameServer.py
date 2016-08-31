@@ -40,13 +40,19 @@ class TurnGameServer(GameServer):
                     # raise Exception
             print "player END!!!!!"
         except Exception as e:
+            print "player OUT!!!!!!!!!!!!!!!!!!!!!1 wow"
             self.game_logic.onError(player.get_pid())
 
+            # remove player from room and turns
             for turn in self.turns:
-                turn.pop(player.get_pid())
+                try:
+                    turn.remove(player.get_pid())
+                except Exception as e:
+                    print e
             print self.turns
+            self.room.player_list.remove(player)
 
-            self.q.get()
-            self.q.task_done()
+            yield self.q.get()
+            #self.q.task_done()
             print "[!] ERROR : "
             print e
