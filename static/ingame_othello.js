@@ -63,5 +63,8 @@ function recvGameResult(data) {
     for (var key in data.game_data ) {
         if (data.game_data[key] == "win")
             alertify.alert(key + " 승리!")
+        else if (data.game_data[key] == "draw")
+            alertify.alert("무승부!")
     }
+    goToGameResult();
 }

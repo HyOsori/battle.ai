@@ -73,8 +73,6 @@ function goToGameResult(){
             drawCircle(j,i,0);
         }
     }
-    
-    
 }
 
 function checkSelected(){
@@ -207,7 +205,8 @@ if ("WebSocket" in window) {
         }
         else if (data.msg == "game_result") {
             recvGameResult(data);
-
+            $("#id_gameResults_ul").last().addClass("selected");
+            drawBoard();
         }
     }
     $('#id_match_btn').bind('click',getSelected);
