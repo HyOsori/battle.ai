@@ -237,9 +237,11 @@ class OthelloEndPhase(Phase):
         }
 
         if blackScore > whiteScore:
-            resultDict['winner'] = self.black
+            resultDict['win'] = self.black
+            resultDict['lose'] = self.white
         elif whiteScore > blackScore:
-            resultDict['winner'] = self.white
+            resultDict['win'] = self.white
+            resultDict['lose'] = self.black
         else:
             resultDict['draw'] = True
 
@@ -260,7 +262,11 @@ class OthelloEndPhase(Phase):
                 resultDict = self.getScoreOfBoard()
                 self.notifyWinner(resultDict)
                 logging.error(pid + ' **************************')
-                self.end(True)
+                send_dict = {resultDict['win']:'win',
+                                    resultDict['lose']:'lose',
+                                    'black_score':resultDict['black_score'],
+                                    'white_score':resultDict['white_score']}
+                self.end(True, send_dict)
                 return
 
             self.changeTurn()
