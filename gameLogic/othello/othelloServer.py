@@ -215,6 +215,7 @@ class OthelloEndPhase(Phase):
         shardDict = self.getSharedDict()
         self.black = self.playerList[0]
         self.white = self.playerList[1]
+
         self.cntPlayer = 2
         self.board = shardDict['board']
 
@@ -248,19 +249,17 @@ class OthelloEndPhase(Phase):
         # args is not using
         super(OthelloEndPhase, self).doAction(pid,dictData)
         try:
-            args = dictData
-            response = args['response']
-            if response != 'OK':
-                self.setPlayerResult(pid,'error')
+#            args = dictData
+#            response = args['response']
+#            if response != 'OK':
+#                self.setPlayerResult(pid,'error')
 
             self.cntPlayer -= 1
 
             if self.cntPlayer == 0:
                 resultDict = self.getScoreOfBoard()
-                sharedDict = self.getSharedDict()
-                if resultDict['draw'] != True:
-                    sharedDict['winner'] = resultDict['winner']
                 self.notifyWinner(resultDict)
+                logging.error(pid + ' **************************')
                 self.end(True)
                 return
 
