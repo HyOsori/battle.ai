@@ -1,8 +1,8 @@
 import tornado.ioloop
 import os.path
 import sys
-
 sys.path.insert(0,'../')
+# TODO : find out how to control path and error
 
 from playerserver.PlayerServer import PlayerServer
 from webserver.WebServer import WebServer
@@ -36,6 +36,3 @@ class MainServer:
 if __name__ == "__main__":
     main_server = MainServer()
     main_server.run()
-
-
-
