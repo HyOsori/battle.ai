@@ -8,11 +8,12 @@ from server.m_format import *
 from tornado import gen
 from gameLogic.baskin.baskinServer import BaskinServer
 from server.playerserver.GameServer import GameServer
+from gameLogic.othello.othelloServer import OthelloTurnGameLogic
 
 
 class TurnGameServer(GameServer):
     def __init__(self, room, battle_ai_list, web_client_list, game_logic = None):
-        game_logic = BaskinServer(self)
+        game_logic = OthelloTurnGameLogic(self)
         GameServer.__init__(self, room, battle_ai_list, web_client_list, game_logic)
 
     @gen.coroutine
