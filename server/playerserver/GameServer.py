@@ -103,15 +103,8 @@ class GameServer:
 
             for x in range(len(self.turns)):
                 self.q.get()
+            return
 
-            '''
-            while True:
-                try:
-                    self.q.get()
-                except Exception as e:
-                    self.q.task_done()
-                    return
-            '''
         json_data = json.dumps(data)
 
         for player in self.room.player_list:
