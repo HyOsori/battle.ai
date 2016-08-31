@@ -80,7 +80,7 @@
     -now_turn : 현재 턴의 것
 
     notify_finish일때는 dict의 key로 다음과 같이 보낸다.
-    -winnner        : 승자의 pid를 반환
+    -win            : 승자의 pid를 반환
     -black_score    : 선공의 점수
     -white_score    : 후공의 점수
     -draw           : 무승부 여부를 True, Fasle로 알려준다.
