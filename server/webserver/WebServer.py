@@ -54,11 +54,11 @@ class WebSocketServer(tornado.websocket.WebSocketHandler):
             self.web_client_list.pop(self)
 
     def _response_match(self, pid_list):
-        # be care for concurrent access
         try:
             players = [self.battle_ai_list.pop(pid) for pid in pid_list]
         except Exception as e:
             print e
+            return
 
         for pid in pid_list:
             for attendee in self.web_client_list.values():
@@ -78,6 +78,10 @@ class WebSocketServer(tornado.websocket.WebSocketHandler):
         except Exception as e:
             print(e)
             self.web_client_list.pop(self)
+
+    # TODO : find out how to deal with this error (CORS)
+    def check_origin(self, origin):
+        return True
 
     def on_close(self):
         self.web_client_list.pop(self)
