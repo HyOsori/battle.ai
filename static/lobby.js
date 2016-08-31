@@ -21,7 +21,7 @@ function goToLobby(){
 function goToInGame(){
     $("#id_board_canvas").css("display","");
     $("#id_gameResults_ul").css("display","none");
-    $("#id_goToLobby_btn").css("display","");
+    $("#id_goToLobby_btn").css("display","none");
     $("#id_conn_btn").css("display","none");
     $("#id_conn_id").css("display","none");
     $("#id_list_ul").css("display","none");
@@ -44,7 +44,30 @@ function goToGameResult(){
     $("#id_list_ul").css("display","none");
     $("#id_match_btn").css("display","none");
     $("#id_messages").css("display","");
+    
+    for(var i=0; i<gameResults.length; i++){
+        var blackNum = 0;
+        var whiteNum = 0;
+        for(var j=0; j<8; j++){
+            for(var k=0; k<8; k++){
+                if (gameResults[i][j][k]==1)
+                    blackNum++;
+                else if (gameResults[i][j][k]==2)
+                    whiteNum++;
+            }
+        }
+        num_list.push([blackNum,whiteNum]);
+    }
 
+    for(var i=0; i<gameResults.length; i++){
+        if (num_list[i][0] > num_list[i][1])
+            appendToList(i+1,num_list[i][0],num_list[i][1],"black","white");
+        else if (num_list[i][0] < num_list[i][1])
+            appendToList(i+1,num_list[i][0],num_list[i][1],"white","black");
+        else if (num_list[i][0] == num_list[i][1])
+            appendToList(i+1,num_list[i][0],num_list[i][1],"gainsboro","black");
+    }
+    
     for(var i=0; i<8; i++){
         for(var j=0; j<8; j++){
             drawCircle(j,i,0);
@@ -106,7 +129,10 @@ if ("WebSocket" in window) {
 
     messageContainer.innerHTML = "WebSocket is supported by your Browser!";
     var ws = new WebSocket("ws://localhost:9000/websocket");
-    goToLobby();
+    goToLobby()
+    ws.onopen = function (evt) {
+        
+    };
     ws.onmessage = function (evt) {
         var received_msg = evt.data;
         message += ">> " + received_msg + "<br>";
