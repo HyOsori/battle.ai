@@ -255,6 +255,7 @@ class OthelloEndPhase(Phase):
                 if resultDict['draw'] != True:
                     sharedDict['winner'] = resultDict['winner']
                 self.notifyWinner(resultDict)
+                self.end(True)
                 return
 
         except Exception, e:
