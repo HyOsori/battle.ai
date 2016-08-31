@@ -215,6 +215,7 @@ class OthelloEndPhase(Phase):
         shardDict = self.getSharedDict()
         self.black = self.playerList[0]
         self.white = self.playerList[1]
+        self.cntPlayer = 2
         self.board = shardDict['board']
 
         self.sendGameOver()
@@ -249,7 +250,12 @@ class OthelloEndPhase(Phase):
         try:
             args = dictData
             response = args['response']
-            if response == 'OK':
+            if response != 'OK':
+                self.setPlayerResult(pid,'error')
+
+            self.cntPlayer -= 1
+
+            if self.cntPlayer == 0:
                 resultDict = self.getScoreOfBoard()
                 sharedDict = self.getSharedDict()
                 if resultDict['draw'] != True:
@@ -257,6 +263,9 @@ class OthelloEndPhase(Phase):
                 self.notifyWinner(resultDict)
                 self.end(True)
                 return
+
+            self.changeTurn()
+            self.sendGameOver()
 
         except Exception, e:
             logging.debug(e)
@@ -276,7 +285,7 @@ class OthelloEndPhase(Phase):
 
     def sendGameOver(self):
         logging.debug('Send gameover message to ' + self.nowTurn())
-        self.requestAll( {})
+        self.request( self.nowTurn() ,{})
 
 #######################################
 #######################################
