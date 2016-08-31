@@ -23,7 +23,7 @@ class Client:
         print '서버에 연결 되었습니다.'
 
 
-        self.sendUserName()
+        self.setAndSendUserName()
 
     def __del__(self):
         self._sock.close()
@@ -36,13 +36,13 @@ class Client:
         self._parser = parser
 
     #user name을 룸이 받는 프로토콜을 확인한후에 작성 할것
-    def sendUserName(self):
+    def setAndSendUserName(self):
         print '사용할 닉네임을 결정 하세요.'
         self._username = raw_input()
 
         if self._username == 'None':
             print 'None이라는 닉네임은 사용하면 안됌'
-            self.sendUserName()
+            self.setAndSendUserName()
             return
 
         send_msg = {}
@@ -84,8 +84,8 @@ class Client:
             decoding_data = self.recvGameData()
             if decoding_data['msg'] == 'game_result':
                 print decoding_data['game_data']
-                break
+                continue
             send_msg = self._parser.parsingGameData(decoding_data)
             self.sendGameData(send_msg)
 
-    #언제 wihile 루프를 벗어날까? 그런 신호가 하나 필요하겠다.
+    #언제 wihile 루프를 벗어날까? 그런 신호가 하나 필요하겠다.??
