@@ -73,6 +73,8 @@ function goToGameResult(){
             drawCircle(j,i,0);
         }
     }
+    
+    
 }
 
 function checkSelected(){
@@ -193,9 +195,19 @@ if ("WebSocket" in window) {
         }
         else if (data.msg == "game_data") {
             recvGameMsg(data);
+            boardResult = data.game_data.board;
+        }
+        else if (data.msg == "round_result"){
+            gameResults.push(boardResult);
+            for(var i=0; i<8; i++){
+                for(var j=0; j<8; j++){
+                    drawCircle(j,i,0);
+                }
+            }
         }
         else if (data.msg == "game_result") {
             recvGameResult(data);
+
         }
     }
     $('#id_match_btn').bind('click',getSelected);

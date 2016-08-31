@@ -1,7 +1,21 @@
+var boardResult;
 var gameResults = [];
 var num_list = [];
 
-
+function drawBoard(){
+    var nav = document.getElementById('id_gameResults_ul');
+    var index = 0;
+    for(index; index<nav.childNodes.length; index++){
+        var child = nav.childNodes[index];
+        if (child.className == 'selected')
+            break;
+    }
+    for(var i=0; i<8; i++){
+        for(var j=0; j<8; j++){
+            drawCircle(j,i,gameResults[index][i][j]);
+        }
+    }
+}
 
 function appendToList(round,blackNum,whiteNum,backgroundColor,fontColor){
     var whiteStone = $('<img />').attr({
@@ -24,7 +38,7 @@ function appendToList(round,blackNum,whiteNum,backgroundColor,fontColor){
             event.target.closest("li").className = 'selected';
         else
             event.target.className = 'selected';
-        drawBoard(nav);
+        drawBoard();
     }).append('Round ',round,' ',blackStone,' ',blackNum,' : ',whiteStone,' ',whiteNum).css({"background-color":backgroundColor, "color":fontColor}).appendTo('#id_gameResults_ul')
 }
 
