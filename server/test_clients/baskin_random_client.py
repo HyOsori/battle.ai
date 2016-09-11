@@ -73,4 +73,3 @@ if __name__ == "__main__":
 			request(msg_type, {'response' : 'OK'})
 
 		#모든 라운드가 종료되었다는게 필요
-			#순대 4 매1 둑불 1
