@@ -171,9 +171,15 @@ if ("WebSocket" in window) {
         else if (data.msg == "game_data") {
             recvGameMsg(data);
 
-            if (data.msg_type == "notify_on_turn")
+            if (data.msg_type == "notify_on_turn") {
                 roundBoardResult = data.game_data.board;
-
+                var nowTurn;
+                if (data.game_data.now_turn == data.game_data.black)
+                    nowTurn = 1;
+                else if (data.game_data.now_turn == data.game_data.white)
+                    nowTurn = 2;
+                highLight(data.game_data.x, data.game_data.y, nowTurn)
+            }
             else if (data.msg_type == "notify_finish") {
                 var roundScoreResult = data.game_data;
                 roundResult["board"]=roundBoardResult;

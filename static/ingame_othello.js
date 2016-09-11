@@ -28,18 +28,27 @@ function drawCircle(x,y,color){//draw stone
         ctx.fillStyle = "black"
         ctx.fill();
     }
-    else {
-        if (color == 2){
+    else if (color == 2){
             ctx.arc(10+(interval/2)+(interval*x),10+(interval/2)+(interval*y),(interval/2)-5,0,endAngle);
             ctx.fillStyle = "white"
             ctx.fill();
             ctx.strokeStyle = "black"
             ctx.stroke();
-        }
-        else {//erase stone by drawing rect filled with background color
-            if (color == 0)
-                ctx.clearRect(11+(interval*x),11+(interval*y),interval-2,interval-2);
-        }
+    }
+    else if (color == 0)
+        ctx.clearRect(11+(interval*x),11+(interval*y),interval-2,interval-2);
+    ctx.closePath();
+}
+
+function highLight(x,y,color){
+    ctx.beginPath();
+    if (color == 1){
+        ctx.fillStyle = "white"
+        ctx.fillRect(10+(interval*0.45)+(interval*x),10+(interval*0.45)+(interval*y),interval*0.1,interval*0.1);
+    }
+    else if (color == 2){
+        ctx.fillStyle = "black"
+        ctx.fillRect(10+(interval*0.45)+(interval*x),10+(interval*0.45)+(interval*y),interval*0.1,interval*0.1);
     }
     ctx.closePath();
 }
