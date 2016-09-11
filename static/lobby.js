@@ -45,29 +45,6 @@ function goToGameResult(){
     $("#id_match_btn").css("display","none");
     $("#id_messages").css("display","");
     
-    for(var i=0; i<gameResults.length; i++){
-        var blackNum = 0;
-        var whiteNum = 0;
-        for(var j=0; j<8; j++){
-            for(var k=0; k<8; k++){
-                if (gameResults[i][j][k]==1)
-                    blackNum++;
-                else if (gameResults[i][j][k]==2)
-                    whiteNum++;
-            }
-        }
-        num_list.push([blackNum,whiteNum]);
-    }
-
-    for(var i=0; i<gameResults.length; i++){
-        if (num_list[i][0] > num_list[i][1])
-            appendToList(i+1,num_list[i][0],num_list[i][1],"black","white");
-        else if (num_list[i][0] < num_list[i][1])
-            appendToList(i+1,num_list[i][0],num_list[i][1],"white","black");
-        else if (num_list[i][0] == num_list[i][1])
-            appendToList(i+1,num_list[i][0],num_list[i][1],"gainsboro","black");
-    }
-    
     for(var i=0; i<8; i++){
         for(var j=0; j<8; j++){
             drawCircle(j,i,0);
@@ -193,20 +170,36 @@ if ("WebSocket" in window) {
         }
         else if (data.msg == "game_data") {
             recvGameMsg(data);
-            boardResult = data.game_data.board;
-        }
-        else if (data.msg == "round_result"){
-            gameResults.push(boardResult);
-            for(var i=0; i<8; i++){
-                for(var j=0; j<8; j++){
-                    drawCircle(j,i,0);
+
+            if (data.msg_type == "notify_on_turn")
+                roundBoardResult = data.game_data.board;
+
+            else if (data.msg_type == "notify_finish") {
+                var roundScoreResult = data.game_data;
+                roundResult["board"]=roundBoardResult;
+                roundResult["score"]=roundScoreResult;
+                roundResult["round"]=round;
+                gameResults.push(roundResult);
+                roundResult=[];
+
+                if(roundScoreResult["black_score"] > roundScoreResult["white_score"])
+                    appendToList(round,roundScoreResult["black_score"],roundScoreResult["white_score"],"black","white");
+                else if(roundScoreResult["black_score"] < roundScoreResult["white_score"])
+                    appendToList(round,roundScoreResult["black_score"],roundScoreResult["white_score"],"white","black");
+                if(roundScoreResult["black_score"] == roundScoreResult["white_score"])
+                    appendToList(round,roundScoreResult["black_score"],roundScoreResult["white_score"],"gainsboro","black");
+
+                round++;
+
+                for(var i=0; i<8; i++){
+                    for(var j=0; j<8; j++){
+                        drawCircle(j,i,0);
+                    }
                 }
             }
         }
         else if (data.msg == "game_result") {
             recvGameResult(data);
-            $("#id_gameResults_ul").last().addClass("selected");
-            drawBoard();
         }
     }
     $('#id_match_btn').bind('click',getSelected);
