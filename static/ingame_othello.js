@@ -1,5 +1,6 @@
 var canvas = $("#id_board_canvas")[0];
 var ctx = canvas.getContext("2d");
+
 var round = 1;
 var interval = (canvas.width-20)/8;
 

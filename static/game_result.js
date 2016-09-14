@@ -50,7 +50,13 @@ $('#id_goToLobby_btn').bind('click',function(){
     gameResults=[];
     roundResult=[];
     round=1;
+
     $("#id_gameResults_ul").empty();
+
+    var json = new Object();
+    json.msg = "request_user_list";
+    var req = JSON.stringify(json);
+    ws.send( req );
 
     for(var i=0; i<8; i++){
         for(var j=0; j<8; j++){
