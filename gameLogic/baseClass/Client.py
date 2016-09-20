@@ -27,6 +27,7 @@ class Client:
 
         self.setAndSendUserName()
 
+
     def __del__(self):
         self._sock.close()
 
