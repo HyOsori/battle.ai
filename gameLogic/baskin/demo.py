@@ -14,10 +14,12 @@ class SampleRoom():
 	def start(self):
 		self.gamelogic.onStart(self.playerList)
 	def request(self, pid, messageType, JSON):
-		self.gamelogic.onAction(pid, self.playerDict[pid].request(messageType, JSON))
+		self.gamelogic.onAction(pid, json.loads(self.playerDict[pid].request(messageType, JSON)))
 	def onEnd(self, isValid, result):
 		logging.debug('isValid is ' + str(isValid) + ', result is ' + str(result))
 		pass
+	def notify(self, messageType, dictData):
+		logging.debug('messageType is ' + str(messageType) + ', result is ' + str(dictData))
 
 class AI(object):
 	def __init__(self, pid):
@@ -74,7 +76,7 @@ class RandomAI(AI):
 
 	def request(self, messageType, JSON):
 		if messageType == 'init':
-			args = json.loads(JSON)
+			args = JSON
 			self.minCnt = args['min']
 			self.maxCnt = args['max']
 			self.goal = args['finish']

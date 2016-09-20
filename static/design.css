@@ -1,0 +1,75 @@
+#id_container {
+    margin:auto;
+    border-style:solid;
+    padding:0px 20px;
+}
+#id_list_ul {
+    list-style:none;
+    min-width:210px;
+    padding:2px;
+    border-style:solid;
+    overflow-y:scroll;
+    float:right;
+    margin:0px;
+    background-color:white;
+}
+#id_list_ul li {
+    border-style:solid;
+    border-color:black;
+    padding:5px 10px 5px 10px;
+    margin:4px;
+    border-radius:5px;
+    cursor:pointer;
+}
+#id_list_ul .class_selected {
+    border-color:red;
+}
+#id_board_canvas {
+    border-style:solid;
+    float:left;
+    margin:0px;
+}
+#id_messages {
+    height:200px;
+    width:500px;
+    background:black;
+    color:white;
+    overflow-y:auto;
+    vertical-align:bottom;
+    margin:10px 0px;
+}
+#id_gameResults_ul {
+    list-style:none;
+    min-width:210px;
+    padding:2px;
+    border-style:solid;
+    overflow-y:scroll;
+    float:right;
+    margin:0px;
+    background-color:white;
+}
+#id_gameResults_ul li {
+    border-style:solid;
+    border-color:black;
+    padding:5px 10px 5px 10px;
+    margin:4px;
+    border-radius:5px;
+    cursor:pointer;
+}
+#id_gameResults_ul .class_selected {
+    border-color:red;
+}
+#id_gameMessage {
+    text-align:left;
+    margin:0px;
+    padding:0px;
+    font-size:250%;
+}
+#id_goToLobby_btn {
+    float:right;
+    margin:10px 0px;
+}
+#id_matchBtnContainer {
+    margin:0px;
+    border-style:solid;
+}

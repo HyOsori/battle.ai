@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" type="text/css" href="{{ static_url('design.css')}}" >
+        <link rel="stylesheet" type="text/css" href="{{ static_url('alertify.core.css')}}" />
+        <link rel="stylesheet" type="text/css" href="{{ static_url('alertify.default.css')}}" />
+    </head>
+    <body>
+    <div id="id_container">
+        <div id="id_gameMessage">Othello</div>
+        <canvas id="id_board_canvas"></canvas>
+        <ul id="id_gameResults_ul"></ul>
+        <button id="id_goToLobby_btn">home</button>
+        <input type="button" id="id_conn_btn" value="connect websocket" />
+        <ul id="id_list_ul"></ul>
+        <button id="id_match_btn" disabled="true">match</button>
+        <div id="id_messages"></div>
+    </div>
+        <div id="id_baskin_message" class="class_ingame"></div>
+        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+        <script type="text/javascript" src="{{ static_url('alertify.js') }}"></script>
+        <script type="text/javascript" src="{{ static_url('lobby.js') }}"></script>
+        <script type="text/javascript" src="{{ static_url('ingame_othello.js') }}"></script>
+        <script type="text/javascript" src="{{ static_url('game_result.js') }}"></script>
+        <br><br>
+    </body>
+</html>

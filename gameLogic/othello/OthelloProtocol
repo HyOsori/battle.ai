@@ -1,0 +1,86 @@
+#-*-coding:utf-8-*-
+오델로 게임 프로토콜
+
+1. 메시지의 종류 (msg_type 의 종류)
+    a. on_turn
+        전해지는 dict의 key : board, black, white, none
+        board : 현재 게임서버에서 관리하고 있는 보드의 정보를 가져올 수 있다.
+          보드의 내용은 black,white,none으로 채워져 있으며 선공이 둔 곳은 black, 후공이 둔 곳은 white
+          아무도 두지 않은 곳은 none이다.
+        black : 선공의 pid (사용자의 이름) 이다.
+        white : 후공의 pid (사용자의 이름) 이다.
+          (즉 자신의 pid는 black과 white 중에 하나이다.)
+        none : 선공이 둔 곳도, 후공이 둔 곳도 아니다. 즉 비어있다.
+
+        위의 dict 정보를 활용하여 자신이 둘 좌표의 정보를 dict형태로 바꾸어 반드시 전송해야 한다.
+        보내야할 dict의 key : x, y
+        x : x좌표의 값, y : y좌표의 값
+
+        위 dict정보를 self.makeSendMsg(msg_type, dict)를 사용하여 보내면 된다.
+
+
+    b. finish
+        전해지는 dict의 key : 없음
+        게임 종료시 전해지는 메시지 타입으로 확인했다는 메시지를 보내주어야 한다.
+        확인했다는 메시지로는
+        공백의 dict를 self.makeSendMsg(msg_type, dict) 를 사용하여 보내면 된다.
+
+2. AI 대전 참가자가 만들 코드
+    othello AI대전에 참가할 플레이어는 othelloGameParser의 OthelloParser클래스를 상속받아
+
+    <<def parsingGameData(self,decoding_data)>> 를 구현 하면 된다.
+
+    이 함수는 decoding_data로 게임서버에서 온 데이터, 즉 1번의 <메시지의 종류, 게임 데이터 정보> 등을
+    dict형태로 바꾼 값이므로
+    1번의 key값을 사용하여 자신이 원하는 대로 반환할 dict값을 만들어내면 된다.
+
+    그리고 반할 dict 포맷에 맞춰서 return 해주면 AI대전에 참가할 준비가 되었다.
+
+3. 오소리 ai대전에 사용할만한 함수
+    OthelloParser를 사용하여 자신만의 ai parser를 구현했다면 다음과 같은 함수의 도움을 받을 수 있다.
+    - isOnBoard(x,y) : x와 y는 0과 7사이의 숫자인지 아닌지를 반환한다.
+    - isValidMove(board,black,white,tile,xstart,ystart)
+        : 주어진 board에 대하여 tile에 해당하는 돌을 xstart, ystart 에 둘수 있는지 없는지
+        True, False로 반환 한다.
+    - getValidMoves(board,black,white,tile)
+        : 주어진 board에 대하여 tile에 해당하는 돌이 둘수있는 모든 좌표를 리스트의 리스트로 반환
+
+4. 예시 프로그램
+    예시 프로그램은 gameLogic / othello / test.py 로 남겨두었다.
+
+    from gameLogic.baseClass.baseClient import Client
+    from gameLogic.othello.myOthelloParser import MyOthelloParser
+
+    HOST = '127.0.0.1'
+    PORT = 9001
+
+    client = Client(HOST,PORT)
+    test1 = MyOthelloParser()
+    client.setParser(test1)
+
+    client.clientRun()
+
+    HOST 는 서버의 ip를 PORT는 서버가 열어놓은 port를 입력하면 된다.
+    그런 후에 Client(HOST,PORT)를 호출하면 서버에 연결되며 username을 입력받는다.
+
+
+
+5. 프론트에게 보내는 정보로는
+    msg_type :  notify_on_turn
+                notify_finish
+    두 가지의 경우가 있고
+
+    notify_on_turn일때 보내는 dict의 key는 다음과 같다
+    -board  : 보드의 정보입니다. 보드는 선공이 둔 곳은 1 후공이 둔 곳은 2, 두지 않은곳은 0으로
+    하였습니다.
+    -x      : 이번턴에 둔 x좌표
+    -y      : 이번턴에 둔 y좌표
+    -black  : 선공의 돌(pid)
+    -white  : 후공의 돌(pid)
+    -now_turn : 현재 턴의 것
+
+    notify_finish일때는 dict의 key로 다음과 같이 보낸다.
+    -win            : 승자의 pid를 반환
+    -black_score    : 선공의 점수
+    -white_score    : 후공의 점수
+    -draw           : 무승부 여부를 True, Fasle로 알려준다.

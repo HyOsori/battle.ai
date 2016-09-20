@@ -1,83 +1,169 @@
 #-*- coding:utf-8 -*-
-
+from tornado import queues, gen
 import json
-import GameLogic
+import time
+from server.m_format import *
 
-from tornado import gen
-
-"""
-GAMESERVER
-
-1. WebServer에서 web_client_list, battle_ai_list, Room을 전달 받는다
-2. 생성자에서 게임 턴 순서 정하기 >> selectTurn() >> 순서 배열 리턴
-3. onStart(pid[]) >> 게임 시작
-4. request(pid, msgTyp, JSON게임판정보)으로 player와 logic에 전달
-   msgType에 따른 적합성 판단 -> 유효범위의 msgType인지
-5. onAction() 호출 >> 리턴값으로 유효성 전달받음
-6. onError(), onEnd() 호출
-7. 게임 진행에 따른 로그 저장 >> 일단 light하게 메모리에 저장
 
 """
+GameServer (for all games, abstract class)
+
+TurnGameServer (for turn games)
+RealTimeGameServer (for real time games, not yet)
+"""
+
 
 class GameServer:
-    def __init__(self, room):
+    def __init__(self, room, battle_ai_list, web_client_list, game_logic):
+        self.game_logic = game_logic
         self.room = room
-        self.current_msgtype = -1
+        self.battle_ai_list = battle_ai_list
+        self.web_client_list = web_client_list
+        self.q = queues.Queue()
 
+        self.time_delay = 0.5
 
-    def selectTurn(self):
-        turn = []
-        self.perm(0)
-        return turn
+        self.game_result = {}
+        self.error_msg = "none"
 
-    def perm(self, num):
-        pass
+        self.current_msg_type = -1
+        self.error_code = 1
+        self.turns = []
+        #self.byo_yomi = byo_yomi()
+        # end code [0-normal end, 1-abnormal end]
 
     @gen.coroutine
-    def __game_handler(self):
-        try:
-            turn = self.selectTurn(self.room.players)
-            GameLogic.onStart(turn)
-            for player in self.room.players:
-                self.__player_handler(player)
-        except:
-            GameLogic.onError()
-            print('[ERROR] GAME SET FAILED')
-        finally:
-            GameLogic.onEnd()
+    def game_handler(self):
+        self.turns = self._select_turns(self.room.player_list)
+        print self.turns
+        for turn in self.turns:
+            self.game_logic.onStart(turn)
+            print "START"
+            for player in self.room.player_list:
+                self.q.put(player)
+                self._player_handler(player)
+            yield self.q.join()
+        print "END"
+        self.destroy_room()
 
+    def _select_turns(self, players):
+        turn = [player.get_pid() for player in players]
+        return [turn, turn]
 
-    def request(self, player, msg, gameData):
-        self.current_msgtype = msg
+    def _player_handler(self, player):
+        raise NotImplementedError
 
-        ##send
-        data = { "msg_type" : msg , "game" : gameData}
+    def request(self, pid, msg_type, game_data):
+        for p in self.room.player_list:
+            if p.get_pid() == pid:
+                player = p
+        self.current_msg_type = msg_type
+
+        data = {MSG: GAME_DATA, MSG_TYPE: msg_type, GAME_DATA: game_data}
         json_data = json.dumps(data)
+        print "send to : "+player.get_pid()
+        print json_data
+
         player.send(json_data)
+        # self.byo_yomi.start_timer()
+
+    def notify(self, msg, game_data):
+        data = {MSG: GAME_DATA, MSG_TYPE: msg, GAME_DATA: game_data}
+        json_data = json.dumps(data)
+
+        for player in self.room.player_list:
+            player.send(json_data)
+
+        for attendee in self.room.attendee_list:
+            attendee.send(json_data)
+
+    def onEnd(self, is_valid_end, game_data, error_msg="none"):
+        print "On end is called !!!!!! bbbbb"
+
+        self.game_result = game_data
+        self.error_msg = error_msg
+
+        if is_valid_end:
+            self.error_code = 0
+            data = {MSG: GAME_DATA, MSG_TYPE: ROUND_RESULT, GAME_DATA: game_data}
+        else:
+            self.error_code = 1
+            data = {MSG: GAME_RESULT, ERROR: self.error_code, ERROR_MSG: error_msg, GAME_DATA: game_data}
+
+            json_data = json.dumps(data)
+
+            for player in self.room.player_list:
+                player.send(json_data)
+
+            for attendee in self.room.attendee_list:
+                attendee.send(json_data)
+
+
+            # TODO : memory lack error must be corrected!!
+
+            for x in range(len(self.turns)):
+                self.q.get()
+            return
+
+        json_data = json.dumps(data)
+
+        for player in self.room.player_list:
+            player.send(json_data)
+
         for attendee in self.room.attendee_list:
             attendee.send(json_data)
 
 
-    @gen.coroutine
-    def __player_handler(self, player):
-        while True:
-            message = yield player.read()
-            res = yield json.loads(message)
-            if res["msg_type"] == self.current_msgtype:
-                recv = yield GameLogic.onAction(player, message)
-                if not recv:
-                    raise Exception
-                else:
-                    for attendee in self.room.attendee_list:
-                        attendee.send(message)
-            elif res["msg_type"] == "end":  ## end는 종료 메세지 타입
-                break
-            else:
-                raise Exception
+    def destroy_room(self):
 
+        data = {MSG: GAME_RESULT, ERROR: self.error_code, ERROR_MSG: self.error_msg, GAME_DATA: self.game_result}
+
+        json_data = json.dumps(data)
+        for attendee in self.room.attendee_list:
+            attendee.send(json_data)
+
+        print self.room.player_list
+        print "-----------------------------------------------"
+
+        for player in self.room.player_list:
+            self.battle_ai_list[player.get_pid()] = player
+            for attendee in self.web_client_list.values():
+                attendee.notice_user_added(player.get_pid())
+
+    def set_delay_time(self, delay_time=0.5):
+        self.time_delay = delay_time
+
+    def delay_action(self):
+        time.sleep(self.time_delay)
 
     def save_game_data(self):
         pass
 
 
+# class byo_yomi:
+#     def __init__(self, base_time = 0, turn_time = 30, turn_num = 1):
+#         self.base_time = base_time
+#         self.turn_time = turn_time
+#         self.turn_num = turn_num
+#
+#     def start_timer(self):
+#         if self.base_time > 0:
+#             self.start_time = time.clock()  ## time.clock() is affected by time.sleep()
+#         elif self.base_time == 0:
+#             self.count_time(self.turn_time)
+#
+#     def stop_timer(self):
+#
+#         pass
+#
+#     def timeout(self):
+#
+#         pass
+#
+#     def count_time(self, time_limit):
+#
+#         self.current_time = time.clock()
+#
+#         if self.start_time - self.current_time >  time_limit :
+#             self.timeout()
 
