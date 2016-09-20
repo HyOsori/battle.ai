@@ -14,8 +14,9 @@ function goToLobby(){
     $("#id_list_ul").css("display","");
     $("#id_match_btn").css("display","");
     $("#id_messages").css("display","");
+    $("#id_gameMessage_second").css("display","none");
 
-    $("#id_gameMessage").html("Othello");
+    $("#id_gameMessage").html("Othello").css("text-align","left");
 }
 
 function goToInGame(){
@@ -27,6 +28,7 @@ function goToInGame(){
     $("#id_list_ul").css("display","none");
     $("#id_match_btn").css("display","none");
     $("#id_messages").css("display","");
+    $("#id_gameMessage_second").css("display","");
 
     for(var i=0; i<8; i++){
         for(var j=0; j<8; j++){
@@ -44,7 +46,8 @@ function goToGameResult(){
     $("#id_list_ul").css("display","none");
     $("#id_match_btn").css("display","none");
     $("#id_messages").css("display","");
-    
+    $("#id_gameMessage_second").css("display","none");
+
     for(var i=0; i<8; i++){
         for(var j=0; j<8; j++){
             drawCircle(j,i,0);
@@ -78,7 +81,8 @@ function clickHandler(event) {
 
 //Size of elements
 $("#id_container").css({"width":window.innerHeight*0.95*1.25,"height":window.innerHeight*0.95});
-$("#id_gameMessage").css({"width":window.innerHeight*0.95*1.25*0.8,"height":window.innerHeight*0.95*0.1});
+$("#id_gameMessage").css("height",window.innerHeight*0.95*0.1);
+$("#id_gameMessage_second").css("height",window.innerHeight*0.95*0.07);
 $("#id_list_ul").css({"width":window.innerHeight*0.95*1.25*0.2,"height":window.innerHeight*0.95*0.8});
 $("#id_board_canvas").attr({"width":window.innerHeight*0.95*0.8,"height":window.innerHeight*0.95*0.8});
 $("#id_gameResults_ul").css({"width":window.innerHeight*0.95*1.25*0.25,"height":window.innerHeight*0.95*0.79});
@@ -178,7 +182,7 @@ if ("WebSocket" in window) {
                     nowTurn = 1;
                 else if (data.game_data.now_turn == data.game_data.white)
                     nowTurn = 2;
-                highLight(data.game_data.x, data.game_data.y, nowTurn)
+                highLight(data.game_data.y, data.game_data.x, nowTurn)
             }
             else if (data.msg_type == "notify_finish") {
                 var roundScoreResult = data.game_data;
@@ -196,6 +200,8 @@ if ("WebSocket" in window) {
                     appendToList(round,roundScoreResult["black_score"],roundScoreResult["white_score"],"gainsboro","black");
 
                 round++;
+
+                $("#id_gameMessage_second").html("Round "+round);
 
                 for(var i=0; i<8; i++){
                     for(var j=0; j<8; j++){

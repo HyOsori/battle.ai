@@ -65,6 +65,12 @@
     padding:0px;
     font-size:250%;
 }
+#id_gameMessage_second {
+    text-align:center;
+    margin:0px;
+    padding:0px;
+    font-size:150%;
+}
 #id_goToLobby_btn {
     float:right;
     margin:10px 0px;
