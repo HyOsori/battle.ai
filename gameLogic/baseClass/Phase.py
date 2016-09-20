@@ -2,7 +2,7 @@ class Phase(object):
 	def __init__(self, logicServer, messageType):
 		self._logicServer = logicServer
 		self.messageType = messageType
-		self.nofityMessageType = 'notify_' + messageType
+		self.notifyMessageType = 'notify_' + messageType
 		pass
 
 	def onStart(self):
@@ -48,4 +48,4 @@ class Phase(object):
 		return self._logicServer.getPlayerResult(pid)
 	
 	def notify(self, dictData):
-		self._logicServer.notify(self.nofityMessageType, dictData)
+		self._logicServer.notify(self.notifyMessageType, dictData)
