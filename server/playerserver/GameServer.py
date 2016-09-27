@@ -37,7 +37,7 @@ class GameServer:
         self.turns = self._select_turns(self.room.player_list)
         print self.turns
         for turn in self.turns:
-            self.game_logic.onStart(turn)
+            self.game_logic.on_start(turn)
             print "START"
             for player in self.room.player_list:
                 self.q.put(player)

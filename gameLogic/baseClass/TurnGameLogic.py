@@ -1,77 +1,77 @@
 class TurnGameLogic(object):
-	def __init__(self, gameServer):
-		self._room = gameServer
-		self._phaseList = []
-		self._currentPhase = None
-		self._sharedDict = {}
+	def __init__(self, game_server):
+		self._game_server = game_server
+		self._phase_list = []
+		self._current_phase = None
+		self._shared_dict = {}
 
-	def onStart(self, playerList):
-		self._playerList = playerList
-		self._resultDict = dict(
-			zip(playerList, ['draw'] * len(playerList))
+	def on_start(self, player_list):
+		self._player_list = player_list
+		self._result_dict = dict(
+			zip(player_list, ['draw'] * len(player_list))
 			)
-		self._turnNum = -1
-		self.changeTurn()
+		self._turn_num = -1
+		self.change_turn()
 
-	def onAction(self,pid,dictData):
-		self._currentPhase.doAction(pid, dictData)
+	def on_action(self, pid, dict_data):
+		self._current_phase.do_action(pid, dict_data)
 
-	def onError(self, pid):
+	def on_error(self, pid):
 		pass
 
-	def changePhase(self, index):
-		if self._currentPhase != None:
-			self._currentPhase.onEnd()
-		self._currentPhase = self._phaseList[index]
-		self._messageType = self._currentPhase.messageType
-		self._currentPhase.onStart()
+	def change_phase(self, index):
+		if self._current_phase != None:
+			self._current_phase.on_end()
+		self._current_phase = self._phase_list[index]
+		self._messageType = self._current_phase.messageType
+		self._current_phase.on_start()
 
-	def changeTurn(self, index = None):
+	def change_turn(self, index = None):
 		if index != None:
-			self._turnNum = index
+			self._turn_num = index
 		else:
-			self._turnNum = self._turnNum + 1
+			self._turn_num = self._turn_num + 1
 
-		while self._resultDict[self.nowTurn()] == 'error':
-			self._turnNum = self._turnNum + 1
+		while self._result_dict[self.now_turn()] == 'error':
+			self._turn_num = self._turn_num + 1
 
-	def nowTurn(self):
-		length = len(self._playerList)
-		return self._playerList[self._turnNum%length]
+	def now_turn(self):
+		length = len(self._player_list)
+		return self._player_list[self._turn_num % length]
 
-	def requestAll(self, messageType, dictData):
-		for pid in self._playerList:
-			self.request(pid, messageType, dictData)
+	def request_all(self, message_type, dict_data):
+		for pid in self._player_list:
+			self.request(pid, message_type, dict_data)
 
-	def request(self, pid, messageType, dictData):
-		self._room.request(pid, messageType, dictData)
+	def request(self, pid, message_type, dict_data):
+		self._game_server.request(pid, message_type, dict_data)
 
-	def end(self, isValidEnd, resultList=None):
-		if resultList == None:
-			resultList = self._resultDict
+	def end(self, is_valid_end, result_list=None):
+		if result_list == None:
+			result_list = self._result_dict
 		
-		self._room.onEnd(isValidEnd, resultList)
+		self._game_server.on_end(is_valid_end, result_list)
 
-	def appendPhase(self, phase):
-		self._phaseList.append(phase)
-		return len(self._phaseList)-1
+	def append_phase(self, phase):
+		self._phase_list.append(phase)
+		return len(self._phase_list) - 1
 		
-	def getSharedDict(self):
-		return self._sharedDict
+	def get_shared_dict(self):
+		return self._shared_dict
 
-	def getPlayerList(self):
-		return self._playerList
+	def get_player_list(self):
+		return self._player_list
 
-	def setPlayerResult(self, pid, result):
-		self._resultDict[pid] = result
+	def set_player_result(self, pid, result):
+		self._result_dict[pid] = result
 
-	def setAllPlayerResult(self, result):
-		for name, res in self._resultDict.iteritems():
+	def set_all_player_result(self, result):
+		for name, res in self._result_dict.iteritems():
 			if res != 'error':
-				self._resultDict[name] = result
+				self._result_dict[name] = result
 
-	def getPlayerResult(self, pid):
-		return self._resultDict[pid]
+	def get_player_result(self, pid):
+		return self._result_dict[pid]
 
-	def notify(self, messageType, dictData):
-		self._room.notify(messageType, dictData)
+	def notify(self, message_type, dict_data):
+		self._game_server.notify(message_type, dict_data)
