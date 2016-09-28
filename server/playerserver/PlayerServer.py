@@ -26,6 +26,7 @@ class PlayerServer(tornado.tcpserver.TCPServer):
     @gen.coroutine
     def _accept_handler(self, stream):
         recv = yield stream.read_bytes(256, partial=True)
+        print recv
         msg = json.loads(recv)
         """
             msg = {"msg" : "user_info", "msg_type" : "init", "user_data" : {"username" : userid }}

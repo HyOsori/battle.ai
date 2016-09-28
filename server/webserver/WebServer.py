@@ -27,6 +27,7 @@ class WebSocketServer(tornado.websocket.WebSocketHandler):
         self.web_client_list[self] = new_attendee
 
     def on_message(self, message):
+        print message
         request = json.loads(message)
         try:
             msg = request[MSG]
