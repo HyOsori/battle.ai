@@ -18,6 +18,7 @@ USER = "user"
 
 MSG_TYPE = "msg_type"
 GAME_DATA = "game_data"
+DATA = "data"
 ERROR = "error"
 ERROR_MSG = "error_msg"
 ROUND_RESULT = "round_result"

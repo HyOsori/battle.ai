@@ -8,8 +8,11 @@ from playerserver.PlayerServer import PlayerServer
 from webserver.WebServer import WebServer
 from webserver.WebServer import WebSocketServer
 
+import logging
+
 TCP_PORT = 9001
 WEB_PORT = 9000
+
 
 class MainServer:
     def __init__(self):
@@ -28,11 +31,17 @@ class MainServer:
         )
 
     def run(self):
+        '''
+        Start server
+        run webserver and tcpserver
+        webserver : manage attendee
+        tcpserever : manage ai_client
+        '''
         io_loop = tornado.ioloop.IOLoop.current()
         self.tcp_server.listen(TCP_PORT)
         self.app.listen(WEB_PORT)
 
-        print("IO LOOP START !!")
+        logging.debug("IOLoop is started")
         io_loop.start()
 
 if __name__ == "__main__":

@@ -12,6 +12,8 @@ from server.User import Player
 
 from tornado import gen
 
+import logging
+
 
 class PlayerServer(tornado.tcpserver.TCPServer):
     def __init__(self, web_client_list, battle_ai_list):
@@ -20,17 +22,32 @@ class PlayerServer(tornado.tcpserver.TCPServer):
         self.web_client_list = web_client_list
 
     def handle_stream(self, stream, address):
-        print("accept client")
-        tornado.ioloop.IOLoop.current().spawn_callback(self._accept_handler, stream)
+        '''
+        when ai client connect to server this function is run
+        and spawn_callback (__accept handler)
+        :param stream: ai client's stream
+        :param address:  ai client's ip address
+        '''
+        logging.debug("accept client is done")
+        tornado.ioloop.IOLoop.current().spawn_callback(self.__accept_handler, stream)
 
     @gen.coroutine
-    def _accept_handler(self, stream):
+    def __accept_handler(self, stream):
+        '''
+        this function accept user_id
+        receive protocol is
+            msg = {"msg" : "user_info", "msg_type" : "init", "data" : {"username" : userid }}
+        if user_id is valid - return y
+        else - return n
+
+        :param stream:  ai_client's stream
+        '''
+        # TODO : set protocol of user_info, and handle exception of every case
+
         recv = yield stream.read_bytes(256, partial=True)
-        print recv
+        logging.debug(recv)
         msg = json.loads(recv)
-        """
-            msg = {"msg" : "user_info", "msg_type" : "init", "user_data" : {"username" : userid }}
-        """
+
         username = msg["user_data"]["username"]
 
         if username in self.battle_ai_list.keys():
@@ -49,7 +66,12 @@ class PlayerServer(tornado.tcpserver.TCPServer):
 
 
     def _on_close(self, username):
-        print 'Socket ' + username + ' Closed'
+        '''
+        when stream is closed this funciton is run
+        :param username: ai client user name
+        '''
+
+        logging.debug(str(username)+"'s stream is closed")
 
         try:
             self.battle_ai_list.pop(username)

@@ -4,6 +4,7 @@ import json
 import time
 from server.m_format import *
 
+import logging
 
 """
 GameServer (for all games, abstract class)
@@ -35,19 +36,22 @@ class GameServer:
         '''
         :param
         round_num: number of round to play game
-        룸에 들어온 플레이어의 게임 진행을 다루는 함수
+        handle game playing
         '''
         self.turns = self._select_turns(self.room.player_list)
-        print self.turns
+
         for turn in self.turns:
+            logging.debug("=====Are You Ready=====")
             self.game_logic.on_start(turn)
+            logging.debug("==================Game Start==================")
             print "START"
             for player in self.room.player_list:
                 self.q.put(player)
                 self._player_handler(player)
             yield self.q.join()
-        print "END"
+            logging.debug("==============Game End=============")
         self.destroy_room()
+        logging.debug("==========Destroy Room==========")
 
     def _select_turns(self, players):
         turn = [player.get_pid() for player in players]
