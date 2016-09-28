@@ -1,0 +1,93 @@
+html {
+	display:flex;
+	align-items:center;
+	justify-content:center;
+	width:100%;
+	height:100%;
+}
+body {
+	margin:auto;
+	position:relative;
+	width:65%;
+}
+body:before {
+	content:"";
+	display:block;
+	padding-top:70%;
+}
+#id_container {
+    display:flex;
+	margin:auto;
+	flex-direction:column;
+	width:100%;
+	height:100%;
+	position:absolute;
+	top:0;
+	right:0;
+	left:0;
+	bottom:0;
+	padding:5px;
+
+    border:1px solid black;
+}
+#id_title {
+	flex-grow:1;
+}
+#id_gameMessage_second {
+	flex-grow:1;
+}
+#id_context {
+	display:flex;
+	flex-grow:20;
+	padding:5px;
+}
+#id_main {
+	display:flex;
+	flex-direction:column;
+	flex-grow:7;
+}
+#id_setSpeed {
+
+}
+#id_side {
+	display:flex;
+	flex-direction:column;
+	flex-grow:2;
+}
+#id_log {
+	flex-grow:3;
+	margin:5px;
+}
+#id_board_canvas {
+	flex-grow:10;
+	margin:5px;
+}
+#id_messages {
+	flex-grow:1;
+	margin:5px;
+	max-height:250px;
+}
+#id_list_ul {
+	flex-grow:20;
+	padding:5px;
+	margin:5px;
+}
+#id_list_ul li {
+	margin:5px;
+}
+#id_btnContainer {
+	display:flex;
+	flex-grow:1;
+}
+#id_dummyMatch_btn {
+	flex-grow:1;
+	margin:5px;
+}
+#id_match_btn {
+	flex-grow:1;
+	margin:5px;
+}
+#id_conn_btn {
+	flex-grow:1;
+	margin:5px;
+}

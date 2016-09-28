@@ -1,0 +1,11 @@
+#id_board_canvas {
+    border-style:solid;
+    float:left;
+    margin:0px;
+}
+#id_gameMessage_second {
+    text-align:center;
+    margin:0px;
+    padding:0px;
+    font-size:150%;
+}

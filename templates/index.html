@@ -1,22 +1,36 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <link rel="stylesheet" type="text/css" href="{{ static_url('design.css')}}" >
+        <link rel="stylesheet" type="text/css" href="{{ static_url('frame.css')}}" >
+        <link rel="stylesheet" type="text/css" href="{{ static_url('lobby.css')}}" >
+        <link rel="stylesheet" type="text/css" href="{{ static_url('ingame.css')}}" >
+        <link rel="stylesheet" type="text/css" href="{{ static_url('game_result.css')}}" >
         <link rel="stylesheet" type="text/css" href="{{ static_url('alertify.core.css')}}" />
         <link rel="stylesheet" type="text/css" href="{{ static_url('alertify.default.css')}}" />
     </head>
     <body>
-    <div id="id_container">
-        <div id="id_gameMessage">Othello</div>
-        <div id="id_gameMessage_second"></div>
-        <canvas id="id_board_canvas"></canvas>
-        <ul id="id_gameResults_ul"></ul>
-        <button id="id_goToLobby_btn">home</button>
-        <input type="button" id="id_conn_btn" value="connect websocket" />
-        <ul id="id_list_ul"></ul>
-        <button id="id_match_btn" disabled="true">match</button>
-        <div id="id_messages"></div>
-    </div>
+        <div id="id_container">
+			<div id="id_title">Othello</div>
+            <div id="id_gameMessage_second"></div>
+            <div id="id_context">
+				<div id="id_main">
+                    <input type="range" id="id_setSpeed" max="5" min="1"/>
+					<div id="id_log">game log</div>
+                    <canvas id="id_board_canvas"></canvas>
+					<div id="id_messages"></div>
+				</div>
+				<div id="id_side">
+                    <input type="button" id="id_conn_btn" value="connect websocket" />
+					<ul id="id_list_ul"></ul>
+					<ul id="id_gameResults_ul"></ul>
+                    <div id="id_btnContainer">
+					    <input type="button" id="id_goToLobby_btn" value="home" />
+                        <button id="id_dummyMatch_btn" disabled="true">Dummy Match</button>
+                        <button id="id_match_btn" disabled="true">Match</button>
+                    </div>
+				</div>
+			</div>
+		</div>
         <div id="id_baskin_message" class="class_ingame"></div>
         <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
         <script type="text/javascript" src="{{ static_url('alertify.js') }}"></script>

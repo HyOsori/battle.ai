@@ -4,6 +4,11 @@ var MAX_MATCH_USER_CNT = 2;
 var list = [];
 var messageContainer = document.getElementById('id_messages');
 var userList = document.getElementById('id_list_ul');
+var setSpeed = document.getElementById('id_setSpeed');
+
+$("#id_setSpeed").bind('click',function() {
+    console.log(setSpeed.value);
+})
 
 function goToLobby(){
     $("#id_board_canvas").css("display","none");
@@ -15,8 +20,10 @@ function goToLobby(){
     $("#id_match_btn").css("display","");
     $("#id_messages").css("display","");
     $("#id_gameMessage_second").css("display","none");
+    $("#id_log").css("display","");
+    $("#id_dummyMatch_btn").css("display","");
 
-    $("#id_gameMessage").html("Othello").css("text-align","left");
+    $("#id_title").html("Othello").css("text-align","left");
 }
 
 function goToInGame(){
@@ -27,8 +34,10 @@ function goToInGame(){
     $("#id_conn_id").css("display","none");
     $("#id_list_ul").css("display","none");
     $("#id_match_btn").css("display","none");
-    $("#id_messages").css("display","");
+    $("#id_messages").css("display","none");
     $("#id_gameMessage_second").css("display","");
+    $("#id_log").css("display","none");
+    $("#id_dummyMatch_btn").css("display","none");
 
     for(var i=0; i<8; i++){
         for(var j=0; j<8; j++){
@@ -45,8 +54,10 @@ function goToGameResult(){
     $("#id_conn_id").css("display","none");
     $("#id_list_ul").css("display","none");
     $("#id_match_btn").css("display","none");
-    $("#id_messages").css("display","");
+    $("#id_messages").css("display","none");
     $("#id_gameMessage_second").css("display","none");
+    $("#id_log").css("display","none");
+    $("#id_dummyMatch_btn").css("display","none");
 
     for(var i=0; i<8; i++){
         for(var j=0; j<8; j++){
@@ -79,15 +90,6 @@ function clickHandler(event) {
     }
 }
 
-//Size of elements
-$("#id_container").css({"width":window.innerHeight*0.95*1.25,"height":window.innerHeight*0.95});
-$("#id_gameMessage").css("height",window.innerHeight*0.95*0.1);
-$("#id_gameMessage_second").css("height",window.innerHeight*0.95*0.07);
-$("#id_list_ul").css({"width":window.innerHeight*0.95*1.25*0.2,"height":window.innerHeight*0.95*0.8});
-$("#id_board_canvas").attr({"width":window.innerHeight*0.95*0.8,"height":window.innerHeight*0.95*0.8});
-$("#id_gameResults_ul").css({"width":window.innerHeight*0.95*1.25*0.25,"height":window.innerHeight*0.95*0.79});
-$("#id_messages").css({"width":window.innerHeight*0.95*1.25*0.6,"height":window.innerHeight*0.95*0.25});
-$("#id_goToLobby_btn").css({"width":window.innerHeight*0.95*1.25*0.25,"height":window.innerHeight*0.95*0.05});
 
 function getSelected(){
     var selectedUser = [];

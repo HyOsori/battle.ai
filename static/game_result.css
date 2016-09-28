@@ -1,0 +1,25 @@
+#id_gameResults_ul {
+    list-style:none;
+    min-width:210px;
+    padding:2px;
+    border-style:solid;
+    overflow-y:scroll;
+    float:right;
+    margin:0px;
+    background-color:white;
+}
+#id_gameResults_ul li {
+    border-style:solid;
+    border-color:black;
+    padding:5px 10px 5px 10px;
+    margin:4px;
+    border-radius:5px;
+    cursor:pointer;
+}
+#id_gameResults_ul .class_selected {
+    border-color:red;
+}
+#id_goToLobby_btn {
+    float:right;
+    margin:10px 0px;
+}

@@ -1,0 +1,63 @@
+#id_title {
+    text-align:left;
+    padding:10px;
+}
+#id_log {
+    background:gainsboro;
+    border-radius:5px;
+}
+#id_list_ul {
+    list-style:none;
+    min-width:210px;
+    padding:2px;
+    border:2px solid white;
+    border-radius:10px;
+    overflow-y:scroll;
+    float:right;
+    margin:0px;
+    background-color:gainsboro;
+}
+#id_list_ul li {
+    border:2px solid white;
+    padding:5px 10px 5px 10px;
+    margin:4px;
+    border-radius:5px;
+    cursor:pointer;
+    text-align:center;
+}
+#id_list_ul .class_selected {
+    background-color:whitesmoke;
+}
+#id_list_ul li:hover {
+    background-color:whitesmoke;
+}
+#id_messages {
+    background:black;
+    color:white;
+    overflow-y:auto;
+}
+#id_btnContainer {
+
+}
+#id_dummyMatch_btn {
+    border:1px solid white;
+    background:gainsboro;
+    color:black;
+    border-radius:5px;
+}
+#id_match_btn {
+    border:1px solid white;
+    background:gainsboro;
+    color:black;
+    border-radius:5px;
+}
+#id_match_btn .disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+#id_conn_btn {
+    border:1px solid white;
+    background:gainsboro;
+    color:black;
+    border-radius:5px;
+}

@@ -56,7 +56,7 @@ function highLight(x,y,color){
 
 function gameStart(user_list) {
     users = user_list;
-    $("#id_gameMessage").html("● "+users[0]+"  vs  "+users[1]+" ○").css("text-align","center");
+    $("#id_title").html("● "+users[0]+"  vs  "+users[1]+" ○").css("text-align","center");
     $("#id_gameMessage_second").html("Round "+round);
 }
 
@@ -75,11 +75,11 @@ function recvGameResult(data) {
     for (var key in data.game_data ) {
         if (data.game_data[key] == "win") {
             alertify.alert(key + " 승리!")
-            $("#id_gameMessage").html(key+" WIN!").css("text-align","center");
+            $("#id_title").html(key+" WIN!").css("text-align","center");
         }
         else if (data.game_data[key] == "draw") {0
             alertify.alert("무승부!")
-            $("#id_gameMessage").html("DRAW").css("text-align", "center");
+            $("#id_title").html("DRAW").css("text-align", "center");
         }
     }
     goToGameResult();
