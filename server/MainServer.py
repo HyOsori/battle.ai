@@ -8,6 +8,8 @@ from playerserver.PlayerServer import PlayerServer
 from webserver.WebServer import WebServer
 from webserver.WebServer import WebSocketServer
 
+TCP_PORT = 9001
+WEB_PORT = 9000
 
 class MainServer:
     def __init__(self):
@@ -27,8 +29,8 @@ class MainServer:
 
     def run(self):
         io_loop = tornado.ioloop.IOLoop.current()
-        self.tcp_server.listen(9001)
-        self.app.listen(9000)
+        self.tcp_server.listen(TCP_PORT)
+        self.app.listen(WEB_PORT)
 
         print("IO LOOP START !!")
         io_loop.start()
