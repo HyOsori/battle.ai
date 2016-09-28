@@ -42,9 +42,9 @@ class GameServer:
 
         for turn in self.turns:
             logging.debug("=====Are You Ready=====")
-            # TODO: ready check!!   bb
-            self.game_logic.onStart(turn)
+            self.game_logic.on_start(turn)
             logging.debug("==================Game Start==================")
+            print "START"
             for player in self.room.player_list:
                 self.q.put(player)
                 self._player_handler(player)
