@@ -79,3 +79,20 @@
 		background: #5CB811;
 		background: rgba(92,184,17,.9);
 	}
+	.alertify-log-blackwin {
+		background: #333333;
+		color: #EEE;
+		border: 2px solid #EEE; /* browsers that don't support rgba */
+		text-shadow: 0px 0px 0 rgba(0,0,0,.5);
+	}
+	.alertify-log-whitewin {
+		background: #EEEEEE;
+		color: #000;
+		border: 2px solid #333; /* browsers that don't support rgba */
+		text-shadow: 0px 0px 0 rgba(0,0,0,.5);
+	}
+	.alertify-log-draw {
+		background: #999999;
+		color: #000;
+		text-shadow: 1px 1px 0 rgba(255,255,255,.5);
+	}
