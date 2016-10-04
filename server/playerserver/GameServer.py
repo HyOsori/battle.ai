@@ -4,6 +4,7 @@ import json
 import time
 from server.m_format import *
 
+import logging
 
 """
 GameServer (for all games, abstract class)
@@ -21,7 +22,7 @@ class GameServer:
         self.web_client_list = web_client_list
         self.q = queues.Queue()
 
-        self.time_delay = 0.5
+        self.time_delay = 0.1
 
         self.game_result = {}
         self.error_msg = "none"
@@ -29,26 +30,33 @@ class GameServer:
         self.current_msg_type = -1
         self.error_code = 1
         self.turns = []
-        #self.byo_yomi = byo_yomi()
-        # end code [0-normal end, 1-abnormal end]
 
     @gen.coroutine
-    def game_handler(self):
+    def game_handler(self, round_num = 0):
+        '''
+        :param
+        round_num: number of round to play game
+        handle game playing
+        '''
         self.turns = self._select_turns(self.room.player_list)
-        print self.turns
+
         for turn in self.turns:
+            logging.debug("=====Are You Ready=====")
             self.game_logic.on_start(turn)
+            logging.debug("==================Game Start==================")
             print "START"
             for player in self.room.player_list:
                 self.q.put(player)
                 self._player_handler(player)
             yield self.q.join()
-        print "END"
+            logging.debug("==============Game End=============")
         self.destroy_room()
+        logging.debug("==========Destroy Room==========")
 
     def _select_turns(self, players):
         turn = [player.get_pid() for player in players]
-        return [turn, turn]
+
+        return [turn, [turn[1], turn[0]]]
 
     def _player_handler(self, player):
         raise NotImplementedError
@@ -87,6 +95,7 @@ class GameServer:
             self.error_code = 0
             data = {MSG: GAME_DATA, MSG_TYPE: ROUND_RESULT, GAME_DATA: game_data}
         else:
+            # TODO: do not excute this code, - go to destory_room naturally
             self.error_code = 1
             data = {MSG: GAME_RESULT, ERROR: self.error_code, ERROR_MSG: error_msg, GAME_DATA: game_data}
 
@@ -113,9 +122,8 @@ class GameServer:
         for attendee in self.room.attendee_list:
             attendee.send(json_data)
 
-
     def destroy_room(self):
-
+        # TODO: game_result must chagned to real game_result, not round result
         data = {MSG: GAME_RESULT, ERROR: self.error_code, ERROR_MSG: self.error_msg, GAME_DATA: self.game_result}
 
         json_data = json.dumps(data)
@@ -123,7 +131,7 @@ class GameServer:
             attendee.send(json_data)
 
         print self.room.player_list
-        print "-----------------------------------------------"
+        print "-----------------Destory Room------------------------------"
 
         for player in self.room.player_list:
             self.battle_ai_list[player.get_pid()] = player
@@ -138,32 +146,3 @@ class GameServer:
 
     def save_game_data(self):
         pass
-
-
-# class byo_yomi:
-#     def __init__(self, base_time = 0, turn_time = 30, turn_num = 1):
-#         self.base_time = base_time
-#         self.turn_time = turn_time
-#         self.turn_num = turn_num
-#
-#     def start_timer(self):
-#         if self.base_time > 0:
-#             self.start_time = time.clock()  ## time.clock() is affected by time.sleep()
-#         elif self.base_time == 0:
-#             self.count_time(self.turn_time)
-#
-#     def stop_timer(self):
-#
-#         pass
-#
-#     def timeout(self):
-#
-#         pass
-#
-#     def count_time(self, time_limit):
-#
-#         self.current_time = time.clock()
-#
-#         if self.start_time - self.current_time >  time_limit :
-#             self.timeout()
-
