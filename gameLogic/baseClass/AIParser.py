@@ -1,7 +1,6 @@
 
 #-*-coding:utf-8-*-
 
-
 class AIParser:
     def init_parser(self, client, username):
         '''
