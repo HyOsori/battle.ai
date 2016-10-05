@@ -15,10 +15,17 @@ class Client:
         self._sock = socket(AF_INET, SOCK_STREAM)
         self._parser = None
 
+        self.bis_connect = False
+
+        self.__remain_packet = "";
+
         try:
             self._sock.connect((host,port))
+            self.bis_connect = True
         except:
             print '연결에 실패 하였습니다.'
+            return
+
 
         print '서버에 연결 되었습니다.'
 
@@ -27,6 +34,9 @@ class Client:
 
     def __del__(self):
         self._sock.close()
+
+    def is_connect(self):
+        return self.bis_connect
 
     def getUsername(self):
         return self._username
@@ -53,10 +63,62 @@ class Client:
         self._sock.send(json_msg)
 
     def recvGameData(self):
-        game_data = self._sock.recv(1024)
-        decoding_data = json.loads(game_data)
-        print 'recv data',decoding_data
-        return decoding_data
+        if self.__remain_packet == "":
+            game_data = self._sock.recv(1024)
+
+            cnt_open_brace = 0
+            i = 0
+            while i < len(game_data):
+                if game_data[i] == '{':
+                    cnt_open_brace += 1
+                elif game_data[i] == '}':
+                    cnt_open_brace -= 1
+                    if cnt_open_brace == 0:
+                        break
+                i += 1
+
+            if i < len(game_data) - 1:  # JSON 하나 자르고 남은 것이 있는 상태
+                self.__remain_packet = game_data[i + 1:]
+                game_data = game_data[:i + 1]
+                print 'cut game_data', game_data
+                decoding_data = json.loads(game_data)
+                return decoding_data
+            elif i == len(game_data) - 1:  # 딱 떨어지는 JSON을 받음
+                self.__remain_packet = ""
+                decoding_data = json.loads(game_data)
+                return decoding_data
+            else:  # 미완성된 JSON을 받아놓은 상태
+                self.__remain_packet = game_data[i + 1:]
+
+        while True:
+            cnt_open_brace = 0
+            i = 0
+            while i < len(self.__remain_packet):
+                if self.__remain_packet[i] == '{':
+                    cnt_open_brace += 1
+                elif self.__remain_packet[i] == '}':
+                    cnt_open_brace -= 1
+                    if cnt_open_brace == 0:
+                        break
+                i += 1
+
+            if i < len(self.__remain_packet) - 1:  # JSON 하나 자르고 남은 것이 있는 상태
+                game_data = self.__remain_packet[:i + 1]
+                self.__remain_packet = self.__remain_packet[i + 1:]
+                print 'cut game_data', game_data
+                decoding_data = json.loads(game_data)
+                return decoding_data
+            elif i == len(self.__remain_packet) - 1:  # 딱 떨어지는 JSON을 받음
+                game_data = self.__remain_packet
+                self.__remain_packet = ""
+                decoding_data = json.loads(game_data)
+                return decoding_data
+            else:  # 미완성된 JSON을 받아놓은 상태
+                game_data = self._sock.recv(1024)
+                print "seungmin",self.__remain_packet
+                self.__remain_packet += game_data
+
+                continue
 
     #이 부분도 그냥 Parser에 생성 해도 좋을듯
     def makeSendMsg(self, msg_type, game_data):
