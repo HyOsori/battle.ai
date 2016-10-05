@@ -15,6 +15,13 @@ body:before {
 	display:block;
 	padding-top:70%;
 }
+li {
+	margin:5px;
+}
+button {
+	flex-grow:1;
+	margin:5px;
+}
 #id_container {
     display:flex;
 	margin:auto;
@@ -44,7 +51,7 @@ body:before {
 #id_main {
 	display:flex;
 	flex-direction:column;
-	flex-grow:7;
+	flex-grow:5;
 }
 #id_setSpeed {
 
@@ -56,38 +63,37 @@ body:before {
 }
 #id_log {
 	flex-grow:3;
+	padding:5px;
+	margin:5px;
+}
+#id_log li {
+	margin:5px;
+}
+#id_canvasContainer {
+	flex-grow:1;
 	margin:5px;
 }
 #id_board_canvas {
-	flex-grow:10;
-	margin:5px;
+	position:relative;
 }
 #id_messages {
 	flex-grow:1;
 	margin:5px;
 	max-height:250px;
 }
+#id_chart {
+	flex-grow:1;
+}
 #id_list_ul {
 	flex-grow:20;
 	padding:5px;
 	margin:5px;
 }
-#id_list_ul li {
+#id_gameResults_ul {
+	flex-grow:20;
 	margin:5px;
 }
 #id_btnContainer {
 	display:flex;
 	flex-grow:1;
-}
-#id_dummyMatch_btn {
-	flex-grow:1;
-	margin:5px;
-}
-#id_match_btn {
-	flex-grow:1;
-	margin:5px;
-}
-#id_conn_btn {
-	flex-grow:1;
-	margin:5px;
 }

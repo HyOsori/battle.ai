@@ -1,28 +1,53 @@
 var canvas = $("#id_board_canvas")[0];
 var ctx = canvas.getContext("2d");
 
-var round = 1;
 var interval = (canvas.width-20)/8;
-
+var round = 1;
+var size = $("#id_side").css('height');
 var users;
 
-//draw lines of board
-ctx.beginPath();
-for (var i=0; i<9; i++){
-    ctx.moveTo(10,10+(interval*i));
-    ctx.lineTo(10+(interval*8),10+(interval*i));
-    ctx.stroke();
-}
-for (var i=0; i<9; i++){
-    ctx.moveTo(10+(interval*i),10);
-    ctx.lineTo(10+(interval*i),10+(interval*8));
-    ctx.stroke();
-}
-ctx.closePath();
+$(window).resize(ResizeCanvas);
 
-function drawCircle(x,y,color){//draw stone
+function ResizeCanvas() {
+    size = $("#id_side").css('height');
+    $("#id_board_canvas").attr({"width": size, "height": size});
+    interval = (canvas.width-20)/8;
+    ClearBoard();
+    DrawLines();    
+}
+
+function goToInGame(){
+    $("#id_canvasContainer").css("display","");
+    $("#id_gameResults_ul").css("display","none");
+    $("#id_btnContainer").css("display","none");
+    $("#id_conn_btn").css("display","none");
+    $("#id_list_ul").css("display","none");
+    $("#id_messages").css("display","none");
+    $("#id_gameMessage_second").css("display","");
+    $("#id_log").css("display","none");
+    $("#id_chart").css("display","");
+    $("#id_setSpeed").css("display","none");
+
+    ResizeCanvas();
+}
+
+function DrawLines() {
     ctx.beginPath();
-    //arc(x_center,y_center,radius,startAngle,endAngle,anticlockwise)
+    for (var i=0; i<9; i++){
+        ctx.moveTo(10,10+(interval*i));
+        ctx.lineTo(10+(interval*8),10+(interval*i));
+        ctx.stroke();
+    }
+    for (var i=0; i<9; i++){
+        ctx.moveTo(10+(interval*i),10);
+        ctx.lineTo(10+(interval*i),10+(interval*8));
+        ctx.stroke();
+    }
+    ctx.closePath();    
+}
+
+function drawCircle(x,y,color){
+    ctx.beginPath();
     var endAngle = Math.PI * 2;
     if (color == 1){
         ctx.arc(10+(interval/2)+(interval*x),10+(interval/2)+(interval*y),(interval/2)-5,0,endAngle);
@@ -41,7 +66,16 @@ function drawCircle(x,y,color){//draw stone
     ctx.closePath();
 }
 
+function ClearBoard() {
+    for (var i=0; i<8; i++) {
+        for (var j=0; j<8; j++) {
+            drawCircle(j,i,0);
+        }
+    }
+}
+
 function highLight(x,y,color){
+    interval = (canvas.width-20)/8;
     ctx.beginPath();
     if (color == 1){
         ctx.fillStyle = "white"

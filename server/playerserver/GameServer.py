@@ -21,7 +21,7 @@ class GameServer:
         self.web_client_list = web_client_list
         self.q = queues.Queue()
 
-        self.time_delay = 0.5
+        self.time_delay = 0.1
 
         self.game_result = {}
         self.error_msg = "none"

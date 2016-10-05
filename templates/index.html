@@ -15,23 +15,36 @@
             <div id="id_context">
 				<div id="id_main">
                     <input type="range" id="id_setSpeed" max="5" min="1"/>
-					<div id="id_log">game log</div>
-                    <canvas id="id_board_canvas"></canvas>
+					<ul id="id_log">
+                        <li>log1</li>
+                        <li>log2</li>
+                        <li>log3</li>
+                        <li>log4</li>
+                        <li>log5</li>
+                        <li>log6</li>
+                        <li>log7</li>
+                        <li>log8</li>
+                        <li>log9</li>
+                        <li>log10</li>
+                    </ul>
+                    <div id ="id_canvasContainer">
+                        <canvas id="id_board_canvas"></canvas>
+                    </div>
 					<div id="id_messages"></div>
 				</div>
 				<div id="id_side">
-                    <input type="button" id="id_conn_btn" value="connect websocket" />
+                    <button id="id_conn_btn">connect websocket</button>
+                    <div id="id_chart"></div>
 					<ul id="id_list_ul"></ul>
 					<ul id="id_gameResults_ul"></ul>
                     <div id="id_btnContainer">
-					    <input type="button" id="id_goToLobby_btn" value="home" />
+					    <button id="id_goToLobby_btn">home</button>
                         <button id="id_dummyMatch_btn" disabled="true">Dummy Match</button>
                         <button id="id_match_btn" disabled="true">Match</button>
                     </div>
 				</div>
 			</div>
 		</div>
-        <div id="id_baskin_message" class="class_ingame"></div>
         <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
         <script type="text/javascript" src="{{ static_url('alertify.js') }}"></script>
         <script type="text/javascript" src="{{ static_url('lobby.js') }}"></script>

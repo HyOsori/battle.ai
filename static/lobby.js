@@ -6,64 +6,23 @@ var messageContainer = document.getElementById('id_messages');
 var userList = document.getElementById('id_list_ul');
 var setSpeed = document.getElementById('id_setSpeed');
 
-$("#id_setSpeed").bind('click',function() {
-    console.log(setSpeed.value);
-})
 
 function goToLobby(){
-    $("#id_board_canvas").css("display","none");
+    $("#id_canvasContainer").css("display","none");
     $("#id_gameResults_ul").css("display","none");
+    $("#id_btnContainer").css("display","");
     $("#id_goToLobby_btn").css("display","none");
     $("#id_conn_btn").css("display","");
-    $("#id_conn_id").css("display","");
     $("#id_list_ul").css("display","");
     $("#id_match_btn").css("display","");
     $("#id_messages").css("display","");
     $("#id_gameMessage_second").css("display","none");
     $("#id_log").css("display","");
     $("#id_dummyMatch_btn").css("display","");
+    $("#id_chart").css("display","none");
+    $("#id_setSpeed").css("display","");
 
     $("#id_title").html("Othello").css("text-align","left");
-}
-
-function goToInGame(){
-    $("#id_board_canvas").css("display","");
-    $("#id_gameResults_ul").css("display","none");
-    $("#id_goToLobby_btn").css("display","none");
-    $("#id_conn_btn").css("display","none");
-    $("#id_conn_id").css("display","none");
-    $("#id_list_ul").css("display","none");
-    $("#id_match_btn").css("display","none");
-    $("#id_messages").css("display","none");
-    $("#id_gameMessage_second").css("display","");
-    $("#id_log").css("display","none");
-    $("#id_dummyMatch_btn").css("display","none");
-
-    for(var i=0; i<8; i++){
-        for(var j=0; j<8; j++){
-            drawCircle(j,i,0);
-        }
-    }
-}
-
-function goToGameResult(){
-    $("#id_board_canvas").css("display","");
-    $("#id_gameResults_ul").css("display","");
-    $("#id_goToLobby_btn").css("display","");
-    $("#id_conn_btn").css("display","none");
-    $("#id_conn_id").css("display","none");
-    $("#id_list_ul").css("display","none");
-    $("#id_match_btn").css("display","none");
-    $("#id_messages").css("display","none");
-    $("#id_gameMessage_second").css("display","none");
-    $("#id_log").css("display","none");
-    $("#id_dummyMatch_btn").css("display","none");
-
-    for(var i=0; i<8; i++){
-        for(var j=0; j<8; j++){
-            drawCircle(j,i,0);
-        }
-    }
 }
 
 function checkSelected(){
@@ -112,7 +71,7 @@ if ("WebSocket" in window) {
 
     messageContainer.innerHTML = "WebSocket is supported by your Browser!";
     var ws = new WebSocket("ws://localhost:9000/websocket");
-    goToLobby()
+    goToLobby();
     ws.onopen = function (evt) {
         
     };
@@ -184,32 +143,12 @@ if ("WebSocket" in window) {
                     nowTurn = 1;
                 else if (data.game_data.now_turn == data.game_data.white)
                     nowTurn = 2;
-                highLight(data.game_data.y, data.game_data.x, nowTurn)
+                highLight(data.game_data.y, data.game_data.x, nowTurn) // Interchange x, y temporarily
             }
-            else if (data.msg_type == "notify_finish") {
-                var roundScoreResult = data.game_data;
-                roundResult["board"]=roundBoardResult;
-                roundResult["score"]=roundScoreResult;
-                roundResult["round"]=round;
-                gameResults.push(roundResult);
-                roundResult=[];
-
-                if(roundScoreResult["black_score"] > roundScoreResult["white_score"])
-                    appendToList(round,roundScoreResult["black_score"],roundScoreResult["white_score"],"black","white");
-                else if(roundScoreResult["black_score"] < roundScoreResult["white_score"])
-                    appendToList(round,roundScoreResult["black_score"],roundScoreResult["white_score"],"white","black");
-                if(roundScoreResult["black_score"] == roundScoreResult["white_score"])
-                    appendToList(round,roundScoreResult["black_score"],roundScoreResult["white_score"],"gainsboro","black");
-
-                round++;
-
+            else if (data.msg_type == "notify_finish") { // A round is ended
+                SaveRoundResult(data);
                 $("#id_gameMessage_second").html("Round "+round);
-
-                for(var i=0; i<8; i++){
-                    for(var j=0; j<8; j++){
-                        drawCircle(j,i,0);
-                    }
-                }
+                ClearBoard();
             }
         }
         else if (data.msg == "game_result") {
