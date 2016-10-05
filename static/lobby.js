@@ -52,15 +52,18 @@ function clickHandler(event) {
 
 function getSelected(){
     var selectedUser = [];
+    var speed = setSpeed.value;
     for (var i=0; i<userList.childNodes.length; i++){
         var child = userList.childNodes[i];
         if (child.className == 'class_selected'){
             selectedUser.push(child.innerText);
         }
     }
+
     var json = new Object();
     json.msg = "request_match";
-    json.users = selectedUser;
+    json.data.users = selectedUser;
+    json.data.speed = speed;
     var req = JSON.stringify(json);
     ws.send( req );
 }

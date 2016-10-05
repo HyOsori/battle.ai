@@ -11,11 +11,11 @@
     <body>
         <div id="id_container">
 			<div id="id_title">Othello</div>
-            <div id="id_gameMessage_second"></div>
+            <div id="id_gameMessage_second" class="class_ingame"></div>
             <div id="id_context">
 				<div id="id_main">
-                    <input type="range" id="id_setSpeed" max="5" min="1"/>
-					<ul id="id_log">
+                    <input type="range" id="id_setSpeed" class="class_lobby" max="5" min="1"/>
+					<ul id="id_log" class="class_lobby">
                         <li>log1</li>
                         <li>log2</li>
                         <li>log3</li>
@@ -27,20 +27,20 @@
                         <li>log9</li>
                         <li>log10</li>
                     </ul>
-                    <div id ="id_canvasContainer">
+                    <div id ="id_canvasContainer" class="class_ingame class_gameResult">
                         <canvas id="id_board_canvas"></canvas>
                     </div>
-					<div id="id_messages"></div>
+					<div id="id_messages" class="class_lobby"></div>
 				</div>
 				<div id="id_side">
-                    <button id="id_conn_btn">connect websocket</button>
-                    <div id="id_chart"></div>
-					<ul id="id_list_ul"></ul>
-					<ul id="id_gameResults_ul"></ul>
+                    <button id="id_conn_btn" class="class_lobby">connect websocket</button>
+                    <div id="id_chart" class="class_ingame"></div>
+					<ul id="id_list_ul" class="class_lobby"></ul>
+					<ul id="id_gameResults_ul" class="class_gameResult"></ul>
                     <div id="id_btnContainer">
-					    <button id="id_goToLobby_btn">home</button>
-                        <button id="id_dummyMatch_btn" disabled="true">Dummy Match</button>
-                        <button id="id_match_btn" disabled="true">Match</button>
+					    <button id="id_goToLobby_btn" class="class_gameResult">home</button>
+                        <button id="id_dummyMatch_btn" class="class_lobby" disabled="true">Dummy Match</button>
+                        <button id="id_match_btn" class="class_lobby" disabled="true">Match</button>
                     </div>
 				</div>
 			</div>
