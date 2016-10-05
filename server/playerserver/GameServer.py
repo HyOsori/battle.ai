@@ -4,7 +4,7 @@ import json
 import time
 from server.m_format import *
 
-import logging
+import server.ServerLog as logging
 
 """
 GameServer (for all games, abstract class)
@@ -59,25 +59,47 @@ class GameServer:
         return [turn, [turn[1], turn[0]]]
 
     def _player_handler(self, player):
+        '''
+        handle player's game playing
+        :param player: player object
+        '''
         raise NotImplementedError
 
-    def request(self, pid, msg_type, game_data):
+    def request(self, pid, msg_type, data):
+        '''
+        callback function
+        game logic call this function to request player's response
+        :param pid: player id
+        :param msg_type: message type
+        :param data: message data
+        '''
+
         for p in self.room.player_list:
             if p.get_pid() == pid:
                 player = p
+                break
+
         self.current_msg_type = msg_type
 
-        data = {MSG: GAME_DATA, MSG_TYPE: msg_type, GAME_DATA: game_data}
-        json_data = json.dumps(data)
-        print "send to : "+player.get_pid()
-        print json_data
+        message = {MSG: GAME_DATA, MSG_TYPE: msg_type, GAME_DATA: data}
+        json_data = json.dumps(message)
+
+        logging.debug("send to "+player.get_pid())
+        logging.debug(json_data)
 
         player.send(json_data)
-        # self.byo_yomi.start_timer()
 
-    def notify(self, msg, game_data):
-        data = {MSG: GAME_DATA, MSG_TYPE: msg, GAME_DATA: game_data}
-        json_data = json.dumps(data)
+    def notify(self, msg_type, data):
+        '''
+        callback function
+        game logic call this function to notify game data
+        :param msg_type: notifying message
+        :param data: message data
+        '''
+        message = {MSG: GAME_DATA, MSG_TYPE: msg_type, GAME_DATA: data}
+        json_data = json.dumps(message)
+
+        logging.debug(json_data)
 
         for player in self.room.player_list:
             player.send(json_data)
@@ -85,21 +107,24 @@ class GameServer:
         for attendee in self.room.attendee_list:
             attendee.send(json_data)
 
-    def onEnd(self, is_valid_end, game_data, error_msg="none"):
-        print "On end is called !!!!!! bbbbb"
+    def on_end(self, is_valid_end, message):
+        """
+        callback function
+        when game is ended this function is called by GameLogic
+        :param is_valid_end: 0 (normal end), 1 (abnormal end)
+        :param message: game result information
+        """
+        logging.debug("on_end() function is called")
 
-        self.game_result = game_data
-        self.error_msg = error_msg
+        self.game_result = message
 
         if is_valid_end:
-            self.error_code = 0
-            data = {MSG: GAME_DATA, MSG_TYPE: ROUND_RESULT, GAME_DATA: game_data}
+            message = {MSG: GAME_DATA, MSG_TYPE: ROUND_RESULT, GAME_DATA: message}
         else:
             # TODO: do not excute this code, - go to destory_room naturally
-            self.error_code = 1
-            data = {MSG: GAME_RESULT, ERROR: self.error_code, ERROR_MSG: error_msg, GAME_DATA: game_data}
+            message = {MSG: GAME_HANDLER, MSG_TYPE: GAME_RESULT, GAME_DATA: DATA}
 
-            json_data = json.dumps(data)
+            json_data = json.dumps(message)
 
             for player in self.room.player_list:
                 player.send(json_data)
@@ -114,7 +139,7 @@ class GameServer:
                 self.q.get()
             return
 
-        json_data = json.dumps(data)
+        json_data = json.dumps(message)
 
         for player in self.room.player_list:
             player.send(json_data)
@@ -123,6 +148,9 @@ class GameServer:
             attendee.send(json_data)
 
     def destroy_room(self):
+        '''
+        When all round is ended, room is destroyed. Clients get back to robby.
+        '''
         # TODO: game_result must chagned to real game_result, not round result
         data = {MSG: GAME_RESULT, ERROR: self.error_code, ERROR_MSG: self.error_msg, GAME_DATA: self.game_result}
 
@@ -130,15 +158,15 @@ class GameServer:
         for attendee in self.room.attendee_list:
             attendee.send(json_data)
 
-        print self.room.player_list
-        print "-----------------Destory Room------------------------------"
+        logging.debug(str(self.room.player_list))
+        logging.info("-----------------Destory room----------------------------")
 
         for player in self.room.player_list:
             self.battle_ai_list[player.get_pid()] = player
             for attendee in self.web_client_list.values():
                 attendee.notice_user_added(player.get_pid())
 
-    def set_delay_time(self, delay_time=0.5):
+    def set_delay_time(self, delay_time=0.1):
         self.time_delay = delay_time
 
     def delay_action(self):

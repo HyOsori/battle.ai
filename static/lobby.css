@@ -1,0 +1,49 @@
+ul {
+    list-style:none;
+    padding:2px;
+    border:2px solid white;
+    border-radius:10px;
+    background-color:gainsboro;
+}
+li {
+    border:2px solid white;
+    padding:5px 10px 5px 10px;
+    border-radius:5px;
+    cursor:pointer;
+}
+li:hover {
+    background-color:whitesmoke;
+}
+button {
+    border:1px solid white;
+    background:gainsboro;
+    color:black;
+    border-radius:5px;
+}
+#id_title {
+    text-align:left;
+    padding:10px;
+}
+#id_log {
+    overflow-y:scroll;
+}
+#id_log li {
+    text-align:left;
+}
+#id_list_ul {
+    overflow-y:scroll;
+}
+#id_list_ul li {
+    text-align:center;
+}
+#id_list_ul .class_selected {
+    background-color:whitesmoke;
+}
+#id_messages {
+    background:black;
+    color:white;
+    overflow-y:auto;
+}
+#id_btnContainer {
+
+}
