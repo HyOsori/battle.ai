@@ -15,11 +15,11 @@ RealTimeGameServer (for real time games, not yet)
 
 
 class GameServer:
-    def __init__(self, room, battle_ai_list, web_client_list, game_logic):
+    def __init__(self, room, player_list, attendee_list, game_logic):
         self.game_logic = game_logic
         self.room = room
-        self.battle_ai_list = battle_ai_list
-        self.web_client_list = web_client_list
+        self.player_list = player_list  # WHY NEEDED?
+        self.attendee_list = attendee_list  # WHY NEEDED?
         self.q = queues.Queue()
 
         self.time_delay = 0.1
@@ -34,9 +34,9 @@ class GameServer:
     @gen.coroutine
     def game_handler(self, round_num = 0):
         '''
-        :param
-        round_num: number of round to play game
-        handle game playing
+        Handle game playing
+
+        :param round_num: number of round to play game
         '''
         self.turns = self._select_turns(self.room.player_list)
 
@@ -55,6 +55,9 @@ class GameServer:
 
     def _select_turns(self, players):
         turn = [player.get_pid() for player in players]
+        #print len(turn)
+        #new_turn = self.perm(turn, 0, len(turn))
+        #print new_turn
 
         return [turn, [turn[1], turn[0]]]
 
@@ -162,15 +165,48 @@ class GameServer:
         logging.info("-----------------Destory room----------------------------")
 
         for player in self.room.player_list:
-            self.battle_ai_list[player.get_pid()] = player
-            for attendee in self.web_client_list.values():
+            self.player_list[player.get_pid()] = player
+            for attendee in self.attendee_list.values():
                 attendee.notice_user_added(player.get_pid())
 
     def set_delay_time(self, delay_time=0.1):
         self.time_delay = delay_time
 
+    @gen.coroutine
     def delay_action(self):
-        time.sleep(self.time_delay)
+        yield gen.sleep(2)
 
     def save_game_data(self):
         pass
+
+"""
+    def perm(self, players, num, size):
+        players = players
+        turn = []
+
+        if num == size:
+            for i in size:
+                turn[i] = players[i]
+                print turn[i]
+                if i < size-1:
+                    print ","
+                else:
+                    print "\n"
+        else:
+            j = num
+            while j < size:
+                self.swap(players[num], players[j])
+                self.perm(players, num+1, size)
+                self.swap(players[num], players[j])
+                j = j+1
+
+        return turn
+
+    def swap(self, a, b):
+        self.a = a
+        self.b = b
+
+        c = self.a
+        self.a = self.b
+        self.b = c
+        """
