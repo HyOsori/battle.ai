@@ -53,6 +53,7 @@ function clickHandler(event) {
 function getSelected(){
     var selectedUser = [];
     var speed = setSpeed.value;
+    var data = new Object();
     for (var i=0; i<userList.childNodes.length; i++){
         var child = userList.childNodes[i];
         if (child.className == 'class_selected'){
@@ -60,10 +61,12 @@ function getSelected(){
         }
     }
 
+    data.users = selectedUser;
+    data.speed = speed;
+    
     var json = new Object();
     json.msg = "request_match";
-    json.data.users = selectedUser;
-    json.data.speed = speed;
+    json.data = data;
     var req = JSON.stringify(json);
     ws.send( req );
 }
@@ -127,8 +130,8 @@ if ("WebSocket" in window) {
             }
         }
         else if (data.msg == "response_match") {
-            if (data.error == 0) {
-                gameStart(data.users);
+            if (data.data.error == 0) {
+                gameStart(data.data.users);
                 goToInGame();
                 alertify.success("게임 시작!", 2000);
             }
