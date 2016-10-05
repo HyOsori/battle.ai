@@ -174,7 +174,7 @@ class GameServer:
 
     @gen.coroutine
     def delay_action(self):
-        yield gen.sleep(5)
+        yield gen.sleep(2)
 
     def save_game_data(self):
         pass
