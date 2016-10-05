@@ -12,9 +12,9 @@ from gameLogic.othello.OthelloGameLogic import OthelloGameLogic
 
 
 class TurnGameServer(GameServer):
-    def __init__(self, room, battle_ai_list, web_client_list, game_logic = None):
+    def __init__(self, room, player_list, attendee_list, game_logic = None):
         game_logic = OthelloGameLogic(self)
-        GameServer.__init__(self, room, battle_ai_list, web_client_list, game_logic)
+        GameServer.__init__(self, room, player_list, attendee_list, game_logic)
 
     @gen.coroutine
     def _player_handler(self, player):
@@ -26,7 +26,8 @@ class TurnGameServer(GameServer):
                 res = json.loads(message)
                 print res
                 if res[MSG_TYPE] == self.current_msg_type:
-                    self.delay_action()
+                    #self.delay_action()
+                    yield self.delay_action()
                     self.game_logic.on_action(player.get_pid(), res[GAME_DATA])
                     print '_player_handler onAction is done'
                     if res[MSG_TYPE] == FINISH:

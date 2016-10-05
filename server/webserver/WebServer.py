@@ -19,15 +19,15 @@ class WebServer(tornado.web.RequestHandler):
 
 class WebSocketServer(tornado.websocket.WebSocketHandler):
 
-    def initialize(self, web_client_list=dict(), battle_ai_list=dict(), player_server=None):
+    def initialize(self, attendee_list=dict(), player_list=dict(), player_server=None):
         '''
 
-        :param web_client_list:
-        :param battle_ai_list:
+        :param attendee_list:
+        :param player_list:
         :param player_server:
         '''
-        self.web_client_list = web_client_list  # dict() - key : conn
-        self.battle_ai_list = battle_ai_list  # dict() - key : user_id
+        self.attendee_list = attendee_list  # dict() - key : conn
+        self.player_list = player_list  # dict() - key : user_id
         self.player_server = player_server  # PlayerServer
 
     def open(self, *args, **kwargs):
@@ -35,12 +35,12 @@ class WebSocketServer(tornado.websocket.WebSocketHandler):
         open websocket
         '''
         new_attendee = Attendee(self)
-        self.web_client_list[self] = new_attendee
+        self.attendee_list[self] = new_attendee
 
     def on_message(self, message):
         '''
-        when message is come, this function is run.
-        :param message: received message from web_client
+        When receive message from Attendee, this function runs.
+        :param message: message from Attendee
         '''
         logging.debug(message)
         request = json.loads(message)
@@ -56,9 +56,9 @@ class WebSocketServer(tornado.websocket.WebSocketHandler):
             logging.error(str(e) + "// wrong message")
 
     def _response_user_list(self):
-        self.web_client_list[self].attendee_flag = False
+        self.attendee_list[self].attendee_flag = False
 
-        players = list(self.battle_ai_list.keys())
+        players = list(self.player_list.keys())
 
         msg = {MSG: RESPONSE+USER_LIST, USERS: players}
         json_msg = json.dumps(msg)
@@ -67,21 +67,21 @@ class WebSocketServer(tornado.websocket.WebSocketHandler):
             self.write_message(json_msg)
         except Exception as e:
             logging.error(e)
-            self.web_client_list.pop(self)
+            self.attendee_list.pop(self)
 
     def _response_match(self, pid_list):
         try:
-            players = [self.battle_ai_list.pop(pid) for pid in pid_list]
+            players = [self.player_list.pop(pid) for pid in pid_list]
         except Exception as e:
             logging.error(e)
             return
 
         for pid in pid_list:
-            for attendee in self.web_client_list.values():
+            for attendee in self.attendee_list.values():
                 attendee.notice_user_removed(pid)
 
-        room = Room(players, self.web_client_list[self])
-        game_server = TurnGameServer(room, self.battle_ai_list, self.web_client_list)
+        room = Room(players, self.attendee_list[self])
+        game_server = TurnGameServer(room, self.player_list, self.attendee_list)
 
         tornado.ioloop.IOLoop.current().spawn_callback(game_server.game_handler)
 
@@ -90,14 +90,14 @@ class WebSocketServer(tornado.websocket.WebSocketHandler):
 
         try:
             self.write_message(json_msg)
-            self.web_client_list[self].room_enter()
+            self.attendee_list[self].room_enter()
         except Exception as e:
             logging.error(e)
-            self.web_client_list.pop(self)
+            self.attendee_list.pop(self)
 
     # TODO : find out how to deal with this error (CORS)
     def check_origin(self, origin):
         return True
 
     def on_close(self):
-        self.web_client_list.pop(self)
+        self.attendee_list.pop(self)
