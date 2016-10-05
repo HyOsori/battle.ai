@@ -47,7 +47,7 @@ class WebSocketServer(tornado.websocket.WebSocketHandler):
         try:
             msg = request[MSG]
             if msg == REQUEST+MATCH:
-                self._response_match(request[USERS])
+                self._response_match(request[DATA])
             elif msg == REQUEST+USER_LIST:
                 self._response_user_list()
             else:
@@ -69,14 +69,14 @@ class WebSocketServer(tornado.websocket.WebSocketHandler):
             logging.error(e)
             self.attendee_list.pop(self)
 
-    def _response_match(self, pid_list):
+    def _response_match(self, data):
         try:
-            players = [self.player_list.pop(pid) for pid in pid_list]
+            players = [self.player_list.pop(pid) for pid in data[USERS]]
         except Exception as e:
             logging.error(e)
             return
 
-        for pid in pid_list:
+        for pid in data[USERS]:
             for attendee in self.attendee_list.values():
                 attendee.notice_user_removed(pid)
 
@@ -85,7 +85,7 @@ class WebSocketServer(tornado.websocket.WebSocketHandler):
 
         tornado.ioloop.IOLoop.current().spawn_callback(game_server.game_handler)
 
-        msg = {MSG: RESPONSE+MATCH, ERROR: 0, USERS: pid_list}
+        msg = {MSG: RESPONSE+MATCH, DATA: {USERS: data[USERS], SPEED: data[SPEED]}}
         json_msg = json.dumps(msg)
 
         try:
