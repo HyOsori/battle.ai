@@ -3,13 +3,13 @@ import random
 import time
 
 # Set up the constants
-WIDTH = 64
-HEIGHT = 64
-paddingWIDTH = 128
-paddingHEIGHT = 128
-SIZE = 8
+WIDTH = 128
+HEIGHT = 92
+paddingWIDTH = 64
+paddingHEIGHT = 64
+SIZE = 6
 MARGIN1 = 1 # Left-side and Up-side
-MARGIN2 = 1 # Right-side and Down-side
+MARGIN2 = 0 # Right-side and Down-side
 ScoreBarWidth = 36
 NumOfColor = 6
 SleepSecond = 0.0
@@ -22,7 +22,7 @@ StartingPoint2_X = WIDTH - 1
 StartingPoint2_Y = HEIGHT - 1
 
 # Start at center
-"""
+
 StartingPoint1_X = WIDTH / 2 - 1
 StartingPoint1_Y = HEIGHT / 2 - 1
 StartingPoint2_X = WIDTH - 1 - StartingPoint1_X
@@ -38,7 +38,7 @@ StartingPoint2_Y = HEIGHT - 1 - StartingPoint1_Y
 # StartingPoint1 = (30, 30)
 # Center is (31, 31)
 # StartingPoint2 = (32, 32)
-"""
+
 
 # Start at quarter
 """
@@ -220,6 +220,16 @@ def Draw(ruler):
         #time.sleep(SleepSecondGradation)
 """
 
+def OpstructionTest1 ():
+    for y in range(5):
+        for x in range(5):
+            RulerArray[y + 30][x + 30] = -1
+            ColorNumArray[y + 30][x + 30] = -1
+            ColorArray[y + 30][x + 30] = ColorCheck(ColorNumArray[y + 30][x + 30])
+            pygame.draw.rect(screen, ColorArray[y + 30][x + 30], (
+            paddingWIDTH + SIZE * (x + 30) + MARGIN1, paddingHEIGHT + SIZE * (y + 30) + MARGIN1,
+            SIZE - MARGIN1 - MARGIN2, SIZE - MARGIN1 - MARGIN2), 0)
+
 def DummyAi1 (ruler, colornumarray, exclusionnum):
     if (ruler == 1):
         mycolornum = colornumarray[StartingPoint1_Y][StartingPoint1_X]
@@ -274,10 +284,13 @@ for y in range(HEIGHT):
         ColorArray[y][x] = ColorCheck(ColorNumArray[y][x])
         pygame.draw.rect(screen, ColorArray[y][x], (paddingWIDTH + SIZE * x + MARGIN1, paddingHEIGHT + SIZE * y + MARGIN1, SIZE - MARGIN1 - MARGIN2, SIZE - MARGIN1 - MARGIN2), 0)
 
+#OpstructionTest1()
+
 RulerArray[StartingPoint1_Y][StartingPoint1_X] = 1
 RulerArray[StartingPoint2_Y][StartingPoint2_X] = 2
 Absorbtion(1, ColorNumArray[StartingPoint1_Y][StartingPoint1_X])
 Absorbtion(2, ColorNumArray[StartingPoint2_Y][StartingPoint2_X])
+
 
 # Game Loop
 GameTurn = 1;
