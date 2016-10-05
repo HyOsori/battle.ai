@@ -8,12 +8,12 @@ from server.m_format import *
 from tornado import gen
 from gameLogic.baskin.baskinServer import BaskinServer
 from server.playerserver.GameServer import GameServer
-from gameLogic.othello.othelloServer import OthelloTurnGameLogic
+from gameLogic.othello.OthelloGameLogic import OthelloGameLogic
 
 
 class TurnGameServer(GameServer):
     def __init__(self, room, battle_ai_list, web_client_list, game_logic = None):
-        game_logic = OthelloTurnGameLogic(self)
+        game_logic = OthelloGameLogic(self)
         GameServer.__init__(self, room, battle_ai_list, web_client_list, game_logic)
 
     @gen.coroutine
@@ -27,14 +27,14 @@ class TurnGameServer(GameServer):
                 print res
                 if res[MSG_TYPE] == self.current_msg_type:
                     self.delay_action()
-                    self.game_logic.onAction(player.get_pid(), res[GAME_DATA])
+                    self.game_logic.on_action(player.get_pid(), res[GAME_DATA])
                     print '_player_handler onAction is done'
                     if res[MSG_TYPE] == FINISH:
                         self.q.get()
                         self.q.task_done()
                         break
                 else:
-                    self.game_logic.onError(player.get_pid())
+                    self.game_logic.on_error(player.get_pid())
                     self.q.get()
                     self.q.task_done()
                     break
@@ -42,7 +42,7 @@ class TurnGameServer(GameServer):
             print "player END!!!!!"
         except Exception as e:
             print "player OUT!!!!!!!!!!!!!!!!!!!!!1 wow"
-            self.game_logic.onError(player.get_pid())
+            self.game_logic.on_error(player.get_pid())
 
             # remove player from room and turns
             for turn in self.turns:

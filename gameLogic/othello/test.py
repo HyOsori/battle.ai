@@ -1,14 +1,16 @@
 #-*-coding:utf-8-*-
+import sys
 from gameLogic.baseClass.Client import Client
-from gameLogic.othello.myOthelloParser import MyOthelloParser
+from gameLogic.othello.MyOthelloParser import MyOthelloParser
 
 HOST = '127.0.0.1'
 PORT = 9001
 
-client = Client(HOST,PORT)
+client = Client()
+if client.connect_server(HOST, PORT) == False:
+    print '서버 연결오류'
+    sys.exit()
 test1 = MyOthelloParser()
-client.setParser(test1)
+client.set_parser(test1)
 
-client.clientRun()
-
-print "finish!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+client.client_run()
