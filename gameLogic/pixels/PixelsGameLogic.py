@@ -8,8 +8,9 @@ logging.basicConfig(level=logging.DEBUG)
 '''
 ShardDict Key
 
-PHASE_ONTURN -> 'on_turn'->
-PHASE_END    -> 'finish'->
+PHASE_INIT -> 'init'->
+PHASE_LOOP -> 'loop'->
+PHASE_FINISH -> 'finish'->
 board
 
 '''
