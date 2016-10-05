@@ -2,8 +2,8 @@
 #-*-coding:utf-8-*-
 #인터페이스 로써 작동하도록 하자
 
-class GameDataParser:
-    def initParser(self,client,username):
+class AIParser:
+    def init_parser(self, client, username):
         self._client = client
         self.pid = username
 
@@ -13,10 +13,10 @@ class GameDataParser:
 
     #고로 이 부분이 사용자가 코딩할 부분!
 
-    def parsingGameData(self,decoding_data):
+    def parsing_data(self, decoding_data):
         pass
 
-    def makeSendMsg(self, msg_type, game_data):
+    def make_send_msg(self, msg_type, game_data):
         send_msg = {"msg": "game_data"}
         send_msg["msg_type"] = msg_type
         send_msg["game_data"] = game_data

@@ -1,5 +1,4 @@
 # USE : player managing protocol
-
 MSG = "msg"
 REQUEST = "request_"
 RESPONSE = "response_"
@@ -11,6 +10,7 @@ USER_REMOVED = "user_removed"
 
 ERROR = "error"
 
+
 USERS = "users"
 USER = "user"
 
@@ -18,6 +18,9 @@ USER = "user"
 
 MSG_TYPE = "msg_type"
 GAME_DATA = "game_data"
+GAME_HANDLER = "game_handler"
+DATA = "data"
+SPEED = "speed"
 ERROR = "error"
 ERROR_MSG = "error_msg"
 ROUND_RESULT = "round_result"

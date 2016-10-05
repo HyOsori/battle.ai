@@ -12,9 +12,9 @@ class SampleRoom():
 		self.playerList = [x.pid for x in players]
 		self.playerDict = dict(zip(self.playerList, players))
 	def start(self):
-		self.gamelogic.onStart(self.playerList)
+		self.gamelogic.on_start(self.playerList)
 	def request(self, pid, messageType, JSON):
-		self.gamelogic.onAction(pid, json.loads(self.playerDict[pid].request(messageType, JSON)))
+		self.gamelogic.on_action(pid, json.loads(self.playerDict[pid].request(messageType, JSON)))
 	def onEnd(self, isValid, result):
 		logging.debug('isValid is ' + str(isValid) + ', result is ' + str(result))
 		pass
