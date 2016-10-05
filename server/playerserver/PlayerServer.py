@@ -42,7 +42,7 @@ class PlayerServer(tornado.tcpserver.TCPServer):
 
         :param stream:  ai_client's stream
         '''
-        # TODO : set protocol of user_info, and handle excㅎption of every case
+        # TODO : set protocol of user_info, and handle exception of every case
 
         recv = yield stream.read_bytes(256, partial=True)
         logging.debug(recv)
@@ -51,6 +51,8 @@ class PlayerServer(tornado.tcpserver.TCPServer):
         username = msg["user_data"]["username"]
 
         if username in self.player_list.keys():
+            logging.info(str(unicode(username)))
+            username = str(unicode(username))
             # TODO : in case that duplicate id is detected
             pass
 
