@@ -15,14 +15,17 @@ RealTimeGameServer (for real time games, not yet)
 
 
 class GameServer:
-    def __init__(self, room, player_list, attendee_list, game_logic):
+    def __init__(self, room, player_list, attendee_list, game_logic, time_index=4):
         self.game_logic = game_logic
         self.room = room
         self.player_list = player_list  # WHY NEEDED?
         self.attendee_list = attendee_list  # WHY NEEDED?
         self.q = queues.Queue()
 
-        self.time_delay = 0.1
+        self.time_delay_list = [2, 1, 0.5, 0.3, 0.1]
+
+        self.delay_time = 0.3
+        self.set_delay_time(self.time_delay_list[time_index])
 
         self.game_result = {}
         self.error_msg = "none"
@@ -170,11 +173,11 @@ class GameServer:
                 attendee.notice_user_added(player.get_pid())
 
     def set_delay_time(self, delay_time=0.1):
-        self.time_delay = delay_time
+        self.delay_time = delay_time
 
     @gen.coroutine
     def delay_action(self):
-        yield gen.sleep(5)
+        yield gen.sleep(self.delay_time)
 
     def save_game_data(self):
         pass
