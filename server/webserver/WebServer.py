@@ -72,6 +72,7 @@ class WebSocketServer(tornado.websocket.WebSocketHandler):
     def _response_match(self, data):
         try:
             players = [self.player_list.pop(pid) for pid in data[USERS]]
+            logging.error(type(data[USERS][0]))
         except Exception as e:
             logging.error(e)
             return
