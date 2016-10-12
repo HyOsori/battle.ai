@@ -88,13 +88,14 @@ Green5 = (50, 205, 50)
 Green6 = (144, 238, 144)
 
 # Set up the variables
-ColorArray = [[0 for x in range(WIDTH)] for y in range(HEIGHT)]
-ColorArrayCopy = [[0 for x in range(WIDTH)] for y in range(HEIGHT)] # For Gradation
-ColorNumArray = [[0 for x in range(WIDTH)] for y in range(HEIGHT)]
+# ColorArray = [[0 for x in range(WIDTH)] for y in range(HEIGHT)]
+ColorArray = [[0 in range(WIDTH)] in range(HEIGHT)]
+ColorArrayCopy = [[0 in range(WIDTH)] in range(HEIGHT)] # For Gradation
+ColorNumArray = [[0 in range(WIDTH)] in range(HEIGHT)]
 ChosenColorNum = 0
 ColorNum = 0
-RulerArray = [[0 for x in range(WIDTH)] for y in range(HEIGHT)]
-RulerArrayCopy = [[0 for x in range(WIDTH)] for y in range(HEIGHT)]
+RulerArray = [[0 in range(WIDTH)] in range(HEIGHT)]
+RulerArrayCopy = [[0 in range(WIDTH)] in range(HEIGHT)]
 Ruler = 0
 RuledBy1 = 0
 RuledBy2 = 0

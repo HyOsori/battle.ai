@@ -1,9 +1,10 @@
 import sys
-sys.path.insert(0,'../')
 from gameLogic.baseClass.TurnGameLogic import TurnGameLogic
 from gameLogic.baseClass.Phase import Phase
 import logging
 import random
+
+sys.path.insert(0, '../')
 logging.basicConfig(level=logging.DEBUG)
 
 '''
@@ -11,88 +12,85 @@ ShardDict Key
 
 PHASE_LOOP -> 'loop'->
 PHASE_FINISH -> 'finish'->
-board
 '''
+
 
 class PixelsLoopPhase(Phase):
     def __init__(self, logic_server, message_type):
         super(PixelsLoopPhase, self).__init__(logic_server, message_type)
 
+        logging.debug('PHASE_LOOP : INIT')
+
+        # Initialize variables from outside.
+        self.player_list = self.get_player_list()
+        self.shared_dict = self.get_shared_dict()
+        self.next_phase = self.shared_dict['PHASE_FINISH']
+        self.width = self.shared_dict['width']
+        self.height = self.shared_dict['height']
+
+        # Initialize variables.
+        self.round = 0  # Check Rounds.
+        self.initialize = False  # Initialize arrays when new round starts.
+        self.score = [[0, 0], [0, 0]]  # Record the scores of two rounds.
+        self.chosen_color = 0
+
+        # Use these arrays in the form of 'array[y][x]'.
+        self.color_array = [[0 in range(self.width)] in range(self.height)]
+        self.color_array_old = [[0 in range(self.width)] in range(self.height)]
+        # Copy color_array to notify front_end of the change in map.
+        self.ruler_array = [[0 in range(self.width)] in range(self.height)]
+        self.ruler_array_copy = [[0 in range(self.width)] in range(self.height)]
+        # Copy ruler_array for complete absorbing at absorb().
 
     def on_start(self):
         super(PixelsLoopPhase, self).on_start()
-        logging.debug('PixelsLoopPhase.on_start')
-        self.player_list = self.get_player_list()
-        shared_dict = self.get_shared_dict()
+        logging.debug('PHASE_LOOP : START')
 
-        self.round = 0  # To check whether phase must be changed or not
-        self.initialize = False  # To initialize arrays when new round starts.
-
-        self.score_amount = [0, 0]  # To record the amounts of scores.
-        self.score = [0, 0] # To record the scores of each round.
-
-        self.chosen_color = 0
-
-        self.next_phase = shared_dict['PHASE_FINISH']
-
-        # Set up variables from shared_dict
-        self.width = shared_dict['width']
-        self.height = shared_dict['height']
-
-        # Set up the arrays
-        self.color_array = [[0 for x in range(self.width)] for y in range(self.height)]
-        self.color_array_old = [[0 for x in range(self.width)] for y in range(self.height)]
-        self.ruler_array = [[0 for x in range(self.width)] for y in range(self.height)]
-        self.ruler_array_copy = [[0 for x in range(self.width)] for y in range(self.height)]
+        # Pycharm recommends us not to define instance attribute outside __init__.
 
         # Copy the arrays
         self.initialize_arrays()
 
-
     def do_action(self, pid, dict_data):
         super(PixelsLoopPhase, self).do_action(pid, dict_data)
-        logging.debug('PixelsLoopPhase.do_action')
-        logging.debug('pid : ' + pid)
-        shared_dict = self.get_shared_dict()
+        logging.debug('PHASE_LOOP : DO_ACTION / pid : ' + pid)
 
-        if (self.initialize):
+        if self.initialize:
             self.initialize_arrays()
-            self.score_amount[0] = self.score_amount[0] + self.score[0]
-            self.score_amount[1] = self.score_amount[1] + self.score[1]
-            self.score = [0, 0]
+            self.score[self.round] = [0, 0]
             self.initialize = False
 
-        if (self.round == 2): # go to next phase
-            shared_dict['score_amount'] = self.score_amount
+        if self.round == 2:  # go to next phase
+            self.shared_dict['score'] = self.score
             self.change_phase(self.next_phase)
 
         ruler = 0
-        if (pid == self.player_list[0]):
+        if pid == self.player_list[0]:
             ruler = 1
-        if (pid == self.player_list[1]):
+        if pid == self.player_list[1]:
             ruler = 2
         self.chosen_color = dict_data['chosen_color']
 
+        #
         for y in range(self.height):
             for x in range(self.width):
                 self.color_array_old[y][x] = self.color_array[y][x]
 
         self.absorb(ruler, self.chosen_color)
 
-        if (self.check_status()):
-            self.round = self.round + 1
+        if self.check_status():
+            self.round += 1
             self.initialize = True
 
         self.request_to_client()
         self.notify_to_front()
-
 
     def on_end(self):
         super(PixelsLoopPhase, self).on_end()
         logging.debug('PixelsLoopPhase.on_end')
 
     def notify_to_front(self):
-        notifyDict = {
+        notify_dict = {
             'width': self.width,
             'height': self.height,
             'color_array_old': self.color_array_old,
@@ -100,7 +98,7 @@ class PixelsLoopPhase(Phase):
             'ruler_array': self.ruler_array,
             'score': self.score
         }
-        self.notify(notifyDict)
+        self.notify(notify_dict)
 
     def request_to_client(self):
         logging.debug('Request ' + self.now_turn() + '\'s decision')
@@ -113,62 +111,57 @@ class PixelsLoopPhase(Phase):
         }
         self.request(self.now_turn(), info_dict)
 
-
-    def initialize_arrays(self):
-        shared_dict = self.get_shared_dict()
+    def initialize_arrays(self):  # Initialize arrays when new round starts.
         for y in range(self.height):
             for x in range(self.width):
-                self.color_array[y][x] = shared_dict['color_array_init'][y][x]
-
+                self.color_array[y][x] = self.shared_dict['color_array_init'][y][x]
 
     def absorb(self, ruler, chosen_color):
         for y in range(self.height):  # Fill ruled area with chosen_color
             for x in range(self.width):
-                if (self.ruler_array[y][x] == ruler):
+                if self.ruler_array[y][x] == ruler:
                     self.color_array[y][x] = chosen_color
 
         absorb_repeat = True
-        while (absorb_repeat):  # For complete absorbing
+        while absorb_repeat:  # For complete absorbing
             for y in range(self.height):  # Copy ruler_array for complete absorbing
                 for x in range(self.width):
                     self.ruler_array_copy[y][x] = self.ruler_array[y][x]
 
             for y in range(self.height):  # Absorb
                 for x in range(self.width):
-                    if (self.ruler_array[y][x] == 0 and self.color_array[y][x] == chosen_color and (
-                            # If the area isn't ruled and is filled with chosen color
-                                        (x > 0 and self.ruler_array[y][x - 1] == ruler) or  # Check left side
-                                        (x < (self.width - 1) and self.ruler_array[y][x + 1] == ruler) or  # Check right side
-                                    (y > 0 and self.ruler_array[y - 1][x] == ruler) or  # Check up side
-                                (y < (self.height - 1) and self.ruler_array[y + 1][x] == ruler))):  # Check down side
+                    if self.ruler_array[y][x] == 0 and self.color_array[y][x] == chosen_color and (
+                        # If the area isn't ruled and is filled with chosen color
+                        (x > 0 and self.ruler_array[y][x - 1] == ruler) or  # Check left side
+                        (x < (self.width - 1) and self.ruler_array[y][x + 1] == ruler) or  # Check right side
+                        (y > 0 and self.ruler_array[y - 1][x] == ruler) or  # Check up side
+                        (y < (self.height - 1) and self.ruler_array[y + 1][x] == ruler)
+                    ):  # Check down side
                         self.ruler_array[y][x] = ruler  # Rule the area
 
             absorb_repeat = False
             check_stop = False
             for y in range(self.height):  # If ruler_array == ruler_array_copy -> Finish absorbing.
-                if (check_stop):
+                if check_stop:
                     break
                 for x in range(self.width):
-                    if (self.ruler_array[y][x] != self.ruler_array_copy[y][x]):
+                    if self.ruler_array[y][x] != self.ruler_array_copy[y][x]:
                         absorb_repeat = True;
                         check_stop = True  # For escape from outer for loop.
                         break
-
 
     def check_status(self):
         self.score = [0, 0]
         finish = True
         for y in range(self.height):
             for x in range(self.width):
-                if (self.ruler_array[y][x] == 0):
+                if self.ruler_array[y][x] == 0:
                     finish = False
-                elif (self.ruler_array[y][x] == 1):
-                    self.score[0] = self.score[0] + 1
-                elif (self.ruler_array[y][x] == 2):
-                    self.score[1] = self.score[1] + 1
+                elif self.ruler_array[y][x] == 1:
+                    self.score[0] += 1
+                elif self.ruler_array[y][x] == 2:
+                    self.score[1] += 1
         return finish
-
-
 
 
 class PixelsFinishPhase(Phase):
@@ -189,15 +182,9 @@ class PixelsFinishPhase(Phase):
         logging.debug('PixelsFinishPhase.on_end')
 
 
-
-
 class PixelsGameLogic(TurnGameLogic):
     def __init__(self, game_server):
         super(PixelsGameLogic, self).__init__(game_server)
-
-    def on_start(self, player_list):
-        logging.debug('PixelsGameLogic.on_start')
-        super(PixelsGameLogic, self).on_start(player_list)
 
         # Width and height must be multiples of 8.
         # Because start_point of players are 3/8 and 5/8 points of map.
@@ -206,17 +193,21 @@ class PixelsGameLogic(TurnGameLogic):
         self.num_of_color = 6
 
         # Set up the arrays
-        self.color_array_init = [[0 for x in range(self.width)] for y in range(self.height)]
-        self.ruler_array_init = [[0 for x in range(self.width)] for y in range(self.height)]
+        self.color_array_init = [[0 in range(self.width)] in range(self.height)]
+        self.ruler_array_init = [[0 in range(self.width)] in range(self.height)]
+
+        # Set up start_point
+        self.start_point = [[3 / 8 * self.height, 3 / 8 * self.width],
+                            [5 / 8 * self.height, 5 / 8 * self.width]]
+
+    def on_start(self, player_list):
+        logging.debug('PixelsGameLogic.on_start')
+        super(PixelsGameLogic, self).on_start(player_list)
 
         # Set up the map (random color 1 ~ 6)
         for y in range(self.height):
             for x in range(self.width):
                 self.color_array[y][x] = random.randint(1, self.num_of_color)
-
-        # Set up start_point
-        self.start_point = [[3 / 8 * self.height, 3 / 8 * self.width],
-                            [5 / 8 * self.height, 5 / 8 * self.width]]
 
         # Let the colors of start_points 0.
         self.color_array_init[self.start_point[0][0]][self.start_point[0][1]] = 0
