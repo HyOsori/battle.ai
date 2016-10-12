@@ -12,42 +12,69 @@ PHASE_INIT -> 'init'->
 PHASE_LOOP -> 'loop'->
 PHASE_FINISH -> 'finish'->
 board
-
 '''
 
+# {"msg":"game_data","msg_type": 정할거,"data":정할거}
+
 class PixelsInitPhase(Phase):
+    def __init__(self, logic_server, message_type):
+        super(PixelsInitPhase, self).__init__(logic_server, message_type)
+
     def on_start(self):
-        pass
+        super(PixelsInitPhase, self).on_start()
+        logging.debug('PixelsInitPhase.on_start')
 
     def do_action(self, pid, dict_data):
-        pass
+        super(PixelsInitPhase, self).do_action(pid, dict_data)
+        logging.debug('PixelsInitPhase.do_action')
+        logging.debug('pid : ' + pid)
 
     def on_end(self):
-        pass
+        super(PixelsInitPhase, self).on_end()
+        logging.debug('PixelsInitPhase.on_end')
 
 class PixelsLoopPhase(Phase):
+    def __init__(self, logic_server, message_type):
+        super(PixelsLoopPhase, self).__init__(logic_server, message_type)
+
     def on_start(self):
-        pass
+        super(PixelsLoopPhase, self).on_start()
+        logging.debug('PixelsLoopPhase.on_start')
 
     def do_action(self, pid, dict_data):
-        pass
+        super(PixelsLoopPhase, self).do_action(pid, dict_data)
+        logging.debug('PixelsLoopPhase.do_action')
+        logging.debug('pid : ' + pid)
 
     def on_end(self):
-        pass
+        super(PixelsLoopPhase, self).on_end()
+        logging.debug('PixelsLoopPhase.on_end')
 
 
 class PixelsFinishPhase(Phase):
+    def __init__(self, logic_server, message_type):
+        super(PixelsFinishPhase, self).__init__(logic_server, message_type)
+
     def on_start(self):
-        pass
+        super(PixelsFinishPhase, self).on_start()
+        logging.debug('PixelsFinishPhase.on_start')
 
     def do_action(self, pid, dict_data):
-        pass
+        super(PixelsLoopPhase, self).do_action(pid, dict_data)
+        logging.debug('PixelsLoopPhase.do_action')
+        logging.debug('pid : ' + pid)
 
     def on_end(self):
-        pass
+        super(PixelsFinishPhase, self).on_end()
+        logging.debug('PixelsFinishPhase.on_end')
 
 class PixelsGameLogic(TurnGameLogic):
+    def __init__(self, game_server):
+        super(PixelsGameLogic, self).__init__(game_server)
+
     def on_start(self, player_list):
+        logging.debug('PixelsGameLogic.on_start')
+
         super(PixelsGameLogic, self).on_start(player_list)
         init_phase = PixelsInitPhase(self, 'init')
         loop_phase = PixelsLoopPhase(self, 'loop')
