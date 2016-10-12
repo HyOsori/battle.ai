@@ -50,7 +50,7 @@ class PixelsLoopPhase(Phase):
         logging.debug('PixelsLoopPhase.do_action')
         logging.debug('pid : ' + pid)
 
-        if (self.round == 2):
+        if (self.round == 2): # go to next phase
             pass
 
         if (self.initialize):
