@@ -26,5 +26,6 @@ ERROR_MSG = "error_msg"
 ROUND_RESULT = "round_result"
 GAME_RESULT = "game_result"
 
+INIT = "init"
 FINISH = "finish"
 

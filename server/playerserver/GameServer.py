@@ -1,7 +1,6 @@
 #-*- coding:utf-8 -*-
 from tornado import queues, gen
 import json
-import time
 from server.m_format import *
 
 import server.ServerLog as logging
@@ -44,17 +43,18 @@ class GameServer:
         self.turns = self._select_turns(self.room.player_list)
 
         for turn in self.turns:
-            logging.debug("=====Are You Ready=====")
+            logging.info("=====Are You Ready=====")
+            self.__ready_check(self.room.player_list)
             self.game_logic.on_start(turn)
-            logging.debug("==================Game Start==================")
+            logging.info("==================Game Start==================")
             print "START"
             for player in self.room.player_list:
                 self.q.put(player)
                 self._player_handler(player)
             yield self.q.join()
-            logging.debug("==============Game End=============")
+            logging.info("==============Game End=============")
         self.destroy_room()
-        logging.debug("==========Destroy Room==========")
+        logging.info("==========Destroy Room==========")
 
     def _select_turns(self, players):
         turn = [player.get_pid() for player in players]
@@ -63,6 +63,9 @@ class GameServer:
         #print new_turn
 
         return [turn, [turn[1], turn[0]]]
+
+    def __ready_check(self, players):
+        return None
 
     def _player_handler(self, player):
         '''
@@ -87,11 +90,11 @@ class GameServer:
 
         self.current_msg_type = msg_type
 
-        message = {MSG: GAME_DATA, MSG_TYPE: msg_type, GAME_DATA: data}
+        message = {MSG: GAME_DATA, MSG_TYPE: msg_type, DATA: data}
         json_data = json.dumps(message)
 
-        logging.debug("send to "+player.get_pid())
-        logging.debug(json_data)
+        logging.info("send to "+player.get_pid())
+        logging.info(json_data)
 
         player.send(json_data)
 
@@ -102,10 +105,10 @@ class GameServer:
         :param msg_type: notifying message
         :param data: message data
         '''
-        message = {MSG: GAME_DATA, MSG_TYPE: msg_type, GAME_DATA: data}
+        message = {MSG: GAME_DATA, MSG_TYPE: msg_type, DATA: data}
         json_data = json.dumps(message)
 
-        logging.debug(json_data)
+        logging.info(json_data)
 
         for player in self.room.player_list:
             player.send(json_data)
@@ -120,15 +123,15 @@ class GameServer:
         :param is_valid_end: 0 (normal end), 1 (abnormal end)
         :param message: game result information
         """
-        logging.debug("on_end() function is called")
+        logging.info("on_end() function is called")
 
         self.game_result = message
 
         if is_valid_end:
-            message = {MSG: GAME_DATA, MSG_TYPE: ROUND_RESULT, GAME_DATA: message}
+            message = {MSG: GAME_DATA, MSG_TYPE: ROUND_RESULT, DATA: message}
         else:
             # TODO: do not excute this code, - go to destory_room naturally
-            message = {MSG: GAME_HANDLER, MSG_TYPE: GAME_RESULT, GAME_DATA: DATA}
+            message = {MSG: GAME_HANDLER, MSG_TYPE: GAME_RESULT, DATA: message}
 
             json_data = json.dumps(message)
 
@@ -137,7 +140,6 @@ class GameServer:
 
             for attendee in self.room.attendee_list:
                 attendee.send(json_data)
-
 
             # TODO : memory lack error must be corrected!!
 
@@ -158,13 +160,13 @@ class GameServer:
         When all round is ended, room is destroyed. Clients get back to robby.
         '''
         # TODO: game_result must chagned to real game_result, not round result
-        data = {MSG: GAME_RESULT, ERROR: self.error_code, ERROR_MSG: self.error_msg, GAME_DATA: self.game_result}
+        data = {MSG: GAME_HANDLER, MSG_TYPE: GAME_RESULT, DATA: self.game_result}
 
         json_data = json.dumps(data)
         for attendee in self.room.attendee_list:
             attendee.send(json_data)
 
-        logging.debug(str(self.room.player_list))
+        logging.info(str(self.room.player_list))
         logging.info("-----------------Destory room----------------------------")
 
         for player in self.room.player_list:

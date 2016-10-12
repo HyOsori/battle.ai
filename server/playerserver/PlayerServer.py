@@ -7,6 +7,7 @@ import tornado.web
 import tornado.websocket
 import tornado.tcpserver
 import functools
+from server.m_format import *
 
 from server.User import Player
 
@@ -48,7 +49,7 @@ class PlayerServer(tornado.tcpserver.TCPServer):
         logging.debug(recv)
         msg = json.loads(recv)
 
-        username = msg["user_data"]["username"]
+        username = msg[DATA]["username"]
 
         if username in self.player_list.keys():
             logging.info(str(unicode(username)))

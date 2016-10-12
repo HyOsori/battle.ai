@@ -48,5 +48,9 @@ class MainServer:
         io_loop.start()
 
 if __name__ == "__main__":
+    if len(sys.argv) == 3:
+        TCP_PORT = int(sys.argv[1])
+        WEB_PORT = int(sys.argv[2])
+
     main_server = MainServer()
     main_server.run()
