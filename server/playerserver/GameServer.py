@@ -19,7 +19,7 @@ class GameServer:
         self.room = room
         self.player_list = player_list  # WHY NEEDED?
         self.attendee_list = attendee_list  # WHY NEEDED?
-        self.q = queues.Queue()
+        self.q = None
 
         self.time_delay_list = [2, 1, 0.5, 0.3, 0.1]
 
@@ -31,6 +31,7 @@ class GameServer:
 
         self.current_msg_type = -1
         self.error_code = 1
+        self.normal_game_playing = True
         self.turns = []
 
     @gen.coroutine
@@ -42,12 +43,19 @@ class GameServer:
         '''
         self.turns = self._select_turns(self.room.player_list)
 
+        self.q = queues.Queue(len(self.room.player_list))
+
         for turn in self.turns:
             logging.info("=====Are You Ready=====")
             self.__ready_check(self.room.player_list)
             self.game_logic.on_start(turn)
             logging.info("==================Game Start==================")
-            print "START"
+
+            # check game normal flag
+            if not self.normal_game_playing:
+                break
+            logging.debug("normal game playinng ........")
+
             for player in self.room.player_list:
                 self.q.put(player)
                 self._player_handler(player)
