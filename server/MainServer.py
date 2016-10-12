@@ -16,6 +16,9 @@ WEB_PORT = 9000
 
 class MainServer:
     def __init__(self):
+
+        # TODO: game_logic selection must be added, tcp_port, web_port, playing game will be argument of MainServer.py
+
         self.player_list = dict()
         self.attendee_list = dict()
 
@@ -45,5 +48,9 @@ class MainServer:
         io_loop.start()
 
 if __name__ == "__main__":
+    if len(sys.argv) == 3:
+        TCP_PORT = int(sys.argv[1])
+        WEB_PORT = int(sys.argv[2])
+
     main_server = MainServer()
     main_server.run()

@@ -6,7 +6,7 @@ class MyOthelloParser(OthelloAIParser):
     def parsing_data(self, decoding_data):
         msg = decoding_data['msg']
         msg_type = decoding_data['msg_type']
-        game_data = decoding_data['game_data']
+        game_data = decoding_data['data']
 
         parsing_data = {}
 

@@ -23,7 +23,7 @@ class OthelloAIParser2(AIParser):
     def decoding(self, decoding_data):
         self.msg = decoding_data['msg']
         self.msg_type = decoding_data['msg_type']
-        self.game_data = decoding_data['game_data']
+        self.game_data = decoding_data['data']
 
     def parsing_data(self, decoding_data):
         self.decoding(decoding_data)
