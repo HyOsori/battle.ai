@@ -16,14 +16,17 @@ WEB_PORT = 9000
 
 class MainServer:
     def __init__(self):
-        self.battle_ai_list = dict()
-        self.web_client_list = dict()
 
-        self.tcp_server = PlayerServer(self.web_client_list, self.battle_ai_list)
+        # TODO: game_logic selection must be added, tcp_port, web_port, playing game will be argument of MainServer.py
+
+        self.player_list = dict()
+        self.attendee_list = dict()
+
+        self.tcp_server = PlayerServer(self.attendee_list, self.player_list)
 
         self.app = tornado.web.Application(
             [
-                (r"/websocket", WebSocketServer, dict(battle_ai_list=self.battle_ai_list, web_client_list=self.web_client_list, player_server=self.tcp_server)),
+                (r"/websocket", WebSocketServer, dict(player_list=self.player_list, attendee_list=self.attendee_list, player_server=self.tcp_server)),
                 (r"/", WebServer),
             ],
             template_path=os.path.join(os.path.dirname(__file__), "../templates"),
@@ -41,9 +44,13 @@ class MainServer:
         self.tcp_server.listen(TCP_PORT)
         self.app.listen(WEB_PORT)
 
-        logging.debug("IOLoop is started")
+        logging.info("IOLoop is started")
         io_loop.start()
 
 if __name__ == "__main__":
+    if len(sys.argv) == 3:
+        TCP_PORT = int(sys.argv[1])
+        WEB_PORT = int(sys.argv[2])
+
     main_server = MainServer()
     main_server.run()
