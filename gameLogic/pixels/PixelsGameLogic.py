@@ -27,10 +27,13 @@ class PixelsLoopPhase(Phase):
 
         self.round = 0  # To check whether phase must be changed or not
         self.initialize = False  # To initialize arrays when new round starts.
-        self.turn = 0  # To record the turns of a round.
 
         self.score_amount = [0, 0]  # To record the amounts of scores.
         self.score = [0, 0] # To record the scores of each round.
+
+        self.chosen_color = 0
+
+        self.next_phase = shared_dict['PHASE_FINISH']
 
         # Set up variables from shared_dict
         self.width = shared_dict['width']
@@ -38,6 +41,7 @@ class PixelsLoopPhase(Phase):
 
         # Set up the arrays
         self.color_array = [[0 for x in range(self.width)] for y in range(self.height)]
+        self.color_array_old = [[0 for x in range(self.width)] for y in range(self.height)]
         self.ruler_array = [[0 for x in range(self.width)] for y in range(self.height)]
         self.ruler_array_copy = [[0 for x in range(self.width)] for y in range(self.height)]
 
@@ -49,34 +53,65 @@ class PixelsLoopPhase(Phase):
         super(PixelsLoopPhase, self).do_action(pid, dict_data)
         logging.debug('PixelsLoopPhase.do_action')
         logging.debug('pid : ' + pid)
-
-        if (self.round == 2): # go to next phase
-            pass
+        shared_dict = self.get_shared_dict()
 
         if (self.initialize):
             self.initialize_arrays()
-            self.score_amount = self.score
+            self.score_amount[0] = self.score_amount[0] + self.score[0]
+            self.score_amount[1] = self.score_amount[1] + self.score[1]
             self.score = [0, 0]
             self.initialize = False
+
+        if (self.round == 2): # go to next phase
+            shared_dict['score_amount'] = self.score_amount
+            self.change_phase(self.next_phase)
 
         ruler = 0
         if (pid == self.player_list[0]):
             ruler = 1
-            self.turn = self.turn + 1
         if (pid == self.player_list[1]):
             ruler = 2
-        chosen_color = dict_data['chosen_color']
+        self.chosen_color = dict_data['chosen_color']
 
-        self.absorb(ruler, chosen_color)
+        for y in range(self.height):
+            for x in range(self.width):
+                self.color_array_old[y][x] = self.color_array[y][x]
+
+        self.absorb(ruler, self.chosen_color)
 
         if (self.check_status()):
             self.round = self.round + 1
             self.initialize = True
 
+        self.request_to_client()
+        self.notify_to_front()
+
 
     def on_end(self):
         super(PixelsLoopPhase, self).on_end()
         logging.debug('PixelsLoopPhase.on_end')
+
+    def notify_to_front(self):
+        notifyDict = {
+            'width': self.width,
+            'height': self.height,
+            'color_array_old': self.color_array_old,
+            'color_array': self.color_array,
+            'ruler_array': self.ruler_array,
+            'score': self.score
+        }
+        self.notify(notifyDict)
+
+    def request_to_client(self):
+        logging.debug('Request ' + self.now_turn() + '\'s decision')
+        info_dict = {
+            'width': self.width,
+            'height': self.height,
+            'color_array': self.color_array,
+            'ruler_array': self.ruler_array,
+            'chosen_color': self.chosen_color
+        }
+        self.request(self.now_turn(), info_dict)
 
 
     def initialize_arrays(self):
