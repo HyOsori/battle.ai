@@ -10,14 +10,17 @@ from gameLogic.baskin.baskinServer import BaskinServer
 from server.playerserver.GameServer import GameServer
 from gameLogic.othello.OthelloGameLogic import OthelloGameLogic
 
+import server.ServerLog as logging
+
 
 class TurnGameServer(GameServer):
-    def __init__(self, room, player_list, attendee_list, game_logic = None):
+    def __init__(self, room, player_list, attendee_list, game_speed, game_logic = None):
         game_logic = OthelloGameLogic(self)
-        GameServer.__init__(self, room, player_list, attendee_list, game_logic)
+        GameServer.__init__(self, room, player_list, attendee_list, game_logic, game_speed)
 
     @gen.coroutine
     def _player_handler(self, player):
+        logging.debug(str(self.delay_time)+" - delay time")
         try:
             print player.get_pid()+": Player handler running"
 

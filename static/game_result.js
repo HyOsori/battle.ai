@@ -2,24 +2,6 @@ var roundBoardResult;
 var roundResult = [];
 var gameResults = [];
 
-function goToGameResult(){
-    $("#id_canvasContainer").css("display","");
-    $("#id_gameResults_ul").css("display","");
-    $("#id_btnContainer").css("display","");
-    $("#id_goToLobby_btn").css("display","");
-    $("#id_conn_btn").css("display","none");
-    $("#id_list_ul").css("display","none");
-    $("#id_match_btn").css("display","none");
-    $("#id_messages").css("display","none");
-    $("#id_gameMessage_second").css("display","none");
-    $("#id_log").css("display","none");
-    $("#id_dummyMatch_btn").css("display","none");
-    $("#id_chart").css("display","none");
-    $("#id_setSpeed").css("display","none");
-    
-    ResizeCanvas();
-}
-
 function drawBoard(){
     var nav = document.getElementById('id_gameResults_ul');
     var index = 0;
@@ -36,7 +18,7 @@ function drawBoard(){
     }
 }
 
-function appendToList(round,blackNum,whiteNum,backgroundColor,fontColor){
+function SaveRoundResult(round, blackNum, whiteNum){
     var whiteStone = $('<img />').attr({
         src:"https://upload.wikimedia.org/wikipedia/en/2/20/Realistic_White_Go_Stone.svg",
         height:"12",
@@ -47,7 +29,21 @@ function appendToList(round,blackNum,whiteNum,backgroundColor,fontColor){
         height:"12",
         width:"12"
     })
-    $('<li />').bind('click',function(event){
+    var background_color;
+    var font_color;
+
+    if (blackNum > whiteNum) {
+        background_color = "black";
+        font_color = "white";
+    } else if (blackNum < whiteNum) {
+        background_color = "white";
+        font_color = "black";
+    } else if (blackNum == whiteNum) {
+        background_color = "gainsboro";
+        font_color = "black";
+    }
+    
+    $('<li />').bind('click', function(event) {
         var nav = document.getElementById('id_gameResults_ul');
         for (var i=0; i<nav.childNodes.length; i++){
             var child = nav.childNodes[i];
@@ -58,29 +54,27 @@ function appendToList(round,blackNum,whiteNum,backgroundColor,fontColor){
         else
             event.target.className = 'class_selected';
         drawBoard();
-    }).append('Round ',round,' ',blackStone,' ',blackNum,' : ',whiteStone,' ',whiteNum).css({"background-color":backgroundColor, "color":fontColor}).appendTo('#id_gameResults_ul')
+    }).append('Round ',round,' ',blackStone,' ',blackNum,' : ',whiteStone,' ',whiteNum).css({"background-color":background_color, "color":font_color}).appendTo('#id_gameResults_ul')
 }
 
-function SaveRoundResult(data) {
-    var roundScoreResult = data.game_data;
+function recvRoundResult(data) {
+    var roundScoreResult = data.data;
     roundResult["board"]=roundBoardResult;
     roundResult["score"]=roundScoreResult;
     roundResult["round"]=round;
     gameResults.push(roundResult);
     roundResult=[];
     
-    if(roundScoreResult["black_score"] > roundScoreResult["white_score"])
-        appendToList(round,roundScoreResult["black_score"],roundScoreResult["white_score"],"black","white");
-    else if(roundScoreResult["black_score"] < roundScoreResult["white_score"])
-        appendToList(round,roundScoreResult["black_score"],roundScoreResult["white_score"],"white","black");
-    if(roundScoreResult["black_score"] == roundScoreResult["white_score"])
-        appendToList(round,roundScoreResult["black_score"],roundScoreResult["white_score"],"gainsboro","black");
+    SaveRoundResult(round,roundScoreResult["black_score"],roundScoreResult["white_score"]);
     
     round++;
+    
+    $("#id_gameMessage_second").html("Round "+round);
+    ClearBoard();
 }
 
 $('#id_goToLobby_btn').bind('click',function(){
-    goToLobby();
+    GoToLobby();
     roundBoardResult=[];
     gameResults=[];
     roundResult=[];

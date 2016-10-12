@@ -80,9 +80,13 @@ class WebSocketServer(tornado.websocket.WebSocketHandler):
         for pid in data[USERS]:
             for attendee in self.attendee_list.values():
                 attendee.notice_user_removed(pid)
-
-        room = Room(players, self.attendee_list[self])
-        game_server = TurnGameServer(room, self.player_list, self.attendee_list)
+        try:
+            room = Room(players, self.attendee_list[self])
+            game_server = TurnGameServer(room, self.player_list, self.attendee_list, int(data[SPEED]))
+        except Exception as e:
+            logging.error(e)
+            logging.error("During making room, error is occured")
+            return
 
         tornado.ioloop.IOLoop.current().spawn_callback(game_server.game_handler)
 
