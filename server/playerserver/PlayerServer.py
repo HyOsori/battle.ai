@@ -16,10 +16,10 @@ import logging
 
 
 class PlayerServer(tornado.tcpserver.TCPServer):
-    def __init__(self, web_client_list, battle_ai_list):
+    def __init__(self, attendee_list, player_list):
         tornado.tcpserver.TCPServer.__init__(self)
-        self.battle_ai_list = battle_ai_list
-        self.web_client_list = web_client_list
+        self.player_list = player_list
+        self.attendee_list = attendee_list
 
     def handle_stream(self, stream, address):
         '''
@@ -50,15 +50,17 @@ class PlayerServer(tornado.tcpserver.TCPServer):
 
         username = msg["user_data"]["username"]
 
-        if username in self.battle_ai_list.keys():
-            # in case that duplicate id is detected
+        if username in self.player_list.keys():
+            logging.info(str(unicode(username)))
+            username = str(unicode(username))
+            # TODO : in case that duplicate id is detected
             pass
 
         player = Player(username, stream)
         print(username + " enter the game")
 
-        self.battle_ai_list[username] = player
-        for attendee in self.web_client_list.values():
+        self.player_list[username] = player
+        for attendee in self.attendee_list.values():
             attendee.notice_user_added(username)
 
         on_close_func = functools.partial(self._on_close, username)
@@ -74,9 +76,9 @@ class PlayerServer(tornado.tcpserver.TCPServer):
         logging.debug(str(username)+"'s stream is closed")
 
         try:
-            self.battle_ai_list.pop(username)
+            self.player_list.pop(username)
         except Exception as e:
             print e
 
-        for attendee in self.web_client_list.values():
+        for attendee in self.attendee_list.values():
             attendee.notice_user_removed(username)
