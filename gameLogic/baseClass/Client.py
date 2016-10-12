@@ -52,7 +52,7 @@ class Client:
         send_msg = {}
         send_msg['msg'] = 'user_info'
         send_msg['msg_tpye'] = 'init'
-        send_msg['user_data'] = {'username' : self._username}
+        send_msg['data'] = {'username' : self._username}
         json_msg = json.dumps(send_msg)
         self._sock.send(json_msg)
 
@@ -81,6 +81,7 @@ class Client:
             elif i == len(game_data) - 1:  # 딱 떨어지는 JSON을 받음
                 self.__remain_packet = ""
                 decoding_data = json.loads(game_data)
+                print 'recv :\n',decoding_data
                 return decoding_data
             else:  # 미완성된 JSON을 받아놓은 상태
                 self.__remain_packet = game_data[i + 1:]
@@ -102,11 +103,13 @@ class Client:
                 self.__remain_packet = self.__remain_packet[i + 1:]
                 print 'cut game_data', game_data
                 decoding_data = json.loads(game_data)
+                print 'recv :\n', decoding_data
                 return decoding_data
             elif i == len(self.__remain_packet) - 1:  # 딱 떨어지는 JSON을 받음
                 game_data = self.__remain_packet
                 self.__remain_packet = ""
                 decoding_data = json.loads(game_data)
+                print 'recv :\n', decoding_data
                 return decoding_data
             else:  # 미완성된 JSON을 받아놓은 상태
                 game_data = self._sock.recv(1024)
@@ -119,7 +122,7 @@ class Client:
     def make_send_msg(self, msg_type, game_data):
         send_msg = {"msg": "game_data"}
         send_msg["msg_type"] = msg_type
-        send_msg["game_data"] = game_data
+        send_msg["data"] = game_data
         return send_msg
 
     #인공지능 게임이 끝났을 때 정보를 받아야할까?
@@ -143,7 +146,7 @@ class Client:
         while True:
             decoding_data = self.recv_game_data()
             if decoding_data['msg'] == 'game_result':
-                print decoding_data['game_data']
+                print decoding_data['data']
                 continue
             send_msg = self._parser.parsing_data(decoding_data)
             self.send_game_data(send_msg)

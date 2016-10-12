@@ -1,9 +1,14 @@
 
 #-*-coding:utf-8-*-
-#인터페이스 로써 작동하도록 하자
 
 class AIParser:
     def init_parser(self, client, username):
+        '''
+
+        :param client: Client class, client is call this function to init parser
+        :param username: client's username
+        :return: None
+        '''
         self._client = client
         self.pid = username
 
@@ -14,6 +19,11 @@ class AIParser:
     #고로 이 부분이 사용자가 코딩할 부분!
 
     def parsing_data(self, decoding_data):
+        '''
+
+        :param decoding_data:
+        :return:
+        '''
         pass
 
     def make_send_msg(self, msg_type, game_data):
