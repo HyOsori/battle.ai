@@ -52,7 +52,7 @@ class Client:
         send_msg = {}
         send_msg['msg'] = 'user_info'
         send_msg['msg_tpye'] = 'init'
-        send_msg['user_data'] = {'username' : self._username}
+        send_msg['data'] = {'username' : self._username}
         json_msg = json.dumps(send_msg)
         self._sock.send(json_msg)
 
@@ -122,7 +122,7 @@ class Client:
     def make_send_msg(self, msg_type, game_data):
         send_msg = {"msg": "game_data"}
         send_msg["msg_type"] = msg_type
-        send_msg["game_data"] = game_data
+        send_msg["data"] = game_data
         return send_msg
 
     #인공지능 게임이 끝났을 때 정보를 받아야할까?
@@ -146,7 +146,7 @@ class Client:
         while True:
             decoding_data = self.recv_game_data()
             if decoding_data['msg'] == 'game_result':
-                print decoding_data['game_data']
+                print decoding_data['data']
                 continue
             send_msg = self._parser.parsing_data(decoding_data)
             self.send_game_data(send_msg)
