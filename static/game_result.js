@@ -58,7 +58,7 @@ function SaveRoundResult(round, blackNum, whiteNum){
 }
 
 function recvRoundResult(data) {
-    var roundScoreResult = data.game_data;
+    var roundScoreResult = data.data;
     roundResult["board"]=roundBoardResult;
     roundResult["score"]=roundScoreResult;
     roundResult["round"]=round;

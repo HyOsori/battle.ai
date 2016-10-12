@@ -76,31 +76,31 @@ function gameStart(user_list) {
     GoToInGame();
 }
 
-function recvTurnResult(data) {
+function recvTurnResult(game_data) {
     var y = 0;
-    $.each(data.game_data.board, function(){
+    $.each(game_data.data.board, function(){
         for (var x = 0; x < size; x++) {
             drawCircle(x, y, this[x]);
         }
         y++;
     })
     
-    roundBoardResult = data.game_data.board;
+    roundBoardResult = game_data.data.board;
     var nowTurn;
-    if (data.game_data.now_turn == data.game_data.black)
+    if (game_data.data.now_turn == game_data.data.black)
         nowTurn = 1;
-    else if (data.game_data.now_turn == data.game_data.white)
+    else if (game_data.data.now_turn == game_data.data.white)
         nowTurn = 2;
-    highLight(data.game_data.y, data.game_data.x, nowTurn) // Interchange x, y temporarily
+    highLight(game_data.data.y, game_data.data.x, nowTurn) // Interchange x, y temporarily
 }
 
-function recvGameResult(data) {
-    for (var key in data.game_data ) {
-        if (data.game_data[key] == "win") {
+function recvGameResult(game_data) {
+    for (var key in game_data.data ) {
+        if (game_data.data[key] == "win") {
             alertify.alert(key + " 승리!")
             $("#id_title").html(key+" WIN!").css("text-align","center");
         }
-        else if (data.game_data[key] == "draw") {0
+        else if (game_data.data[key] == "draw") {0
             alertify.alert("무승부!")
             $("#id_title").html("DRAW").css("text-align", "center");
         }

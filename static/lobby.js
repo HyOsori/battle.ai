@@ -115,7 +115,7 @@ if ("WebSocket" in window) {
             }
         }
 
-        else if (data.msg == "game_result") {
+        else if (data.msg == "game_handler") {
             recvGameResult(data);
         }
     }
