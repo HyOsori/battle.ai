@@ -81,6 +81,7 @@ class Client:
             elif i == len(game_data) - 1:  # 딱 떨어지는 JSON을 받음
                 self.__remain_packet = ""
                 decoding_data = json.loads(game_data)
+                print 'recv :\n',decoding_data
                 return decoding_data
             else:  # 미완성된 JSON을 받아놓은 상태
                 self.__remain_packet = game_data[i + 1:]
@@ -102,11 +103,13 @@ class Client:
                 self.__remain_packet = self.__remain_packet[i + 1:]
                 print 'cut game_data', game_data
                 decoding_data = json.loads(game_data)
+                print 'recv :\n', decoding_data
                 return decoding_data
             elif i == len(self.__remain_packet) - 1:  # 딱 떨어지는 JSON을 받음
                 game_data = self.__remain_packet
                 self.__remain_packet = ""
                 decoding_data = json.loads(game_data)
+                print 'recv :\n', decoding_data
                 return decoding_data
             else:  # 미완성된 JSON을 받아놓은 상태
                 game_data = self._sock.recv(1024)
