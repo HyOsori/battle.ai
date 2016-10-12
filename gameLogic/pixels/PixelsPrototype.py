@@ -101,17 +101,18 @@ RuledBy1 = 0
 RuledBy2 = 0
 GameRepeat = True
 
-#ColorCheck - Rainbow
+
+# ColorCheck - Rainbow
 def ColorCheck(colornum): # ColorNum -> Color
-    if (colornum == 1): return RED
-    elif (colornum == 2): return ORANGE
-    elif (colornum == 3): return YELLOW
-    elif (colornum == 4): return GREEN
-    elif (colornum == 5): return BLUE
-    elif (colornum == 6): return PURPLE
+    if colornum == 1: return RED
+    elif colornum == 2: return ORANGE
+    elif colornum == 3: return YELLOW
+    elif colornum == 4: return GREEN
+    elif colornum == 5: return BLUE
+    elif colornum == 6: return PURPLE
     else: return BLACK
 
-#ColorCheck - Red
+# ColorCheck - Red
 """
 def ColorCheck(colornum): # ColorNum -> Color
     if (colornum == 1): return Red1
@@ -123,7 +124,7 @@ def ColorCheck(colornum): # ColorNum -> Color
     else: return BLACK
 """
 
-#ColorCheck - Green
+# ColorCheck - Green
 """
 def ColorCheck(colornum): # ColorNum -> Color
     if (colornum == 1): return Green1
@@ -134,6 +135,7 @@ def ColorCheck(colornum): # ColorNum -> Color
     elif (colornum == 6): return Green6
     else: return BLACK
 """
+
 
 def Absorbtion (ruler, chosencolornum):
 
@@ -149,7 +151,7 @@ def Absorbtion (ruler, chosencolornum):
 
     for y in range(HEIGHT): # Fill ruled area with chosen color
         for x in range(WIDTH):
-            if (RulerArray[y][x] == ruler):
+            if RulerArray[y][x] == ruler:
                 ColorNumArray[y][x] = chosencolornum
                 ColorArray[y][x] = ColorCheck(chosencolornum)
 
@@ -188,7 +190,7 @@ def CheckStatus (ruler):
         for x in range(WIDTH):
             if (ruler[y][x] == 0):
                 Finish = False
-            elif (ruler[y][x] == 1):
+            elif ruler[y][x] == 1:
                 ruledby1 = ruledby1 + 1
             elif (ruler[y][x] == 2):
                 ruledby2 = ruledby2 + 1

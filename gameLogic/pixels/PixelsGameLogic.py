@@ -146,7 +146,7 @@ class PixelsLoopPhase(Phase):
                     break
                 for x in range(self.width):
                     if self.ruler_array[y][x] != self.ruler_array_copy[y][x]:
-                        absorb_repeat = True;
+                        absorb_repeat = True
                         check_stop = True  # For escape from outer for loop.
                         break
 
@@ -173,7 +173,7 @@ class PixelsFinishPhase(Phase):
         logging.debug('PixelsFinishPhase.on_start')
 
     def do_action(self, pid, dict_data):
-        super(PixelsLoopPhase, self).do_action(pid, dict_data)
+        super(PixelsFinishPhase, self).do_action(pid, dict_data)
         logging.debug('PixelsLoopPhase.do_action')
         logging.debug('pid : ' + pid)
 
@@ -207,7 +207,7 @@ class PixelsGameLogic(TurnGameLogic):
         # Set up the map (random color 1 ~ 6)
         for y in range(self.height):
             for x in range(self.width):
-                self.color_array[y][x] = random.randint(1, self.num_of_color)
+                self.color_array_init[y][x] = random.randint(1, self.num_of_color)
 
         # Let the colors of start_points 0.
         self.color_array_init[self.start_point[0][0]][self.start_point[0][1]] = 0
