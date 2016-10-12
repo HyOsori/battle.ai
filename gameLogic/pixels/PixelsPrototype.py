@@ -175,7 +175,7 @@ def Absorbtion (ruler, chosencolornum):
         AbsorbRepeat = False
         for y in range(HEIGHT): # If Ruler == RulerCopy -> Finish absorbtion
             for x in range(WIDTH):
-                if (RulerArray[y][x] != RulerArrayCopy[y][x]):
+                if RulerArray[y][x] != RulerArrayCopy[y][x]:
                     AbsorbRepeat = True;
                     y = HEIGHT
                     break
