@@ -11,7 +11,7 @@
     <body>
         <div id="id_container">
 			<div id="id_title">Othello</div>
-            <div id="id_gameMessage_second" class="class_ingame"></div>
+            <div id="id_gameMessage_second" class="class_inGame"></div>
             <div id="id_context">
 				<div id="id_main">
                     <input type="range" id="id_setSpeed" class="class_lobby" max="5" min="1"/>
@@ -27,14 +27,14 @@
                         <li>log9</li>
                         <li>log10</li>
                     </ul>
-                    <div id ="id_canvasContainer" class="class_ingame class_gameResult">
+                    <div id ="id_canvasContainer" class="class_inGame class_gameResult">
                         <canvas id="id_board_canvas"></canvas>
                     </div>
 					<div id="id_messages" class="class_lobby"></div>
 				</div>
 				<div id="id_side">
                     <button id="id_conn_btn" class="class_lobby">connect websocket</button>
-                    <div id="id_chart" class="class_ingame"></div>
+                    <div id="id_chart" class="class_inGame"></div>
 					<ul id="id_list_ul" class="class_lobby"></ul>
 					<ul id="id_gameResults_ul" class="class_gameResult"></ul>
                     <div id="id_btnContainer">
@@ -46,6 +46,7 @@
 			</div>
 		</div>
         <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+        <script type="text/javascript" src="{{ static_url('Queue.js') }}"></script>
         <script type="text/javascript" src="{{ static_url('alertify.js') }}"></script>
         <script type="text/javascript" src="{{ static_url('lobby.js') }}"></script>
         <script type="text/javascript" src="{{ static_url('ingame_othello.js') }}"></script>

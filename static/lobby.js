@@ -1,29 +1,13 @@
 var MIN_MATCH_USER_CNT = 2;
 var MAX_MATCH_USER_CNT = 2;
+var Title = "othello";
 
 var list = [];
 var messageContainer = document.getElementById('id_messages');
 var userList = document.getElementById('id_list_ul');
 var setSpeed = document.getElementById('id_setSpeed');
 
-
-function goToLobby(){
-    $("#id_canvasContainer").css("display","none");
-    $("#id_gameResults_ul").css("display","none");
-    $("#id_btnContainer").css("display","");
-    $("#id_goToLobby_btn").css("display","none");
-    $("#id_conn_btn").css("display","");
-    $("#id_list_ul").css("display","");
-    $("#id_match_btn").css("display","");
-    $("#id_messages").css("display","");
-    $("#id_gameMessage_second").css("display","none");
-    $("#id_log").css("display","");
-    $("#id_dummyMatch_btn").css("display","");
-    $("#id_chart").css("display","none");
-    $("#id_setSpeed").css("display","");
-
-    $("#id_title").html("Othello").css("text-align","left");
-}
+$(window).resize(ResizeCanvas);
 
 function checkSelected(){
     var count = 0;
@@ -49,35 +33,16 @@ function clickHandler(event) {
     }
 }
 
-
-function getSelected(){
-    var selectedUser = [];
-    var speed = setSpeed.value;
-    var data = new Object();
-    for (var i=0; i<userList.childNodes.length; i++){
-        var child = userList.childNodes[i];
-        if (child.className == 'class_selected'){
-            selectedUser.push(child.innerText);
-        }
-    }
-
-    data.users = selectedUser;
-    data.speed = speed;
-    
-    var json = new Object();
-    json.msg = "request_match";
-    json.data = data;
-    var req = JSON.stringify(json);
-    ws.send( req );
-}
-
 if ("WebSocket" in window) {
+
     var btnConn = document.getElementById('id_conn_btn');
     var message = "";
 
     messageContainer.innerHTML = "WebSocket is supported by your Browser!";
     var ws = new WebSocket("ws://localhost:9000/websocket");
-    goToLobby();
+
+    GoToLobby();
+
     ws.onopen = function (evt) {
         
     };
@@ -102,6 +67,7 @@ if ("WebSocket" in window) {
                 }
             })
         }
+
         else if (data.msg == "notice_user_added") {
             var text = data.user;
             for (var i = 0; i < userList.childNodes.length; i++) {
@@ -129,39 +95,51 @@ if ("WebSocket" in window) {
                 }
             }
         }
+
         else if (data.msg == "response_match") {
             if (data.data.error == 0) {
                 gameStart(data.data.users);
-                goToInGame();
                 alertify.success("게임 시작!", 2000);
             }
             else {
                 alertify.alert("매칭 실패!");
             }
         }
-        else if (data.msg == "game_data") {
-            recvGameMsg(data);
 
+        else if (data.msg == "game_data") {
             if (data.msg_type == "notify_on_turn") {
-                roundBoardResult = data.game_data.board;
-                var nowTurn;
-                if (data.game_data.now_turn == data.game_data.black)
-                    nowTurn = 1;
-                else if (data.game_data.now_turn == data.game_data.white)
-                    nowTurn = 2;
-                highLight(data.game_data.y, data.game_data.x, nowTurn) // Interchange x, y temporarily
+                recvTurnResult(data);
             }
-            else if (data.msg_type == "notify_finish") { // A round is ended
-                SaveRoundResult(data);
-                $("#id_gameMessage_second").html("Round "+round);
-                ClearBoard();
+            else if (data.msg_type == "notify_finish") {
+                recvRoundResult(data);
             }
         }
+
         else if (data.msg == "game_result") {
             recvGameResult(data);
         }
     }
-    $('#id_match_btn').bind('click',getSelected);
+
+    $('#id_match_btn').bind('click',function() {
+        var selectedUser = [];
+        var speed = setSpeed.value;
+        var data = new Object();
+        for (var i=0; i<userList.childNodes.length; i++){
+            var child = userList.childNodes[i];
+            if (child.className == 'class_selected'){
+                selectedUser.push(child.innerText);
+            }
+        }
+
+        data.users = selectedUser;
+        data.speed = speed;
+
+        var json = new Object();
+        json.msg = "request_match";
+        json.data = data;
+        var req = JSON.stringify(json);
+        ws.send( req );
+    });
 
     <!-- connect websocket button handler -->
     btnConn.addEventListener('click', function(){
@@ -179,4 +157,35 @@ if ("WebSocket" in window) {
 else
 {
     messageContainer.innerHTML = "WebSocket NOT supported by your Browser!";
+}
+
+function ResizeCanvas() {
+    canvas_size = $("#id_side").css('height');
+    $("#id_board_canvas").attr({"width": canvas_size, "height": canvas_size});
+    interval = (canvas.width - (margin * 2)) / size;
+    ReadyNewRound();
+}
+
+function GoToLobby() {
+    $(".class_inGame").css("display","none");
+    $(".class_gameResult").css("display","none");
+    $(".class_lobby").css("display","");
+
+    $("#id_title").html(Title).css("text-align","left");
+}
+
+function GoToInGame() {
+    $(".class_lobby").css("display","none");
+    $(".class_gameResult").css("display","none");
+    $(".class_inGame").css("display","");
+    
+    ResizeCanvas();
+}
+
+function GoToGameResult() {
+    $(".class_lobby").css("display","none");
+    $(".class_inGame").css("display","none");
+    $(".class_gameResult").css("display","");
+
+    ResizeCanvas();
 }
