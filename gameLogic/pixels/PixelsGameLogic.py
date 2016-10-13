@@ -104,11 +104,13 @@ class PixelsLoopPhase(Phase):
 
         self.absorb(ruler, self.chosen_color)
 
-        if self.check_status():
+        if self.check_status():  # If check_status returns True, the round is finished.
             self.round += 1
             self.initialize = True
 
-        self.request_to_client(ruler)
+        ruler_enemy = ruler  # Ruler who finished absorbing
+        ruler_self = ruler % 2 + 1  # Ruler who will take the request
+        self.request_to_client(ruler_self, ruler_enemy)
         self.notify_to_front(ruler)
 
     def on_end(self):
@@ -135,7 +137,7 @@ class PixelsLoopPhase(Phase):
         }
         self.notify(notify_dict)
 
-    def request_to_client(self, ruler):
+    def request_to_client(self, ruler_self, ruler_enemy):
         logging.debug('Request ' + self.now_turn() + '\'s decision')
         info_dict = {
             'width': self.width,
@@ -144,9 +146,8 @@ class PixelsLoopPhase(Phase):
             'ruler_array': self.ruler_array,
             'start_point_y': self.start_point_y,
             'start_point_x': self.start_point_x,
-            'ruler_who': ruler,
-            # request 가 다음 ruler 에게 갈 경우 수정 필요. 이건 흡수를 마친 ruler 가 누군지 알려줌.
-            # 2인용일 경우 그냥 이대로 보내고 client 에서 자기가 누군지 알게 할 수도 있지만 별로.
+            'ruler_self': ruler_self,
+            'ruler_enemy': ruler_enemy,
             'enemy_chosen_color': self.chosen_color
         }
         self.request(self.now_turn(), info_dict)
@@ -158,37 +159,39 @@ class PixelsLoopPhase(Phase):
                 self.ruler_array[y][x] = 0
 
     def absorb(self, ruler, chosen_color):
-        for y in range(self.height):  # Fill ruled area with chosen_color
+        for y in range(self.height):  # Fill ruled area with chosen_color.
             for x in range(self.width):
                 if self.ruler_array[y][x] == ruler:
                     self.color_array[y][x] = chosen_color
 
         absorb_repeat = True
-        while absorb_repeat:  # For complete absorbing
-            for y in range(self.height):  # Copy ruler_array for complete absorbing
+        while absorb_repeat:  # Absorb repeatedly for complete absorbing.
+            for y in range(self.height):  # Copy ruler_array for repetitive absorbing.
                 for x in range(self.width):
                     self.ruler_array_copy[y][x] = self.ruler_array[y][x]
 
-            for y in range(self.height):  # Absorb
+            for y in range(self.height):  # Absorb.
                 for x in range(self.width):
                     if self.ruler_array[y][x] == 0 and self.color_array[y][x] == chosen_color and (
-                        # If the area isn't ruled and is filled with chosen color
-                        (x > 0 and self.ruler_array[y][x - 1] == ruler) or  # Check left side
-                        (x < (self.width - 1) and self.ruler_array[y][x + 1] == ruler) or  # Check right side
-                        (y > 0 and self.ruler_array[y - 1][x] == ruler) or  # Check up side
-                        (y < (self.height - 1) and self.ruler_array[y + 1][x] == ruler)
-                    ):  # Check down side
-                        self.ruler_array[y][x] = ruler  # Rule the area
+                        # If the area isn't ruled and is filled with chosen color,
+                        (x > 0 and self.ruler_array[y][x - 1] == ruler)  # Check left side,
+                        or (x < (self.width - 1) and self.ruler_array[y][x + 1] == ruler)  # Check right side,
+                        or (y > 0 and self.ruler_array[y - 1][x] == ruler)  # Check up side,
+                        or (y < (self.height - 1) and self.ruler_array[y + 1][x] == ruler)  # Check down side,
+                    ):  # If ruler's area is adjacent,
+                        self.ruler_array[y][x] = ruler  # Rule the area.
 
             absorb_repeat = False
             check_stop = False
-            for y in range(self.height):  # If ruler_array == ruler_array_copy -> Finish absorbing.
+            # If ruler_array == ruler_array_copy, finish absorbing.
+            # = If there isn't any change after absorbing, absorbing is complete, so finish absorbing.
+            for y in range(self.height):
                 if check_stop:
                     break
                 for x in range(self.width):
                     if self.ruler_array[y][x] != self.ruler_array_copy[y][x]:
                         absorb_repeat = True
-                        check_stop = True  # For escape from outer for loop.
+                        check_stop = True  # To escape from outer for loop.
                         break
 
     def check_status(self):
