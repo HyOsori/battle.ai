@@ -34,6 +34,8 @@ button {
 	left:0;
 	bottom:0;
 	padding:5px;
+	min-width:450px;
+	min-height:315px;
 
     border:1px solid black;
 }
@@ -52,19 +54,37 @@ button {
 	display:flex;
 	flex-direction:column;
 	flex-grow:5;
-}
-#id_setSpeed {
-
+	flex-basis:70%;
 }
 #id_side {
 	display:flex;
 	flex-direction:column;
 	flex-grow:2;
+	flex-basis:30%;
+}
+#id_options {
+	display:flex;
+	flex-grow:1;
+	flex-basis:5%;
+	margin:5px;
+}
+#id_setSpeed_text {
+	flex_grow:1;
+	flex-basis:13%;
+}
+#id_setSpeed {
+	flex_grow:3;
+	flex-basis:37%;
+}
+#id_blank {
+	flex-grow:4;
+	flex-basis:50%;
 }
 #id_log {
-	flex-grow:3;
+	flex-grow:12;
 	padding:5px;
 	margin:5px;
+	flex-basis:70%;
 }
 #id_log li {
 	margin:5px;
@@ -77,9 +97,10 @@ button {
 	position:relative;
 }
 #id_messages {
-	flex-grow:1;
+	flex-grow:4;
 	margin:5px;
 	max-height:250px;
+	flex-basis:25%;
 }
 #id_chart {
 	flex-grow:1;

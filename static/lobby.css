@@ -24,6 +24,9 @@ button {
     text-align:left;
     padding:10px;
 }
+#id_setSpeed_text {
+    text-align:center;
+}
 #id_log {
     overflow-y:scroll;
 }
