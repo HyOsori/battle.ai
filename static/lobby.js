@@ -98,7 +98,7 @@ if ("WebSocket" in window) {
 
         else if (data.msg == "response_match") {
             if (data.data.error == 0) {
-                gameStart(data.data.users);
+                gameStart();
                 alertify.success("게임 시작!", 2000);
             }
             else {

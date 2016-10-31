@@ -69,10 +69,7 @@ function highLight(x, y, color){
     ctx.closePath();
 }
 
-function gameStart(user_list) {
-    users = user_list;
-    $("#id_title").html("● "+users[0]+"  vs  "+users[1]+" ○").css("text-align","center");
-    $("#id_gameMessage_second").html("Round 1");
+function gameStart() {
     GoToInGame();
 }
 
