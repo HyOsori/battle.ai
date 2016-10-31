@@ -47,7 +47,8 @@ class GameServer:
 
         for turn in self.turns:
             logging.info("=====Are You Ready=====")
-            self.__ready_check(self.room.player_list)
+            if not self.__ready_check(self.room.player_list):
+                return
             self.game_logic.on_start(turn)
             logging.info("==================Game Start==================")
 
@@ -72,8 +73,25 @@ class GameServer:
 
         return [turn, [turn[1], turn[0]]]
 
+    @gen.coroutine
     def __ready_check(self, players):
-        return None
+        # send Are you ready message
+        msg = {MSG: GAME_HANDLER, MSG_TYPE: READY, DATA:{}}
+        data = json.dumps(msg)
+        for player in players:
+            player.send(data)
+            recv_data = yield player.read()
+            recv_msg = json.loads(recv_data)
+            if not recv_msg[DATA][RESPONSE] == 'OK':
+                gen.Return(False)
+        # recv Are you ready message
+
+        # send web that all player ready OK
+        recv_msg[DATA] = {RESPONSE: OK, PLAYERS: [player.get_pid() for player in players]}
+        data = json.dumps(recv_msg)
+        for attendee in self.attendee_list:
+            attendee.send(data)
+        gen.Return(True)
 
     def _error_handler(self):
         pass
@@ -202,35 +220,3 @@ class GameServer:
             yield self.q.get()
             self.q.task_done()
         gen.Return(None)
-
-"""
-    def perm(self, players, num, size):
-        players = players
-        turn = []
-
-        if num == size:
-            for i in size:
-                turn[i] = players[i]
-                print turn[i]
-                if i < size-1:
-                    print ","
-                else:
-                    print "\n"
-        else:
-            j = num
-            while j < size:
-                self.swap(players[num], players[j])
-                self.perm(players, num+1, size)
-                self.swap(players[num], players[j])
-                j = j+1
-
-        return turn
-
-    def swap(self, a, b):
-        self.a = a
-        self.b = b
-
-        c = self.a
-        self.a = self.b
-        self.b = c
-        """
