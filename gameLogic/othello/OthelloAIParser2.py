@@ -33,6 +33,10 @@ class OthelloAIParser2(AIParser):
             return self.init_phase()
         elif self.msg_type == 'finish':
             return self.finish_phase()
+        elif self.msg_type == 'round_result':
+            return self.make_send_msg(self.msg_type, {'response' : 'OK'})
+        elif self.msg_type == 'ready':
+            return self.make_send_msg(self.msg_type, {'response' : 'OK'})
 
     def on_turn_phase(self):
         '''

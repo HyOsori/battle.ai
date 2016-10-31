@@ -1,12 +1,8 @@
 #-*- coding:utf-8 -*-
 import json
-import time
-
-from tornado.iostream import StreamClosedError
 
 from server.m_format import *
 from tornado import gen
-from gameLogic.baskin.baskinServer import BaskinServer
 from server.playerserver.GameServer import GameServer
 from gameLogic.othello.OthelloGameLogic import OthelloGameLogic
 
@@ -23,41 +19,33 @@ class TurnGameServer(GameServer):
         logging.debug(str(self.delay_time)+" - delay time")
         try:
             print player.get_pid()+": Player handler running"
-
             while True:
                 message = yield player.read()
                 res = json.loads(message)
                 print res
                 if res[MSG_TYPE] == self.current_msg_type:
-                    #self.delay_action()
+                    # correct message is come
                     yield self.delay_action()
-                    self.game_logic.on_action(player.get_pid(), res[GAME_DATA])
-                    print '_player_handler onAction is done'
+                    self.game_logic.on_action(player.get_pid(), res[DATA])
+                    logging.info('_player_handler onAction is done')
                     if res[MSG_TYPE] == FINISH:
                         self.q.get()
                         self.q.task_done()
+                        logging.debug("finish msg is come")
                         break
                 else:
-                    self.game_logic.on_error(player.get_pid())
-                    self.q.get()
-                    self.q.task_done()
-                    break
-                    # raise Exception
-            print "player END!!!!!"
+                    # wrong message is come : kill player - finish all game
+                    self._exit_handler(player)
+                    gen.Return(None)
+                    logging.debug("in error case at player_handler")
+
         except Exception as e:
-            print "player OUT!!!!!!!!!!!!!!!!!!!!!1 wow"
-            self.game_logic.on_error(player.get_pid())
-
-            # remove player from room and turns
-            for turn in self.turns:
-                try:
-                    turn.remove(player.get_pid())
-                except Exception as e:
-                    print e
-            print self.turns
-            self.room.player_list.remove(player)
-
-            yield self.q.get()
-            #self.q.task_done()
-            print "[!] ERROR : "
+            # TODO : error correcting is needed in error case
+            # wrong message is come : kill play - finish all game
             print e
+            logging.error("wow")
+            self._exit_handler(player)
+            logging.debug("in error case at player_handler (Exception)")
+            # + remove player from room (and close that player's socket)
+
+            # remove items from queue

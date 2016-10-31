@@ -28,6 +28,8 @@ class AIParser:
 
     def make_send_msg(self, msg_type, game_data):
         send_msg = {"msg": "game_data"}
+        if(msg_type == 'ready'):
+            send_msg["msg"] = "game_handler"
         send_msg["msg_type"] = msg_type
-        send_msg["game_data"] = game_data
+        send_msg["data"] = game_data
         return send_msg

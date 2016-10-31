@@ -13,7 +13,6 @@ import logging
 
 class WebServer(tornado.web.RequestHandler):
     def get(self):
-        # self.render("sample.html")
         self.render("index.html")
 
 
@@ -60,7 +59,7 @@ class WebSocketServer(tornado.websocket.WebSocketHandler):
 
         players = list(self.player_list.keys())
 
-        msg = {MSG: RESPONSE+USER_LIST, USERS: players}
+        msg = {MSG: RESPONSE_ + USER_LIST, USERS: players}
         json_msg = json.dumps(msg)
 
         try:
@@ -90,7 +89,7 @@ class WebSocketServer(tornado.websocket.WebSocketHandler):
 
         tornado.ioloop.IOLoop.current().spawn_callback(game_server.game_handler)
 
-        msg = {MSG: RESPONSE+MATCH, DATA: {USERS:data[USERS], ERROR: 0}}
+        msg = {MSG: RESPONSE_ + MATCH, DATA: {USERS: data[USERS], ERROR: 0}}
         json_msg = json.dumps(msg)
 
         try:
