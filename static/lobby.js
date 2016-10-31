@@ -116,7 +116,16 @@ if ("WebSocket" in window) {
         }
 
         else if (data.msg == "game_handler") {
-            recvGameResult(data);
+            if (data.msg_type == "ready") {
+                if (data.data.response = "OK") {
+                    RoundStart(data.data.players);
+                } else {
+                    alertify.alert("매칭 실패!");
+                    GoToLobby();
+                }
+            } else if (data.msg_type == "game_result") {
+                recvGameResult(data);
+            }
         }
     }
 

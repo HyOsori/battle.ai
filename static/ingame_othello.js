@@ -72,8 +72,14 @@ function highLight(x, y, color){
 function gameStart(user_list) {
     users = user_list;
     $("#id_title").html("● "+users[0]+"  vs  "+users[1]+" ○").css("text-align","center");
-    $("#id_gameMessage_second").html("Round "+round);
+    $("#id_gameMessage_second").html("Round 1");
     GoToInGame();
+}
+
+function RoundStart(user_list) {
+    users = user_list;
+    $("#id_title").html("● "+users[0]+"  vs  "+users[1]+" ○").css("text-align","center");
+    $("#id_gameMessage_second").html("Round "+round);
 }
 
 function recvTurnResult(game_data) {
