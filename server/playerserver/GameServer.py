@@ -75,6 +75,9 @@ class GameServer:
     def __ready_check(self, players):
         return None
 
+    def _error_handler(self):
+        pass
+
     def _player_handler(self, player):
         '''
         handle player's game playing
@@ -191,6 +194,14 @@ class GameServer:
 
     def save_game_data(self):
         pass
+
+    def _exit_handler(self, player):
+        self.game_logic.on_error(player.get_pid())
+        self.normal_game_playing = False
+        for player in self.room.player_list:
+            yield self.q.get()
+            self.q.task_done()
+        gen.Return(None)
 
 """
     def perm(self, players, num, size):

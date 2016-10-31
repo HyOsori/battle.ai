@@ -27,30 +27,24 @@ class TurnGameServer(GameServer):
                     # correct message is come
                     yield self.delay_action()
                     self.game_logic.on_action(player.get_pid(), res[GAME_DATA])
-                    print '_player_handler onAction is done'
+                    logging.info('_player_handler onAction is done')
                     if res[MSG_TYPE] == FINISH:
                         self.q.get()
                         self.q.task_done()
-                        raise gen.Return(True)
+                        logging.debug("finish msg is come")
+                        break
                 else:
                     # wrong message is come : kill player - finish all game
-                    self.game_logic.on_error(player.get_pid())
-                    self.normal_game_playing = False
-                    for player in self.room.player_list:
-                        yield self.q.get()
-                        self.q.task_done()
+                    self._exit_handler(player)
+                    gen.Return(None)
                     logging.debug("in error case at player_handler")
 
         except Exception as e:
             # TODO : error correcting is needed in error case
             # wrong message is come : kill play - finish all game
             print e
-            logging.error("wowowowowowowowowowowoo")
-            self.game_logic.on_error(player.get_pid())
-            self.normal_game_playing = False
-            for player in self.room.player_list:
-                yield self.q.get()
-                self.q.task_done()
+            logging.error("wow")
+            self._exit_handler(player)
             logging.debug("in error case at player_handler (Exception)")
             # + remove player from room (and close that player's socket)
 
