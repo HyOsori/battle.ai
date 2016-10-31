@@ -17,11 +17,11 @@ class GameServer:
     def __init__(self, room, player_list, attendee_list, game_logic, time_index=4):
         self.game_logic = game_logic
         self.room = room
-        self.player_list = player_list  # WHY NEEDED?
-        self.attendee_list = attendee_list  # WHY NEEDED?
+        self.player_list = player_list  # WHY NEEDED? - when game room destroy - player added in list
+        self.attendee_list = attendee_list  # WHY NEEDED? - when game room destroy - attendee.notify_user_added
         self.q = None
 
-        self.time_delay_list = [2, 1, 0.5, 0.3, 0.1]
+        self.time_delay_list = [2, 0.5, 0.3, 0.1, 0.05]
 
         self.delay_time = 0.3
         self.set_delay_time(self.time_delay_list[time_index])
@@ -163,22 +163,8 @@ class GameServer:
         if is_valid_end:
             message = {MSG: GAME_DATA, MSG_TYPE: ROUND_RESULT, DATA: message}
         else:
-            # TODO: do not excute this code, - go to destory_room naturally
-            message = {MSG: GAME_HANDLER, MSG_TYPE: GAME_RESULT, DATA: message}
-
-            json_data = json.dumps(message)
-
-            for player in self.room.player_list:
-                player.send(json_data)
-
-            for attendee in self.room.attendee_list:
-                attendee.send(json_data)
-
-            # TODO : memory lack error must be corrected!!
-
-            for x in range(len(self.turns)):
-                self.q.get()
-            return
+            logging.error("logic error end")
+            self._exit_handler()
 
         json_data = json.dumps(message)
 
@@ -224,3 +210,6 @@ class GameServer:
             yield self.q.get()
             self.q.task_done()
         gen.Return(None)
+
+
+
