@@ -47,10 +47,13 @@ class GameServer:
 
         for turn in self.turns:
             logging.info("=====Are You Ready=====")
-            if not self.__ready_check(self.room.player_list):
+            ready = yield self.__ready_check(self.room.player_list)
+            logging.debug("ready status : " + str(ready))
+            if not ready:
                 return
-            self.game_logic.on_start(turn)
+
             logging.info("==================Game Start==================")
+            self.game_logic.on_start(turn)
 
             # check game normal flag
             if not self.normal_game_playing:
@@ -83,15 +86,16 @@ class GameServer:
             recv_data = yield player.read()
             recv_msg = json.loads(recv_data)
             if not recv_msg[DATA][RESPONSE] == 'OK':
-                gen.Return(False)
+                raise gen.Return(False)
         # recv Are you ready message
 
         # send web that all player ready OK
-        recv_msg[DATA] = {RESPONSE: OK, PLAYERS: [player.get_pid() for player in players]}
+        recv_msg[DATA] = {RESPONSE_: OK, PLAYERS: [player.get_pid() for player in players]}
         data = json.dumps(recv_msg)
-        for attendee in self.attendee_list:
+        for attendee in self.room.attendee_list:
             attendee.send(data)
-        gen.Return(True)
+        logging.debug("return True")
+        raise gen.Return(True)
 
     def _error_handler(self):
         pass
