@@ -11,6 +11,7 @@ class Player(User):
     def __init__(self, pid, conn):
         User.__init__(self, conn)
         self.pid = pid
+        self.playing = False
 
     def read(self):
         return self.conn.read_bytes(256, partial=True)
@@ -63,4 +64,6 @@ class Attendee(User):
 
     def room_out(self):
         self.attendee_flag = False
+
+
 
