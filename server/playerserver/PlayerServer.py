@@ -82,7 +82,7 @@ class PlayerServer(tornado.tcpserver.TCPServer):
         try:
             self.player_list.pop(username)
         except Exception as e:
-            print e
+            logging.debug("In player stream closed, pop error")
 
         for attendee in self.attendee_list.values():
             attendee.notice_user_removed(username)
