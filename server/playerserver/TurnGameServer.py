@@ -26,7 +26,7 @@ class TurnGameServer(GameServer):
                 if res[MSG_TYPE] == self.current_msg_type:
                     # correct message is come
                     yield self.delay_action()
-                    self.game_logic.on_action(player.get_pid(), res[GAME_DATA])
+                    self.game_logic.on_action(player.get_pid(), res[DATA])
                     logging.info('_player_handler onAction is done')
                     if res[MSG_TYPE] == FINISH:
                         self.q.get()
