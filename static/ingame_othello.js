@@ -73,7 +73,7 @@ function gameStart() {
     GoToInGame();
 }
 
-function RoundStart(user_list) {
+function roundStart(user_list) {
     users = user_list;
     $("#id_title").html("● "+users[0]+"  vs  "+users[1]+" ○").css("text-align","center");
     $("#id_gameMessage_second").html("Round "+round);
