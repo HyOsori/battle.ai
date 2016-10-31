@@ -27,7 +27,7 @@ class AIParser:
         pass
 
     def make_send_msg(self, msg_type, game_data):
-        send_msg = {"msg": "game_data"}
+        send_msg = {"msg": "data"}
         send_msg["msg_type"] = msg_type
         send_msg["game_data"] = game_data
         return send_msg
