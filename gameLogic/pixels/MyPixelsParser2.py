@@ -3,7 +3,7 @@ from gameLogic.pixels.PixelsParser import PixelsParser
 import random
 
 
-class MyPixelsParser(PixelsParser):
+class MyPixelsParser2(PixelsParser):
     def loop_phase(self):
 
         width = self.game_data['width']

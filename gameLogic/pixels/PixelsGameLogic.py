@@ -232,32 +232,30 @@ class PixelsFinishPhase(Phase):
 
         if self.cnt_player == 0:
             score = self.shared_dict['score']
-            #ruler 0
-            ruler0 = score[0][0] + score[1][0]
-            #ruler 1
-            ruler1 = score[0][1] + score[1][1]
+            # ruler 1
+            ruler1 = score[0][0] + score[1][0]
+            # ruler 2
+            ruler2 = score[0][1] + score[1][1]
 
-            if ruler0 > ruler1:
-                win = 0
-                lose = 1
-            elif ruler0 < ruler1:
+            if ruler1 > ruler2:
                 win = 1
-                lose = 0
-            else:
-                win = 2
                 lose = 2
-
+            elif ruler1 < ruler2:
+                win = 2
+                lose = 1
+            else:
+                win = 0
+                lose = 0
 
             logging.error(pid + ' **************************')
             send_dict = {'win': win,
                          'lose': lose,
-                         'ruler0_score': ruler0,
-                         'ruler1_score': ruler1}
+                         'ruler1_score': ruler1,
+                         'ruler2_score': ruler2}
 
             self.notify_winner(send_dict)
             self.end(True, send_dict)
             return
-
 
     def on_end(self):
         super(PixelsFinishPhase, self).on_end()
