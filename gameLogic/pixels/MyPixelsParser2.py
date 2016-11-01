@@ -27,14 +27,14 @@ class MyPixelsParser2(PixelsParser):
         for y in range(height):
             for x in range(width):
                 if (ruler_array[y][x] == 0) and (
-                    (x > 0 and ruler_array[y][x - 1] == ruler_self) # Check left side
-                    or (x < (width - 1) and ruler_array[y][x + 1] == ruler_self) # Check right side
-                    or (y > 0 and ruler_array[y - 1][x] == ruler_self) # Check up side
-                    or (y < (height - 1) and ruler_array[y + 1][x] == ruler_self) # Check down side
-                ):  # We can rule the area. Divide according to colors and count the number.
+                    (x > 0 and ruler_array[y][x - 1] == ruler_self)  # Check left side
+                    or (x < (width - 1) and ruler_array[y][x + 1] == ruler_self)  # Check right side
+                    or (y > 0 and ruler_array[y - 1][x] == ruler_self)  # Check up side
+                    or (y < (height - 1) and ruler_array[y + 1][x] == ruler_self)  # Check down side
+                ):  # Count the number of area that we can rule, with dividing according to colors.
                     num_of_each_color[color_array[y][x]] += 1
 
-        max = 0
+        max_num = 0
 
         return_color = random.randint(1, 6)
         while return_color == enemy_chosen_color or return_color == my_color:
@@ -42,8 +42,8 @@ class MyPixelsParser2(PixelsParser):
 
         num_of_each_color[0] = -1
         for i in range(num_of_color + 1):
-            if num_of_each_color[i] > max and i != my_color and i != enemy_chosen_color:
-                max = num_of_each_color[i]
+            if num_of_each_color[i] > max_num and i != my_color and i != enemy_chosen_color:
+                max_num = num_of_each_color[i]
                 return_color = i
 
         parsing_data = {'chosen_color': return_color}
