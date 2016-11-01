@@ -212,6 +212,13 @@ class PixelsFinishPhase(Phase):
     def __init__(self, logic_server, message_type):
         super(PixelsFinishPhase, self).__init__(logic_server, message_type)
 
+        # Initialize variables from outside.
+        self.player_list = self.get_player_list()
+        self.shared_dict = self.get_shared_dict()
+
+        # Initialize variables.
+        self.cnt_player = 2
+
     def on_start(self):
         super(PixelsFinishPhase, self).on_start()
         logging.debug('PixelsFinishPhase.on_start')
@@ -221,9 +228,46 @@ class PixelsFinishPhase(Phase):
         logging.debug('PixelsLoopPhase.do_action')
         logging.debug('pid : ' + pid)
 
+        self.cnt_player -= 1
+
+        if self.cnt_player == 0:
+            score = self.shared_dict['score']
+            # ruler 1
+            ruler1 = score[0][0] + score[1][0]
+            # ruler 2
+            ruler2 = score[0][1] + score[1][1]
+
+            if ruler1 > ruler2:
+                win = 1
+                lose = 2
+            elif ruler1 < ruler2:
+                win = 2
+                lose = 1
+            else:
+                win = 0
+                lose = 0
+
+            logging.error(pid + ' **************************')
+            send_dict = {'win': win,
+                         'lose': lose,
+                         'ruler1_score': ruler1,
+                         'ruler2_score': ruler2}
+
+            self.notify_winner(send_dict)
+            self.end(True, send_dict)
+            return
+
     def on_end(self):
         super(PixelsFinishPhase, self).on_end()
         logging.debug('PixelsFinishPhase.on_end')
+
+    def notify_winner(self, winner_dict):
+        notify_dict = winner_dict
+        self.notify(notify_dict)
+
+    def send_game_over(self):
+        logging.debug('Send gameover message to ' + self.now_turn())
+        self.request(self.now_turn(), {})
 
 
 class PixelsGameLogic(TurnGameLogic):
