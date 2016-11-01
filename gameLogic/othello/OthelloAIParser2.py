@@ -8,7 +8,6 @@ import random
 #msg_type -> on_turn 과 finish를 처리해야함
 #on_turn 은 보드의 정보와 black, white에 대한 정보가 dict로 날라옴, 이를 적절히 처리
 #하여 자신이 둘 x,y좌표를 보내면 됨
-3
 #finish메시지에선 별다른 처리가 필요없을 것 같음 아직
 
 #on_turn 의 key = board, black, white, none -> board는 8*8짜리 2차원 배열이며
@@ -20,23 +19,11 @@ class OthelloAIParser2(AIParser):
     def __init__(self):
         self.none = 'NONE'
 
-    def decoding(self, decoding_data):
-        self.msg = decoding_data['msg']
-        self.msg_type = decoding_data['msg_type']
-        self.game_data = decoding_data['data']
-
     def parsing_data(self, decoding_data):
-        self.decoding(decoding_data)
+        base = super(OthelloAIParser2, self).parsing_data(decoding_data)
         if self.msg_type == 'on_turn':
             return self.on_turn_phase()
-        elif self.msg_type == 'init':
-            return self.init_phase()
-        elif self.msg_type == 'finish':
-            return self.finish_phase()
-        elif self.msg_type == 'round_result':
-            return self.make_send_msg(self.msg_type, {'response' : 'OK'})
-        elif self.msg_type == 'ready':
-            return self.make_send_msg(self.msg_type, {'response' : 'OK'})
+        return base
 
     def on_turn_phase(self):
         '''
@@ -45,18 +32,6 @@ class OthelloAIParser2(AIParser):
         :return: make_send_msg를 사용해서 json으로 묶은 것을 return 해주어야 한다.
         '''
         pass
-
-    def init_phase(self):
-        parsing_data = {}
-        parsing_data['response'] = 'OK'
-        send_msg = self.make_send_msg(self.msg_type, parsing_data)
-        return send_msg
-
-    def finish_phase(self):
-        parsing_data = {}
-        parsing_data['response'] = 'OK'
-        send_msg = self.make_send_msg(self.msg_type, parsing_data)
-        return send_msg
 
     def is_on_board(self, x, y):
         '''

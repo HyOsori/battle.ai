@@ -10,7 +10,7 @@ import AIParser
 
 #사용자는 자신의 게임에 맞는 client와 parser를 구현하는게 아니라
 #자신의 게임의 맞는 parser만 구현하면 되게 만들자!
-class Client:
+class Client(object):
     def __init__(self):
         self._sock = None
         self._parser = None
