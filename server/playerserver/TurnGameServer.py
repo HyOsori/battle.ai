@@ -12,7 +12,7 @@ import server.ServerLog as logging
 
 class TurnGameServer(GameServer):
     def __init__(self, room, player_list, attendee_list, game_speed, game_logic = None):
-        game_logic = PixelsGameLogic(self)
+        game_logic = OthelloGameLogic(self)
         GameServer.__init__(self, room, player_list, attendee_list, game_logic, game_speed)
 
     @gen.coroutine
@@ -21,7 +21,7 @@ class TurnGameServer(GameServer):
         try:
             print player.get_pid()+": Player handler running"
             while True:
-                message = yield player.timeout_read()
+                message = yield player.timeout_read(2)
                 res = json.loads(message)
                 print res
                 if res[MSG_TYPE] == self.current_msg_type:
