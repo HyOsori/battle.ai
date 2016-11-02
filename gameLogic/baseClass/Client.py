@@ -58,6 +58,7 @@ class Client(object):
 
     #데이터가 따로 오는 경우 처리를 해야함
     def recv_game_data(self):
+        print 'waiting...'
         if self.__remain_packet == "":
             game_data = self._sock.recv(1024)
 
