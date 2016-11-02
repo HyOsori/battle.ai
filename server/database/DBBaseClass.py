@@ -1,12 +1,12 @@
 class DBBaseClass:
     def __init__(self):
-        pass
+        raise NotImplementedError
 
-    def add_game_log(self):
-        pass
+    def add_game_log(self, winner, win_score, loser, lose_score):
+        raise NotImplementedError
 
     def del_game_log(self):
-        pass
+        raise NotImplementedError
 
     def search_game_log(self):
-        pass
+        raise NotImplementedError

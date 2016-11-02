@@ -12,7 +12,7 @@ import server.ServerLog as logging
 
 class TurnGameServer(GameServer):
     def __init__(self, room, player_list, attendee_list, game_speed, game_logic = None):
-        game_logic = PixelsGameLogic(self)
+        game_logic = OthelloGameLogic(self)
         GameServer.__init__(self, room, player_list, attendee_list, game_logic, game_speed)
 
     @gen.coroutine
@@ -21,7 +21,7 @@ class TurnGameServer(GameServer):
         try:
             print player.get_pid()+": Player handler running"
             while True:
-                message = yield player.read()
+                message = yield player.timeout_read(2)
                 res = json.loads(message)
                 print res
                 if res[MSG_TYPE] == self.current_msg_type:
@@ -43,9 +43,11 @@ class TurnGameServer(GameServer):
         except Exception as e:
             # TODO : error correcting is needed in error case
             # wrong message is come : kill play - finish all game
-            print e
-            logging.error("wow")
-            self._exit_handler(player)
+            logging.error(e)
+            logging.error("here???")
+            if self.normal_game_playing:
+                logging.error("wow")
+                self._exit_handler(player)
             logging.debug("in error case at player_handler (Exception)")
             # + remove player from room (and close that player's socket)
 
