@@ -119,6 +119,9 @@ class PixelsLoopPhase(Phase):
 
         ruler_enemy = ruler  # Ruler who finished absorbing
         ruler_self = ruler % 2 + 1  # Ruler who will take the request
+
+        self.change_turn()
+
         self.request_to_client(ruler_self, ruler_enemy)
         self.notify_to_front(ruler)
 
@@ -232,6 +235,7 @@ class PixelsFinishPhase(Phase):
         super(PixelsFinishPhase, self).on_start()
         logging.debug('PixelsFinishPhase.on_start')
 
+        self.change_turn(0)
         self.send_game_over()
 
     def do_action(self, pid, dict_data):
@@ -241,30 +245,33 @@ class PixelsFinishPhase(Phase):
 
         self.cnt_player -= 1
 
+        score = self.shared_dict['score']
+        # ruler 1
+        ruler1 = score[0][0] + score[1][0]
+        # ruler 2
+        ruler2 = score[0][1] + score[1][1]
+
+        if ruler1 > ruler2:
+            win = 1
+            lose = 2
+        elif ruler1 < ruler2:
+            win = 2
+            lose = 1
+        else:
+            win = 0
+            lose = 0
+
+        logging.error(pid + ' **************************')
+        send_dict = {'win': win,
+                     'lose': lose,
+                     'ruler1_score': ruler1,
+                     'ruler2_score': ruler2}
+        print 'win', win, 'lose', lose, 'score', ruler1, ruler2
+        self.change_turn()
+        self.send_game_over()
+        self.notify_winner(send_dict)
+
         if self.cnt_player == 0:
-            score = self.shared_dict['score']
-            # ruler 1
-            ruler1 = score[0][0] + score[1][0]
-            # ruler 2
-            ruler2 = score[0][1] + score[1][1]
-
-            if ruler1 > ruler2:
-                win = 1
-                lose = 2
-            elif ruler1 < ruler2:
-                win = 2
-                lose = 1
-            else:
-                win = 0
-                lose = 0
-
-            logging.error(pid + ' **************************')
-            send_dict = {'win': win,
-                         'lose': lose,
-                         'ruler1_score': ruler1,
-                         'ruler2_score': ruler2}
-
-            self.notify_winner(send_dict)
             self.end(True, send_dict)
             return
 
@@ -278,7 +285,7 @@ class PixelsFinishPhase(Phase):
 
     def send_game_over(self):
         logging.debug('Send gameover message to ' + self.now_turn())
-        self.request(self.now_turn(), {})
+        self.request(self.now_turn(), {'tlqk':18})
 
 
 class PixelsGameLogic(TurnGameLogic):
@@ -287,8 +294,8 @@ class PixelsGameLogic(TurnGameLogic):
         logging.debug('GameLogic : INIT')
 
         # Initialize constants.
-        self.width = 16
-        self.height = 16
+        self.width = 8
+        self.height = 8
         # Width and height must be multiples of 8.
         # Because start_point of rulers are 3/8 and 5/8 points of board.
         self.num_of_color = 6
