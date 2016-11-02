@@ -59,7 +59,6 @@ class GameServer:
             logging.info("==================Game Start==================")
             self.game_logic.on_start(turn)
 
-
             logging.debug("normal game playinng ........")
 
             for player in self.room.player_list:
@@ -114,6 +113,11 @@ class GameServer:
             logging.error(e)
             logging.error("ready error")
             raise gen.Return(False)
+
+    @gen.coroutine
+    def round_result_reponse_acceptor(self, player):
+        message = yield player.timeout_read()
+        raise gen.Return(message)
 
     def _error_handler(self):
         pass
@@ -179,6 +183,7 @@ class GameServer:
         self.game_result = message
 
         if is_valid_end:
+            self.current_msg_type = ROUND_RESULT
             message = {MSG: GAME_DATA, MSG_TYPE: ROUND_RESULT, DATA: message}
         else:
             logging.error("logic error end")

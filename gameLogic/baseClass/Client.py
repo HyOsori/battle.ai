@@ -114,7 +114,7 @@ class Client(object):
                 return decoding_data
             else:  # 미완성된 JSON을 받아놓은 상태
                 game_data = self._sock.recv(1024)
-                print "seungmin",self.__remain_packet
+                print "yet",game_data
                 self.__remain_packet += game_data
 
                 continue
