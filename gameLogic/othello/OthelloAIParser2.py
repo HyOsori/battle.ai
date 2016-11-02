@@ -20,9 +20,10 @@ class OthelloAIParser2(AIParser):
         self.none = 'NONE'
 
     def parsing_data(self, decoding_data):
-        super(OthelloAIParser2, self).parsing_data(decoding_data)
+        base = super(OthelloAIParser2, self).parsing_data(decoding_data)
         if self.msg_type == 'on_turn':
             return self.on_turn_phase()
+        return base
 
     def on_turn_phase(self):
         '''

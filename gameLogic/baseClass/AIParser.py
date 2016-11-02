@@ -1,7 +1,7 @@
 
 #-*-coding:utf-8-*-
 
-class AIParser:
+class AIParser(object):
     def init_parser(self, client, username):
         '''
 
@@ -33,15 +33,7 @@ class AIParser:
             return self.make_send_msg(self.msg_type, {'response' : 'OK'})
         elif self.msg_type == 'ready':
             return self.make_send_msg(self.msg_type, {'response' : 'OK'})
-
-
-    def parsing_data(self, decoding_data):
-        '''
-
-        :param decoding_data:
-        :return:
-        '''
-        pass
+        return None
 
     def make_send_msg(self, msg_type, game_data):
         send_msg = {"msg": "game_data"}

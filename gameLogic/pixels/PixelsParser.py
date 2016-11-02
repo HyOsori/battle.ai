@@ -8,9 +8,10 @@ class PixelsParser(AIParser):
         pass
 
     def parsing_data(self, decoding_data):
-        super(PixelsParser, self).parsing_data(decoding_data)
+        base = super(PixelsParser, self).parsing_data(decoding_data)
         if self.msg_type == 'loop':
             return self.loop_phase()
+        return base
 
     def loop_phase(self):
         '''

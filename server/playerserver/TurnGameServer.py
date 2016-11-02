@@ -5,13 +5,14 @@ from server.m_format import *
 from tornado import gen
 from server.playerserver.GameServer import GameServer
 from gameLogic.othello.OthelloGameLogic import OthelloGameLogic
+from gameLogic.pixels.PixelsGameLogic import PixelsGameLogic
 
 import server.ServerLog as logging
 
 
 class TurnGameServer(GameServer):
     def __init__(self, room, player_list, attendee_list, game_speed, game_logic = None):
-        game_logic = OthelloGameLogic(self)
+        game_logic = PixelsGameLogic(self)
         GameServer.__init__(self, room, player_list, attendee_list, game_logic, game_speed)
 
     @gen.coroutine
