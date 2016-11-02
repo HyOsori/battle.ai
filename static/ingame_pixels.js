@@ -1,8 +1,7 @@
 var canvas = $("#id_board_canvas")[0];
 var ctx = canvas.getContext("2d");
 
-var canvas_width;
-var canvas_height;
+var round = 1;
 var width;
 var height;
 var color_array_old = [];
@@ -14,8 +13,9 @@ var ruler_array = [];
 var pixel_color = ["#FF0000", "#FFA500", "#FFFF00", "#008000", "#0000FF", "#800080"];
 var speed;
 var sleep_time;
-var pixel_size = 4;
-var margin;
+var pixel_size = 2;
+var margin_width;
+var margin_height;
 
 var borders = new Queue();
 var this_turn_player;
@@ -28,22 +28,23 @@ function gameStart() {
     GoToInGame();
 }
 
-function roundStart(player_list) {
-    width
-    height
-    canvas_width
-    canvas_height
-    margin
+function roundStart(data) {
+    width = data.width;
+    height = data.height;
+	color_array = data.color_array;
+
+    margin_width = (canvas.width - pixel_size * width) / 2;
+	margin_height = (canvas.height - pixel_size * height) / 2;
     sleep_time = speed / (width * height);
 
-    DrawBoard(color_array_old);
+	DrawBoard(color_array);
 }
 
-function recvTurnResult(data) {
+function recvTurnResult(game_data) {
     color_array_old = color_array;
-    color_array
+    color_array = game_data.data.color_array;
     ruler_array_old = ruler_array;
-    ruler_array
+    ruler_array = game_data.data.ruler_array;
 
     this_turn_color
     this_turn_player
@@ -104,7 +105,7 @@ function GetIndexNewTiles(array_old, array) {
 function PaintPixel(x, y, color) {
     ctx.beginPath();
     ctx.fillStyle = color;
-    ctx.fillRect(margin + (x * pixel_size), margin + (y * pixel_size), pixel_size, pixel_size);
+    ctx.fillRect(margin_width + (x * pixel_size), margin_height + (y * pixel_size), pixel_size, pixel_size);
     ctx.closePath();
 }
 
@@ -140,4 +141,15 @@ function PaintBorder(array_old, border, color, this_turn) {
 		array_old[y + 1][x] = 0;
 		borders.enqueue([x, y + 1]);
 	}
+}
+
+function ClearBoard() {
+	ctx.clearRect(0, 0, canvas.width, canvas.height);
+	ctx.beginPath();
+}
+
+function ReadyAfterResize() {
+	margin_width = (canvas.width - pixel_size * width) / 2;
+	margin_height = (canvas.height - pixel_size * height) / 2;
+	DrawBoard(color_array);
 }

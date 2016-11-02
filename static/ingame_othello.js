@@ -11,7 +11,8 @@ var users;
 
 
 
-function ReadyNewRound() {
+function ReadyAfterResize() {
+    interval = (canvas.width - (margin * 2)) / size;
     ClearBoard();
     
     ctx.beginPath();
@@ -73,8 +74,8 @@ function gameStart() {
     GoToInGame();
 }
 
-function roundStart(user_list) {
-    users = user_list;
+function roundStart(data) {
+    users = data.players;
     $("#id_title").html("● "+users[0]+"  vs  "+users[1]+" ○").css("text-align","center");
     $("#id_gameMessage_second").html("Round "+round);
 }

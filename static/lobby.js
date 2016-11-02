@@ -113,12 +113,15 @@ if ("WebSocket" in window) {
             else if (data.msg_type == "notify_finish") {
                 recvRoundResult(data);
             }
+            else if (data.msg_type == "round_result") {
+                
+            }
         }
 
         else if (data.msg == "game_handler") {
             if (data.msg_type == "ready") {
                 if (data.data.response = "OK") {
-                    roundStart(data.data.players);
+                    roundStart(data.data);
                 } else {
                     alertify.alert("매칭 실패!");
                     GoToLobby();
@@ -168,12 +171,7 @@ else
     messageContainer.innerHTML = "WebSocket NOT supported by your Browser!";
 }
 
-function ResizeCanvas() {
-    canvas_size = $("#id_side").css('height');
-    $("#id_board_canvas").attr({"width": canvas_size, "height": canvas_size});
-    interval = (canvas.width - (margin * 2)) / size;
-    ReadyNewRound();
-}
+
 
 function GoToLobby() {
     $(".class_inGame").css("display","none");
@@ -197,4 +195,10 @@ function GoToGameResult() {
     $(".class_gameResult").css("display","");
 
     ResizeCanvas();
+}
+
+function ResizeCanvas() {
+    canvas_size = $("#id_side").css('height');
+    $("#id_board_canvas").attr({"width": canvas_size, "height": canvas_size});
+    ReadyAfterResize();
 }
