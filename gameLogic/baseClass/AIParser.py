@@ -18,6 +18,23 @@ class AIParser:
 
     #고로 이 부분이 사용자가 코딩할 부분!
 
+    def decoding(self, decoding_data):
+        self.msg = decoding_data['msg']
+        self.msg_type = decoding_data['msg_type']
+        self.game_data = decoding_data['data']
+
+    def parsing_data(self, decoding_data):
+        self.decoding(decoding_data)
+        if self.msg_type == 'init':
+            return self.init_phase()
+        elif self.msg_type == 'finish':
+            return self.finish_phase()
+        elif self.msg_type == 'round_result':
+            return self.make_send_msg(self.msg_type, {'response' : 'OK'})
+        elif self.msg_type == 'ready':
+            return self.make_send_msg(self.msg_type, {'response' : 'OK'})
+
+
     def parsing_data(self, decoding_data):
         '''
 
@@ -32,4 +49,16 @@ class AIParser:
             send_msg["msg"] = "game_handler"
         send_msg["msg_type"] = msg_type
         send_msg["data"] = game_data
+        return send_msg
+
+    def init_phase(self):
+        parsing_data = {}
+        parsing_data['response'] = 'OK'
+        send_msg = self.make_send_msg(self.msg_type, parsing_data)
+        return send_msg
+
+    def finish_phase(self):
+        parsing_data = {}
+        parsing_data['response'] = 'OK'
+        send_msg = self.make_send_msg(self.msg_type, parsing_data)
         return send_msg
