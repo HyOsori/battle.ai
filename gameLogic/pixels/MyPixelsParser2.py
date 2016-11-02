@@ -5,7 +5,6 @@ import random
 
 class MyPixelsParser2(PixelsParser):
     def loop_phase(self):
-
         width = self.game_data['width']
         height = self.game_data['height']
         color_array = self.game_data['color_array']

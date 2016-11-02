@@ -91,6 +91,9 @@ class PixelsLoopPhase(Phase):
 
             self.initialize = False
 
+            if pid == self.player_list[0]:
+                self.change_turn()
+
         if self.round == 2:  # Change phase if two rounds are finished.
             self.shared_dict['score'] = self.score
             logging.debug('LoopPhase -> FinishPhase')
@@ -284,8 +287,8 @@ class PixelsGameLogic(TurnGameLogic):
         logging.debug('GameLogic : INIT')
 
         # Initialize constants.
-        self.width = 6
-        self.height = 6
+        self.width = 16
+        self.height = 16
         # Width and height must be multiples of 8.
         # Because start_point of rulers are 3/8 and 5/8 points of board.
         self.num_of_color = 6
