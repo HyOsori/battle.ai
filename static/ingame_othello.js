@@ -76,7 +76,7 @@ function DrawBoard(array) {
     }
 }
 
-function gameStart() {
+function gameStart(data) {
     GoToInGame();
 }
 

@@ -23,8 +23,8 @@ var tiles_get;
 var this_turn_color;
 var border;
 
-function gameStart() {
-    speed
+function gameStart(data) {
+    speed = data.data.speed;
     GoToInGame();
 }
 
@@ -46,8 +46,8 @@ function recvTurnResult(game_data) {
     ruler_array_old = ruler_array;
     ruler_array = game_data.data.ruler_array;
 
-    this_turn_color
-    this_turn_player
+    this_turn_color = 
+    this_turn_player = game_data.data.ruler_who;
 
     GetIndexNewTiles(ruler_array_old, ruler_array);
 	GetBorder(ruler_array_old, this_turn_player);
