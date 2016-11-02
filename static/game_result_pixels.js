@@ -1,5 +1,17 @@
 var gameResults = [];
 
+function DrawResultBoard() {
+    var nav = document.getElementById('id_gameResults_ul');
+    var index = 0;
+    for(index; index<nav.childNodes.length; index++){
+        var child = nav.childNodes[index];
+        if (child.className == 'class_selected') {
+            break;
+        }
+    }
+    DrawBoard(gameResults[index]["round1"]["board"]);
+}
+
 function SaveRoundResult(winner){
     $('<li />').bind('click', function(event) {
         var nav = document.getElementById('id_gameResults_ul');
@@ -8,7 +20,7 @@ function SaveRoundResult(winner){
             child.className = '';
         }
         event.target.className = 'class_selected';
-        DrawBoard(gameResults[i]["round1"]["board"]);
+        DrawResultBoard();
     }).append('Round ', round, ' ', winner).appendTo('#id_gameResults_ul')
 }
 

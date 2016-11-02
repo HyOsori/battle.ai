@@ -1,8 +1,10 @@
 var MIN_MATCH_USER_CNT = 2;
 var MAX_MATCH_USER_CNT = 2;
-var Title = "othello";
+var Title = "Othello";
 
 var list = [];
+var page_now = "Lobby";
+
 var messageContainer = document.getElementById('id_messages');
 var userList = document.getElementById('id_list_ul');
 var setSpeed = document.getElementById('id_setSpeed');
@@ -179,6 +181,7 @@ function GoToLobby() {
     $(".class_lobby").css("display","");
 
     $("#id_title").html(Title).css("text-align","left");
+    page_now = "Lobby";
 }
 
 function GoToInGame() {
@@ -186,6 +189,7 @@ function GoToInGame() {
     $(".class_gameResult").css("display","none");
     $(".class_inGame").css("display","");
     
+    page_now = "InGame";
     ResizeCanvas();
 }
 
@@ -193,7 +197,8 @@ function GoToGameResult() {
     $(".class_lobby").css("display","none");
     $(".class_inGame").css("display","none");
     $(".class_gameResult").css("display","");
-
+    
+    page_now = "GameResult";
     ResizeCanvas();
 }
 

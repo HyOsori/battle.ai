@@ -9,24 +9,14 @@ var round = 1;
 var canvas_size = $("#id_side").css('height');
 var users;
 
-
-
 function ReadyAfterResize() {
     interval = (canvas.width - (margin * 2)) / size;
     ClearBoard();
-    
-    ctx.beginPath();
-    for (var i = 0; i <= size; i++){
-        ctx.moveTo(margin, margin + (interval * i));
-        ctx.lineTo(margin + (interval * size), margin + (interval * i));
-        ctx.stroke();
+    if (page_now == "InGame") {
+        DrawBoard(roundBoardResult);
+    } else if (page_now == "GameResult") {
+        DrawResultBoard();
     }
-    for (var i = 0; i <= size; i++){
-        ctx.moveTo(margin + (interval * i), margin);
-        ctx.lineTo(margin + (interval * i), margin + (interval * size));
-        ctx.stroke();
-    }
-    ctx.closePath();    
 }
 
 function drawCircle(x, y, color) {
@@ -49,11 +39,19 @@ function drawCircle(x, y, color) {
 }
 
 function ClearBoard() {
-    for (var i = 0; i < size; i++) {
-        for (var j = 0; j < size; j++) {
-            drawCircle(j, i, 0);
-        }
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.beginPath();
+    for (var i = 0; i <= size; i++){
+        ctx.moveTo(margin, margin + (interval * i));
+        ctx.lineTo(margin + (interval * size), margin + (interval * i));
+        ctx.stroke();
     }
+    for (var i = 0; i <= size; i++){
+        ctx.moveTo(margin + (interval * i), margin);
+        ctx.lineTo(margin + (interval * i), margin + (interval * size));
+        ctx.stroke();
+    }
+    ctx.closePath(); 
 }
 
 function highLight(x, y, color){
@@ -70,6 +68,14 @@ function highLight(x, y, color){
     ctx.closePath();
 }
 
+function DrawBoard(array) {
+    for (var y = 0; y < size; ++y) {
+        for (var x = 0; x < size; ++x) {
+            drawCircle(x, y, array[y][x]);
+        }
+    }
+}
+
 function gameStart() {
     GoToInGame();
 }
@@ -81,15 +87,9 @@ function roundStart(data) {
 }
 
 function recvTurnResult(game_data) {
-    var y = 0;
-    $.each(game_data.data.board, function(){
-        for (var x = 0; x < size; x++) {
-            drawCircle(x, y, this[x]);
-        }
-        y++;
-    })
-    
     roundBoardResult = game_data.data.board;
+    DrawBoard(roundBoardResult);
+    
     var nowTurn;
     if (game_data.data.now_turn == game_data.data.black)
         nowTurn = 1;

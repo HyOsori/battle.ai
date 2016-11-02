@@ -151,5 +151,10 @@ function ClearBoard() {
 function ReadyAfterResize() {
 	margin_width = (canvas.width - pixel_size * width) / 2;
 	margin_height = (canvas.height - pixel_size * height) / 2;
-	DrawBoard(color_array);
+	if (page_now == "InGame") {
+		DrawBoard(color_array);	
+	} else if (page_now == "GameResult") {
+		DrawResultBoard();
+	}
+	
 }
