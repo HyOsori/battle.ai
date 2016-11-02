@@ -20,7 +20,7 @@ class TurnGameServer(GameServer):
         try:
             print player.get_pid()+": Player handler running"
             while True:
-                message = yield player.read()
+                message = yield player.timeout_read()
                 res = json.loads(message)
                 print res
                 if res[MSG_TYPE] == self.current_msg_type:
