@@ -59,7 +59,6 @@ class GameServer:
             logging.info("==================Game Start==================")
             self.game_logic.on_start(turn)
 
-
             logging.debug("normal game playinng ........")
 
             for player in self.room.player_list:
@@ -81,6 +80,7 @@ class GameServer:
     @gen.coroutine
     def __ready_check(self, players):
         # send Are you ready message
+        return_flag = True
         msg = {MSG: GAME_HANDLER, MSG_TYPE: READY, DATA: {}}
         cur_player = None
         try:
@@ -90,7 +90,9 @@ class GameServer:
                 player.send(data)
                 recv_data = yield player.read()
                 recv_msg = json.loads(recv_data)
+                logging.debug(recv_msg)
                 if not recv_msg[DATA][RESPONSE] == 'OK':
+                    return_flag = False
                     raise gen.Return(False)
             # recv Are you ready message
 
@@ -100,14 +102,22 @@ class GameServer:
             for attendee in self.room.attendee_list:
                 attendee.send(data)
             logging.debug("return True")
+            return_flag = True
             raise gen.Return(True)
-        except Exception:
+        except Exception as e:
+            if return_flag:
+                raise gen.Return(True)
             for p in self.room.player_list:
                 if not p.get_pid() == cur_player.get_pid():
                     self.player_list[p.get_pid()] = p
-
+            logging.error(e)
             logging.error("ready error")
             raise gen.Return(False)
+
+    @gen.coroutine
+    def round_result_reponse_acceptor(self, player):
+        message = yield player.timeout_read()
+        raise gen.Return(message)
 
     def _error_handler(self):
         pass
@@ -173,6 +183,7 @@ class GameServer:
         self.game_result = message
 
         if is_valid_end:
+            self.current_msg_type = ROUND_RESULT
             message = {MSG: GAME_DATA, MSG_TYPE: ROUND_RESULT, DATA: message}
         else:
             logging.error("logic error end")
