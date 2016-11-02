@@ -188,9 +188,9 @@ function GoToInGame() {
     $(".class_lobby").css("display","none");
     $(".class_gameResult").css("display","none");
     $(".class_inGame").css("display","");
-    
-    page_now = "InGame";
+
     ResizeCanvas();
+    page_now = "InGame";
 }
 
 function GoToGameResult() {

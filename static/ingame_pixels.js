@@ -24,7 +24,7 @@ var this_turn_color;
 var border;
 
 function gameStart(data) {
-    speed = data.data.speed;
+    speed = data.data.speed * 1000;
     GoToInGame();
 }
 
