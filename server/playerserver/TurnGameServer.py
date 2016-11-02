@@ -42,9 +42,11 @@ class TurnGameServer(GameServer):
         except Exception as e:
             # TODO : error correcting is needed in error case
             # wrong message is come : kill play - finish all game
-            print e
-            logging.error("wow")
-            self._exit_handler(player)
+            logging.error(e)
+            logging.error("here???")
+            if self.normal_game_playing:
+                logging.error("wow")
+                self._exit_handler(player)
             logging.debug("in error case at player_handler (Exception)")
             # + remove player from room (and close that player's socket)
 

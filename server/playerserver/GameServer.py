@@ -46,6 +46,10 @@ class GameServer:
         self.q = queues.Queue(len(self.room.player_list))
 
         for turn in self.turns:
+            # check game normal flag
+            if not self.normal_game_playing:
+                break
+
             logging.info("=====Are You Ready=====")
             ready = yield self.__ready_check(self.room.player_list)
             logging.debug("ready status : " + str(ready))
@@ -55,9 +59,7 @@ class GameServer:
             logging.info("==================Game Start==================")
             self.game_logic.on_start(turn)
 
-            # check game normal flag
-            if not self.normal_game_playing:
-                break
+
             logging.debug("normal game playinng ........")
 
             for player in self.room.player_list:
@@ -164,7 +166,7 @@ class GameServer:
             message = {MSG: GAME_DATA, MSG_TYPE: ROUND_RESULT, DATA: message}
         else:
             logging.error("logic error end")
-            self._exit_handler()
+            raise Exception
 
         json_data = json.dumps(message)
 
@@ -206,8 +208,10 @@ class GameServer:
     def _exit_handler(self, player):
         self.game_logic.on_error(player.get_pid())
         self.normal_game_playing = False
-        for player in self.room.player_list:
-            yield self.q.get()
+        for p in self.room.player_list:
+            if p.get_pid() == player.get_pid():
+                self.room.player_list.remove(p)
+            self.q.get()
             self.q.task_done()
         gen.Return(None)
 
