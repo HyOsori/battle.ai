@@ -21,19 +21,23 @@ class TurnGameServer(GameServer):
         try:
             print player.get_pid()+": Player handler running"
             while True:
-                message = yield player.timeout_read(2)
+                message = yield player.timeout_read()
                 res = json.loads(message)
-                print res
+                logging.debug("kya")
+                logging.debug(res)
+                logging.debug(res[MSG_TYPE])
+                logging.debug(self.current_msg_type)
                 if res[MSG_TYPE] == self.current_msg_type:
+                    if res[MSG_TYPE] == ROUND_RESULT:
+                        self.q.get()
+                        self.q.task_done()
+                        break
                     # correct message is come
                     yield self.delay_action()
                     self.game_logic.on_action(player.get_pid(), res[DATA])
                     logging.info('_player_handler onAction is done')
                     if res[MSG_TYPE] == FINISH:
-                        self.q.get()
-                        self.q.task_done()
                         logging.debug("finish msg is come")
-                        break
                 else:
                     # wrong message is come : kill player - finish all game
                     self._exit_handler(player)
@@ -48,6 +52,8 @@ class TurnGameServer(GameServer):
             if self.normal_game_playing:
                 logging.error("wow")
                 self._exit_handler(player)
+            else:
+                self.player_list[player.get_pid()] = player
             logging.debug("in error case at player_handler (Exception)")
             # + remove player from room (and close that player's socket)
 
