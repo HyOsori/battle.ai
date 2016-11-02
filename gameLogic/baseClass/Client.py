@@ -10,7 +10,7 @@ import AIParser
 
 #사용자는 자신의 게임에 맞는 client와 parser를 구현하는게 아니라
 #자신의 게임의 맞는 parser만 구현하면 되게 만들자!
-class Client:
+class Client(object):
     def __init__(self):
         self._sock = None
         self._parser = None
@@ -58,6 +58,7 @@ class Client:
 
     #데이터가 따로 오는 경우 처리를 해야함
     def recv_game_data(self):
+        print 'waiting...'
         if self.__remain_packet == "":
             game_data = self._sock.recv(1024)
 

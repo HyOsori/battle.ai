@@ -46,6 +46,10 @@ class GameServer:
         self.q = queues.Queue(len(self.room.player_list))
 
         for turn in self.turns:
+            # check game normal flag
+            if not self.normal_game_playing:
+                break
+
             logging.info("=====Are You Ready=====")
             ready = yield self.__ready_check(self.room.player_list)
             logging.debug("ready status : " + str(ready))
@@ -55,9 +59,7 @@ class GameServer:
             logging.info("==================Game Start==================")
             self.game_logic.on_start(turn)
 
-            # check game normal flag
-            if not self.normal_game_playing:
-                break
+
             logging.debug("normal game playinng ........")
 
             for player in self.room.player_list:
@@ -79,23 +81,33 @@ class GameServer:
     @gen.coroutine
     def __ready_check(self, players):
         # send Are you ready message
-        msg = {MSG: GAME_HANDLER, MSG_TYPE: READY, DATA:{}}
-        data = json.dumps(msg)
-        for player in players:
-            player.send(data)
-            recv_data = yield player.read()
-            recv_msg = json.loads(recv_data)
-            if not recv_msg[DATA][RESPONSE] == 'OK':
-                raise gen.Return(False)
-        # recv Are you ready message
+        msg = {MSG: GAME_HANDLER, MSG_TYPE: READY, DATA: {}}
+        cur_player = None
+        try:
+            data = json.dumps(msg)
+            for player in players:
+                cur_player = player
+                player.send(data)
+                recv_data = yield player.read()
+                recv_msg = json.loads(recv_data)
+                if not recv_msg[DATA][RESPONSE] == 'OK':
+                    raise gen.Return(False)
+            # recv Are you ready message
 
-        # send web that all player ready OK
-        recv_msg[DATA] = {RESPONSE_: OK, PLAYERS: [player.get_pid() for player in players]}
-        data = json.dumps(recv_msg)
-        for attendee in self.room.attendee_list:
-            attendee.send(data)
-        logging.debug("return True")
-        raise gen.Return(True)
+            # send web that all player ready OK
+            recv_msg[DATA] = {RESPONSE_: OK, PLAYERS: [player.get_pid() for player in players]}
+            data = json.dumps(recv_msg)
+            for attendee in self.room.attendee_list:
+                attendee.send(data)
+            logging.debug("return True")
+            raise gen.Return(True)
+        except Exception:
+            for p in self.room.player_list:
+                if not p.get_pid() == cur_player.get_pid():
+                    self.player_list[p.get_pid()] = p
+
+            logging.error("ready error")
+            raise gen.Return(False)
 
     def _error_handler(self):
         pass
@@ -164,7 +176,7 @@ class GameServer:
             message = {MSG: GAME_DATA, MSG_TYPE: ROUND_RESULT, DATA: message}
         else:
             logging.error("logic error end")
-            self._exit_handler()
+            raise Exception
 
         json_data = json.dumps(message)
 
@@ -206,8 +218,10 @@ class GameServer:
     def _exit_handler(self, player):
         self.game_logic.on_error(player.get_pid())
         self.normal_game_playing = False
-        for player in self.room.player_list:
-            yield self.q.get()
+        for p in self.room.player_list:
+            if p.get_pid() == player.get_pid():
+                self.room.player_list.remove(p)
+            self.q.get()
             self.q.task_done()
         gen.Return(None)
 
