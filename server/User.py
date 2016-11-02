@@ -1,16 +1,30 @@
 import json
 from server.m_format import *
-
+from tornado import gen
+import tornado.ioloop
+from functools import partial
 
 class User:
     def __init__(self, conn):
         self.conn = conn
-
+        self.io_loop = tornado.ioloop.IOLoop.instance()
 
 class Player(User):
     def __init__(self, pid, conn):
         User.__init__(self, conn)
         self.pid = pid
+        self.playing = False
+
+    def __error_callback(self, future):
+        future.set_exception(gen.TimeoutError("Timeout"))
+
+    @gen.coroutine
+    def timeout_read(self, timeout = 3):
+        future = self.conn.read_bytes(256, partial=True)
+        timeout_handle = self.io_loop.add_timeout(self.io_loop.time() + timeout, partial(self.__error_callback, future=future))
+        future.add_done_callback(lambda r: self.io_loop.remove_timeout(timeout_handle))
+        message = yield future
+        raise gen.Return(message)
 
     def read(self):
         return self.conn.read_bytes(256, partial=True)
@@ -63,4 +77,6 @@ class Attendee(User):
 
     def room_out(self):
         self.attendee_flag = False
+
+
 
