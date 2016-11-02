@@ -81,6 +81,7 @@ class GameServer:
     @gen.coroutine
     def __ready_check(self, players):
         # send Are you ready message
+        return_flag = True
         msg = {MSG: GAME_HANDLER, MSG_TYPE: READY, DATA: {}}
         cur_player = None
         try:
@@ -90,7 +91,9 @@ class GameServer:
                 player.send(data)
                 recv_data = yield player.read()
                 recv_msg = json.loads(recv_data)
+                logging.debug(recv_msg)
                 if not recv_msg[DATA][RESPONSE] == 'OK':
+                    return_flag = False
                     raise gen.Return(False)
             # recv Are you ready message
 
@@ -100,12 +103,15 @@ class GameServer:
             for attendee in self.room.attendee_list:
                 attendee.send(data)
             logging.debug("return True")
+            return_flag = True
             raise gen.Return(True)
-        except Exception:
+        except Exception as e:
+            if return_flag:
+                raise gen.Return(True)
             for p in self.room.player_list:
                 if not p.get_pid() == cur_player.get_pid():
                     self.player_list[p.get_pid()] = p
-
+            logging.error(e)
             logging.error("ready error")
             raise gen.Return(False)
 

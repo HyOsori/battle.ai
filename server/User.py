@@ -19,7 +19,7 @@ class Player(User):
         future.set_exception(gen.TimeoutError("Timeout"))
 
     @gen.coroutine
-    def timeout_read(self, timeout = 3):
+    def timeout_read(self, timeout = 2):
         future = self.conn.read_bytes(256, partial=True)
         timeout_handle = self.io_loop.add_timeout(self.io_loop.time() + timeout, partial(self.__error_callback, future=future))
         future.add_done_callback(lambda r: self.io_loop.remove_timeout(timeout_handle))
