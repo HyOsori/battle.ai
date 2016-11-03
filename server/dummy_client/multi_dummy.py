@@ -1,6 +1,7 @@
 #-*-coding:utf-8-*-
 import threading
 
+
 class DummyManager:
 
     def __init__(self, parser, name, max_waiting_dummies = 1, max_dummies = 50):
@@ -26,13 +27,15 @@ class DummyManager:
 
     def _spawn_new_dummy(self):
         if len(self.waitings) >= self.max_waiting_dummies:
-            return False # TODO : raise exception
+            raise Exception('There are too many waiting dummies') # TODO : raise exception
         if len(self.waitings)+len(self.gammings) >= self.max_dummies:
-            return False # TODO : raise exception
+            raise Exception('There are too many dummies') # TODO : raise exception
 
         dummy = DummyClient()
+        dummy.set_username(self.name)
         dummy.set_parser(parser=self.parser)
         dummy.connect_server(self.host, self.port)
+        dummy.send_name()
         th = threading.Thread(target=dummy.client_run,
                               args=(self._succeed_waiting,
                                     lambda: self.gammings.remove(dummy)))
@@ -74,17 +77,26 @@ class DummyClient(object):
 
     def connect_server(self, host, port):
         self._sock = socket(AF_INET, SOCK_STREAM)
-        try:
-            self._sock.connect((host,port))
-        except:
-            print '연결에 실패 하였습니다.'
-            return False
-
+        # try:
+        self._sock.connect((host,port))
+        # except:
+        #     print '연결에 실패 하였습니다.'
+            # return False
         print '서버에 연결 되었습니다.'
+
+    def send_name(self):
+        send_msg = {}
+        send_msg['msg'] = 'user_info'
+        send_msg['msg_tpye'] = 'init'
+        send_msg['data'] = {'username': self._username}
+        json_msg = json.dumps(send_msg)
+        self._sock.send(json_msg)
 
     def __del__(self):
         self._sock.close()
 
+    def set_username(self, name):
+        self._username = name
 
     def set_parser(self, parser):
         parser.init_parser(self, self._username)
@@ -182,7 +194,7 @@ class DummyClient(object):
             decoding_data = self.recv_game_data()
             if is_new_game and decoding_data['msg_type'] == 'ready':
                 if on_new_game:
-                    on_new_game()
+                    on_new_game(self)
                 is_new_game = False
             if decoding_data['msg'] == 'game_result':
                 print decoding_data['data']
