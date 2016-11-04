@@ -158,3 +158,7 @@ function ReadyAfterResize() {
 	}
 	
 }
+
+function HighLight() {
+	
+}

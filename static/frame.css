@@ -22,6 +22,10 @@ button {
 	flex-grow:1;
 	margin:5px;
 }
+ul {
+	flex-grow:20;
+	margin:5px;
+}
 #id_container {
     display:flex;
 	margin:auto;
@@ -86,9 +90,6 @@ button {
 	margin:5px;
 	flex-basis:70%;
 }
-#id_log li {
-	margin:5px;
-}
 #id_canvasContainer {
 	flex-grow:1;
 	margin:5px;
@@ -105,16 +106,19 @@ button {
 #id_chart {
 	flex-grow:1;
 }
+#id_dummyclient_ul {
+	flex-grow:2;
+	flex-basis:7%;
+}
 #id_list_ul {
-	flex-grow:20;
 	padding:5px;
-	margin:5px;
+	flex-basis:84%;
 }
 #id_gameResults_ul {
-	flex-grow:20;
-	margin:5px;
+
 }
 #id_btnContainer {
 	display:flex;
 	flex-grow:1;
+	flex-basis:9%;
 }

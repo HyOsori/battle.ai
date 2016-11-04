@@ -8,12 +8,14 @@ var interval = (canvas.width - (margin * 2)) / size;
 var round = 1;
 var canvas_size = $("#id_side").css('height');
 var users;
+var x, y, nowTurn;
 
 function ReadyAfterResize() {
     interval = (canvas.width - (margin * 2)) / size;
     ClearBoard();
     if (page_now == "InGame") {
         DrawBoard(roundBoardResult);
+        highLight(y, x, nowTurn);
     } else if (page_now == "GameResult") {
         DrawResultBoard();
     }
@@ -89,13 +91,14 @@ function roundStart(data) {
 function recvTurnResult(game_data) {
     roundBoardResult = game_data.data.board;
     DrawBoard(roundBoardResult);
-    
-    var nowTurn;
+
     if (game_data.data.now_turn == game_data.data.black)
         nowTurn = 1;
     else if (game_data.data.now_turn == game_data.data.white)
         nowTurn = 2;
-    highLight(game_data.data.y, game_data.data.x, nowTurn) // Interchange x, y temporarily
+    x = game_data.data.x;
+    y = game_data.data.y;
+    highLight(y, x, nowTurn) // Interchange x, y temporarily
 }
 
 function recvGameResult(game_data) {

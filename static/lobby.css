@@ -42,6 +42,9 @@ button {
 #id_list_ul .class_selected {
     background-color:whitesmoke;
 }
+#id_dummyclient_ul li {
+    text-align:center;
+}
 #id_messages {
     background:black;
     color:white;
