@@ -2,7 +2,7 @@ var roundBoardResult;
 var roundResult = [];
 var gameResults = [];
 
-function drawBoard(){
+function DrawResultBoard(){
     var nav = document.getElementById('id_gameResults_ul');
     var index = 0;
     for(index; index<nav.childNodes.length; index++){
@@ -53,7 +53,7 @@ function SaveRoundResult(round, blackNum, whiteNum){
             event.target.closest("li").className = 'class_selected';
         else
             event.target.className = 'class_selected';
-        drawBoard();
+        DrawResultBoard();
     }).append('Round ',round,' ',blackStone,' ',blackNum,' : ',whiteStone,' ',whiteNum).css({"background-color":background_color, "color":font_color}).appendTo('#id_gameResults_ul')
 }
 
