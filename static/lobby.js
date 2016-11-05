@@ -83,8 +83,13 @@ if ("WebSocket" in window) {
                     return;
             }
             if (text.length) {
-                $('<li />', {html: text}).bind('click', clickHandler).appendTo('#id_list_ul');
-                list.push(text);
+                if (text == "DUMMY") {
+                    $('<li />', {html: text}).css("color", "blue").bind('click', clickHandler).appendTo('#id_dummyclient_ul')
+                    list.push(text);
+                } else {
+                    $('<li />', {html: text}).bind('click', clickHandler).appendTo('#id_list_ul')
+                    list.push(text);
+                }
             }
         }
 
@@ -176,7 +181,7 @@ if ("WebSocket" in window) {
         ws.send( req );
     });
 
-    $("#id_search_btn").bind('click', function() {
+    $("#id_search_btn").bind('click', function() {/*send request search*/
         var input = document.getElementById('id_search_input');
         var keyword = input.value;
     });
