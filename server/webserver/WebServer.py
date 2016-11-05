@@ -15,6 +15,27 @@ class WebServer(tornado.web.RequestHandler):
     def get(self):
         self.render("index.html")
 
+class LogHandler(tornado.web.RequestHandler):
+    def initialize(self, database_driver):
+        self.db = database_driver
+
+    def get(self):
+        name = self.get_argument('name')
+        length = self.get_argument('length', default=10)
+        searched = self.db.search_game_log(name=name, cnt=length)
+        searched = [(name, length, 'a','b','c')]
+        self.write(json.dumps(searched))
+
+    def put(self): #log update
+        winner = self.get_argument('winner')
+        win_score = self.get_argument('win_score')
+        loser = self.get_argument('loser')
+        lose_score = self.get_argument('lose_score')
+        self.db.add_game_log(winner, win_score, loser, lose_score)
+        self.write('OK')
+        self.write('{0}'.format(winner))
+
+
 
 class WebSocketServer(tornado.websocket.WebSocketHandler):
 
