@@ -77,7 +77,7 @@ class PixelsLoopPhase(Phase):
     def do_action(self, pid, dict_data):
         super(PixelsLoopPhase, self).do_action(pid, dict_data)
         logging.debug('PHASE_LOOP : DO_ACTION / pid : ' + pid)
-
+        '''
         if self.initialize:  # Initialize the arrays if new(2nd) round starts.
             self.initialize_arrays()
             # self.start_point = [3 / 8, 5 / 8]
@@ -98,7 +98,7 @@ class PixelsLoopPhase(Phase):
             self.shared_dict['score'] = self.score
             logging.debug('LoopPhase -> FinishPhase')
             self.change_phase(self.next_phase)
-
+        '''
         ruler = 0
         if pid == self.player_list[0]:
             ruler = 1
@@ -113,9 +113,15 @@ class PixelsLoopPhase(Phase):
 
         self.absorb(ruler, self.chosen_color)
 
+        logging.debug('PHASE_LOOP : absorbing finished')
+
         if self.check_status():  # If check_status returns True, the round is finished.
-            self.round += 1
-            self.initialize = True
+            self.shared_dict['score'] = self.score
+            logging.debug('LoopPhase -> FinishPhase')
+            self.change_phase(self.next_phase)
+
+            # self.round += 1
+            # self.initialize = True
 
         ruler_enemy = ruler  # Ruler who finished absorbing
         ruler_self = ruler % 2 + 1  # Ruler who will take the request
@@ -123,7 +129,7 @@ class PixelsLoopPhase(Phase):
         self.change_turn()
 
         self.request_to_client(ruler_self, ruler_enemy)
-        self.notify_to_front(ruler)
+        # self.notify_to_front(ruler)
 
     def on_end(self):
         super(PixelsLoopPhase, self).on_end()
@@ -304,8 +310,12 @@ class PixelsGameLogic(TurnGameLogic):
         self.color_array_init = [[0 for x in range(self.width)] for y in range(self.height)]
 
         # Initialize start_point.
-        self.start_point_y = [self.height / 8 * 3 - 1, self.height / 8 * 5]
-        self.start_point_x = [self.width / 8 * 3 - 1, self.width / 8 * 5]
+        # self.start_point_y = [self.height / 8 * 3 - 1, self.height / 8 * 5]
+        # self.start_point_x = [self.width / 8 * 3 - 1, self.width / 8 * 5]
+        self.start_point_y = [0, 7]
+        self.start_point_x = [0, 7]
+        # logging.debug('start_point_y : ' + self.start_point_y)
+        # logging.debug('start_point_x : ' + self.start_point_x)
         # If width or height = 8, [2, 5] (0 ~ 7)
         # If width or height = 80, [29, 50] (0 ~ 79)
 
