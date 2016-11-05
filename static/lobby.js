@@ -1,8 +1,10 @@
 var MIN_MATCH_USER_CNT = 2;
 var MAX_MATCH_USER_CNT = 2;
-var Title = "othello";
+var Title = "Othello";
 
 var list = [];
+var page_now = "Lobby";
+
 var messageContainer = document.getElementById('id_messages');
 var userList = document.getElementById('id_list_ul');
 var setSpeed = document.getElementById('id_setSpeed');
@@ -62,8 +64,13 @@ if ("WebSocket" in window) {
                         return;
                 }
                 if (text.length) {
-                    $('<li />', {html: text}).bind('click', clickHandler).appendTo('#id_list_ul')
-                    list.push(text);
+                    if (text == "DUMMY") {
+                        $('<li />', {html: text}).css("color", "blue").bind('click', clickHandler).appendTo('#id_dummyclient_ul')
+                        list.push(text);
+                    } else {
+                        $('<li />', {html: text}).bind('click', clickHandler).appendTo('#id_list_ul')
+                        list.push(text);
+                    }
                 }
             })
         }
@@ -98,7 +105,7 @@ if ("WebSocket" in window) {
 
         else if (data.msg == "response_match") {
             if (data.data.error == 0) {
-                gameStart(data.data.users);
+                gameStart(data);
                 alertify.success("게임 시작!", 2000);
             }
             else {
@@ -113,10 +120,22 @@ if ("WebSocket" in window) {
             else if (data.msg_type == "notify_finish") {
                 recvRoundResult(data);
             }
+            else if (data.msg_type == "round_result") {
+                
+            }
         }
 
         else if (data.msg == "game_handler") {
-            recvGameResult(data);
+            if (data.msg_type == "ready") {
+                if (data.data.response = "OK") {
+                    roundStart(data.data);
+                } else {
+                    alertify.alert("매칭 실패!");
+                    GoToLobby();
+                }
+            } else if (data.msg_type == "game_result") {
+                recvGameResult(data);
+            }
         }
     }
 
@@ -159,12 +178,7 @@ else
     messageContainer.innerHTML = "WebSocket NOT supported by your Browser!";
 }
 
-function ResizeCanvas() {
-    canvas_size = $("#id_side").css('height');
-    $("#id_board_canvas").attr({"width": canvas_size, "height": canvas_size});
-    interval = (canvas.width - (margin * 2)) / size;
-    ReadyNewRound();
-}
+
 
 function GoToLobby() {
     $(".class_inGame").css("display","none");
@@ -172,20 +186,29 @@ function GoToLobby() {
     $(".class_lobby").css("display","");
 
     $("#id_title").html(Title).css("text-align","left");
+    page_now = "Lobby";
 }
 
 function GoToInGame() {
     $(".class_lobby").css("display","none");
     $(".class_gameResult").css("display","none");
     $(".class_inGame").css("display","");
-    
+
     ResizeCanvas();
+    page_now = "InGame";
 }
 
 function GoToGameResult() {
     $(".class_lobby").css("display","none");
     $(".class_inGame").css("display","none");
     $(".class_gameResult").css("display","");
-
+    
+    page_now = "GameResult";
     ResizeCanvas();
+}
+
+function ResizeCanvas() {
+    canvas_size = $("#id_side").css('height');
+    $("#id_board_canvas").attr({"width": canvas_size, "height": canvas_size});
+    ReadyAfterResize();
 }

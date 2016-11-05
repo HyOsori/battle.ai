@@ -88,8 +88,8 @@ class WebSocketServer(tornado.websocket.WebSocketHandler):
             return
 
         tornado.ioloop.IOLoop.current().spawn_callback(game_server.game_handler)
-
-        msg = {MSG: RESPONSE_ + MATCH, DATA: {USERS: data[USERS], ERROR: 0}}
+        speed_list = [2, 0.5, 0.3, 0.1, 0.05]
+        msg = {MSG: RESPONSE_ + MATCH, DATA: {USERS: data[USERS], ERROR: 0, SPEED: speed_list[int(data[SPEED])]}}
         json_msg = json.dumps(msg)
 
         try:
