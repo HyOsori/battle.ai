@@ -23,7 +23,6 @@ class LogHandler(tornado.web.RequestHandler):
         name = self.get_argument('name')
         length = self.get_argument('length', default=10)
         searched = self.db.search_game_log(name=name, cnt=length)
-        searched = [(name, length, 'a','b','c')]
         self.write(json.dumps(searched))
 
     def put(self): #log update
@@ -33,7 +32,6 @@ class LogHandler(tornado.web.RequestHandler):
         lose_score = self.get_argument('lose_score')
         self.db.add_game_log(winner, win_score, loser, lose_score)
         self.write('OK')
-        self.write('{0}'.format(winner))
 
 
 
