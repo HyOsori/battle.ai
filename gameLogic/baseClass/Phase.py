@@ -49,10 +49,10 @@ class Phase(object):
 
     def notify(self, dict_data):
         self._logic_server.notify(self.notify_message_type, dict_data)
-"""
-    def notify(self, notify_message_type, dict_data):
-        self._logic_server.notify(notify_message_type, dict_data)
 
     def notify_init(self, dict_data):
         self._logic_server.notify(self.notify_init_message_type, dict_data)
-"""
+'''
+    def notify(self, notify_message_type, dict_data):
+        self._logic_server.notify(notify_message_type, dict_data)
+'''
