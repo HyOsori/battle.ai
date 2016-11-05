@@ -8,24 +8,17 @@ var interval = (canvas.width - (margin * 2)) / size;
 var round = 1;
 var canvas_size = $("#id_side").css('height');
 var users;
+var x, y, nowTurn;
 
-
-
-function ReadyNewRound() {
+function ReadyAfterResize() {
+    interval = (canvas.width - (margin * 2)) / size;
     ClearBoard();
-    
-    ctx.beginPath();
-    for (var i = 0; i <= size; i++){
-        ctx.moveTo(margin, margin + (interval * i));
-        ctx.lineTo(margin + (interval * size), margin + (interval * i));
-        ctx.stroke();
+    if (page_now == "InGame") {
+        DrawBoard(roundBoardResult);
+        highLight(y, x, nowTurn);
+    } else if (page_now == "GameResult") {
+        DrawResultBoard();
     }
-    for (var i = 0; i <= size; i++){
-        ctx.moveTo(margin + (interval * i), margin);
-        ctx.lineTo(margin + (interval * i), margin + (interval * size));
-        ctx.stroke();
-    }
-    ctx.closePath();    
 }
 
 function drawCircle(x, y, color) {
@@ -48,11 +41,19 @@ function drawCircle(x, y, color) {
 }
 
 function ClearBoard() {
-    for (var i = 0; i < size; i++) {
-        for (var j = 0; j < size; j++) {
-            drawCircle(j, i, 0);
-        }
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.beginPath();
+    for (var i = 0; i <= size; i++){
+        ctx.moveTo(margin, margin + (interval * i));
+        ctx.lineTo(margin + (interval * size), margin + (interval * i));
+        ctx.stroke();
     }
+    for (var i = 0; i <= size; i++){
+        ctx.moveTo(margin + (interval * i), margin);
+        ctx.lineTo(margin + (interval * i), margin + (interval * size));
+        ctx.stroke();
+    }
+    ctx.closePath(); 
 }
 
 function highLight(x, y, color){
@@ -69,29 +70,35 @@ function highLight(x, y, color){
     ctx.closePath();
 }
 
-function gameStart(user_list) {
-    users = user_list;
-    $("#id_title").html("● "+users[0]+"  vs  "+users[1]+" ○").css("text-align","center");
-    $("#id_gameMessage_second").html("Round "+round);
+function DrawBoard(array) {
+    for (var y = 0; y < size; ++y) {
+        for (var x = 0; x < size; ++x) {
+            drawCircle(x, y, array[y][x]);
+        }
+    }
+}
+
+function gameStart(data) {
     GoToInGame();
 }
 
+function roundStart(data) {
+    users = data.players;
+    $("#id_title").html("● "+users[0]+"  vs  "+users[1]+" ○").css("text-align","center");
+    $("#id_gameMessage_second").html("Round "+round);
+}
+
 function recvTurnResult(game_data) {
-    var y = 0;
-    $.each(game_data.data.board, function(){
-        for (var x = 0; x < size; x++) {
-            drawCircle(x, y, this[x]);
-        }
-        y++;
-    })
-    
     roundBoardResult = game_data.data.board;
-    var nowTurn;
+    DrawBoard(roundBoardResult);
+
     if (game_data.data.now_turn == game_data.data.black)
         nowTurn = 1;
     else if (game_data.data.now_turn == game_data.data.white)
         nowTurn = 2;
-    highLight(game_data.data.y, game_data.data.x, nowTurn) // Interchange x, y temporarily
+    x = game_data.data.x;
+    y = game_data.data.y;
+    highLight(y, x, nowTurn) // Interchange x, y temporarily
 }
 
 function recvGameResult(game_data) {

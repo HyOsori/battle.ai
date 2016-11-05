@@ -9,8 +9,8 @@ class LogDB (DBBaseClass):
         self.open()
 
     def create_table(self):
-        sql = "CREATE TABLE battle_table2(" \
-              + "num int(10) not null AUTO_INCREMENT PRIMARY KEY ," \
+        sql = "CREATE TABLE battle_table(" \
+              + "num int(4) not null AUTO_INCREMENT PRIMARY KEY ," \
               + "winner varchar(10)," \
               + "win_score int(5)," \
               + "loser varchar(10)," \
@@ -40,7 +40,7 @@ class LogDB (DBBaseClass):
             sql = "select * from battle_table ORDER BY num DESC  limit " + str(cnt)
             self.curs.execute(sql)
             db_recent = self.curs.fetchall()
-            return db_recent
+            return self.convert(db_recent)
 
         else:
             if win_lose == 'all':
@@ -56,23 +56,30 @@ class LogDB (DBBaseClass):
 
                 db_all = db_win + db_lose;
                 db_sort = sorted(db_all, key=lambda x: (-x[0]))
-                return db_sort[0:cnt]
+                return self.convert(db_sort[0:cnt])
 
             elif win_lose == 'win':
                 sql = "select * from battle_table where winner = \"" + name + "\"" + \
                       " ORDER BY num DESC limit " + str(cnt)
                 self.curs.execute(sql)
                 db_win = self.curs.fetchall()
-                return db_win
+                return self.convert(db_win)
 
             elif win_lose == 'lose':
                 sql = "select * from battle_table where loser = \"" + name + "\"" + \
                       " ORDER BY num DESC limit " + str(cnt)
                 self.curs.execute(sql)
                 db_lose = self.curs.fetchall()
-                return db_lose
+                return self.convert(db_lose)
 
         self.conn.commit()
+
+    def convert(self, db_tuple):
+        array = []
+        for cnt in db_tuple:
+            row = list(cnt)
+            array.append(row)
+        return array
 
     def connect(self):
         # connect
