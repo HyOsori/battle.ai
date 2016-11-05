@@ -41,7 +41,8 @@ if ("WebSocket" in window) {
     var message = "";
 
     messageContainer.innerHTML = "WebSocket is supported by your Browser!";
-    var ws = new WebSocket("ws://localhost:9000/websocket");
+	//messageContainer.innerHTML = window.location.host
+	var ws = new WebSocket("ws://"+window.location.host+"/websocket");
 
     GoToLobby();
 
