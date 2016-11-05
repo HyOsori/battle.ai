@@ -3,11 +3,11 @@ import random
 import time
 
 # Set up the constants
-WIDTH = 128
-HEIGHT = 92
-paddingWIDTH = 64
-paddingHEIGHT = 64
-SIZE = 6
+WIDTH = 124
+HEIGHT = 124
+paddingWIDTH = 128
+paddingHEIGHT = 128
+SIZE = 4
 MARGIN1 = 1 # Left-side and Up-side
 MARGIN2 = 0 # Right-side and Down-side
 ScoreBarWidth = 36
@@ -21,8 +21,13 @@ StartingPoint1_Y = 0
 StartingPoint2_X = WIDTH - 1
 StartingPoint2_Y = HEIGHT - 1
 
+# Start at 3/8, 5/8
+StartingPoint1_X = WIDTH / 8 * 3 - 1
+StartingPoint1_Y = HEIGHT / 8 * 3 - 1
+StartingPoint2_X = WIDTH / 8 * 5
+StartingPoint2_Y = HEIGHT / 8 * 5
 # Start at center
-
+"""
 StartingPoint1_X = WIDTH / 2 - 1
 StartingPoint1_Y = HEIGHT / 2 - 1
 StartingPoint2_X = WIDTH - 1 - StartingPoint1_X
@@ -38,7 +43,7 @@ StartingPoint2_Y = HEIGHT - 1 - StartingPoint1_Y
 # StartingPoint1 = (30, 30)
 # Center is (31, 31)
 # StartingPoint2 = (32, 32)
-
+"""
 
 # Start at quarter
 """
@@ -88,31 +93,29 @@ Green5 = (50, 205, 50)
 Green6 = (144, 238, 144)
 
 # Set up the variables
-# ColorArray = [[0 for x in range(WIDTH)] for y in range(HEIGHT)]
-ColorArray = [[0 in range(WIDTH)] in range(HEIGHT)]
-ColorArrayCopy = [[0 in range(WIDTH)] in range(HEIGHT)] # For Gradation
-ColorNumArray = [[0 in range(WIDTH)] in range(HEIGHT)]
+ColorArray = [[0 for x in range(WIDTH)] for y in range(HEIGHT)]
+ColorArrayCopy = [[0 for x in range(WIDTH)] for y in range(HEIGHT)] # For Gradation
+ColorNumArray = [[0 for x in range(WIDTH)] for y in range(HEIGHT)]
 ChosenColorNum = 0
 ColorNum = 0
-RulerArray = [[0 in range(WIDTH)] in range(HEIGHT)]
-RulerArrayCopy = [[0 in range(WIDTH)] in range(HEIGHT)]
+RulerArray = [[0 for x in range(WIDTH)] for y in range(HEIGHT)]
+RulerArrayCopy = [[0 for x in range(WIDTH)] for y in range(HEIGHT)]
 Ruler = 0
 RuledBy1 = 0
 RuledBy2 = 0
 GameRepeat = True
 
-
-# ColorCheck - Rainbow
+#ColorCheck - Rainbow
 def ColorCheck(colornum): # ColorNum -> Color
-    if colornum == 1: return RED
-    elif colornum == 2: return ORANGE
-    elif colornum == 3: return YELLOW
-    elif colornum == 4: return GREEN
-    elif colornum == 5: return BLUE
-    elif colornum == 6: return PURPLE
+    if (colornum == 1): return RED
+    elif (colornum == 2): return ORANGE
+    elif (colornum == 3): return YELLOW
+    elif (colornum == 4): return GREEN
+    elif (colornum == 5): return BLUE
+    elif (colornum == 6): return PURPLE
     else: return BLACK
 
-# ColorCheck - Red
+#ColorCheck - Red
 """
 def ColorCheck(colornum): # ColorNum -> Color
     if (colornum == 1): return Red1
@@ -124,7 +127,7 @@ def ColorCheck(colornum): # ColorNum -> Color
     else: return BLACK
 """
 
-# ColorCheck - Green
+#ColorCheck - Green
 """
 def ColorCheck(colornum): # ColorNum -> Color
     if (colornum == 1): return Green1
@@ -135,7 +138,6 @@ def ColorCheck(colornum): # ColorNum -> Color
     elif (colornum == 6): return Green6
     else: return BLACK
 """
-
 
 def Absorbtion (ruler, chosencolornum):
 
@@ -151,7 +153,7 @@ def Absorbtion (ruler, chosencolornum):
 
     for y in range(HEIGHT): # Fill ruled area with chosen color
         for x in range(WIDTH):
-            if RulerArray[y][x] == ruler:
+            if (RulerArray[y][x] == ruler):
                 ColorNumArray[y][x] = chosencolornum
                 ColorArray[y][x] = ColorCheck(chosencolornum)
 
@@ -175,7 +177,7 @@ def Absorbtion (ruler, chosencolornum):
         AbsorbRepeat = False
         for y in range(HEIGHT): # If Ruler == RulerCopy -> Finish absorbtion
             for x in range(WIDTH):
-                if RulerArray[y][x] != RulerArrayCopy[y][x]:
+                if (RulerArray[y][x] != RulerArrayCopy[y][x]):
                     AbsorbRepeat = True;
                     y = HEIGHT
                     break
@@ -190,7 +192,7 @@ def CheckStatus (ruler):
         for x in range(WIDTH):
             if (ruler[y][x] == 0):
                 Finish = False
-            elif ruler[y][x] == 1:
+            elif (ruler[y][x] == 1):
                 ruledby1 = ruledby1 + 1
             elif (ruler[y][x] == 2):
                 ruledby2 = ruledby2 + 1
@@ -222,16 +224,6 @@ def Draw(ruler):
                     pygame.display.update()
         #time.sleep(SleepSecondGradation)
 """
-
-def OpstructionTest1 ():
-    for y in range(5):
-        for x in range(5):
-            RulerArray[y + 30][x + 30] = -1
-            ColorNumArray[y + 30][x + 30] = -1
-            ColorArray[y + 30][x + 30] = ColorCheck(ColorNumArray[y + 30][x + 30])
-            pygame.draw.rect(screen, ColorArray[y + 30][x + 30], (
-            paddingWIDTH + SIZE * (x + 30) + MARGIN1, paddingHEIGHT + SIZE * (y + 30) + MARGIN1,
-            SIZE - MARGIN1 - MARGIN2, SIZE - MARGIN1 - MARGIN2), 0)
 
 def DummyAi1 (ruler, colornumarray, exclusionnum):
     if (ruler == 1):
@@ -287,13 +279,10 @@ for y in range(HEIGHT):
         ColorArray[y][x] = ColorCheck(ColorNumArray[y][x])
         pygame.draw.rect(screen, ColorArray[y][x], (paddingWIDTH + SIZE * x + MARGIN1, paddingHEIGHT + SIZE * y + MARGIN1, SIZE - MARGIN1 - MARGIN2, SIZE - MARGIN1 - MARGIN2), 0)
 
-#OpstructionTest1()
-
 RulerArray[StartingPoint1_Y][StartingPoint1_X] = 1
 RulerArray[StartingPoint2_Y][StartingPoint2_X] = 2
 Absorbtion(1, ColorNumArray[StartingPoint1_Y][StartingPoint1_X])
 Absorbtion(2, ColorNumArray[StartingPoint2_Y][StartingPoint2_X])
-
 
 # Game Loop
 GameTurn = 1;

@@ -1,6 +1,7 @@
 #-*-coding:utf-8-*-
 import threading
 
+
 class DummyManager:
 
     def __init__(self, parser, name, max_waiting_dummies = 1, max_dummies = 50):
