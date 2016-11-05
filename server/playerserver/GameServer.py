@@ -29,10 +29,13 @@ class GameServer:
         self.game_result = {}
         self.error_msg = "none"
 
-        self.current_msg_type = -1
+        self.current_msg_type = "start"
         self.error_code = 1
         self.normal_game_playing = True
         self.turns = []
+
+        self.round_result = None
+        self.game_end = False
 
     @gen.coroutine
     def game_handler(self, round_num = 0):
@@ -79,6 +82,11 @@ class GameServer:
 
     @gen.coroutine
     def __ready_check(self, players):
+
+        # init setting
+        self.round_result = None
+        self.game_end = False
+
         # send Are you ready message
         return_flag = True
         msg = {MSG: GAME_HANDLER, MSG_TYPE: READY, DATA: {}}
@@ -114,11 +122,6 @@ class GameServer:
             logging.error("ready error")
             raise gen.Return(False)
 
-    @gen.coroutine
-    def round_result_reponse_acceptor(self, player):
-        message = yield player.timeout_read()
-        raise gen.Return(message)
-
     def _error_handler(self):
         pass
 
@@ -143,12 +146,13 @@ class GameServer:
                 player = p
                 break
 
+        logging.error("cur msg_type :"+msg_type + "  changed msg_type :" + self.current_msg_type)
         self.current_msg_type = msg_type
 
         message = {MSG: GAME_DATA, MSG_TYPE: msg_type, DATA: data}
         json_data = json.dumps(message)
 
-        logging.info("send to "+player.get_pid())
+        logging.info("request to "+player.get_pid())
         logging.info(json_data)
 
         player.send(json_data)
@@ -183,19 +187,24 @@ class GameServer:
         self.game_result = message
 
         if is_valid_end:
-            self.current_msg_type = ROUND_RESULT
+            self.game_end = True
             message = {MSG: GAME_DATA, MSG_TYPE: ROUND_RESULT, DATA: message}
+            self.round_result = message
         else:
             logging.error("logic error end")
             raise Exception
 
         json_data = json.dumps(message)
 
-        for player in self.room.player_list:
-            player.send(json_data)
-
         for attendee in self.room.attendee_list:
             attendee.send(json_data)
+
+    def send_round_result(self, round_result):
+        logging.error("cur msg_type :" + self.current_msg_type + "  changed msg_type :" + ROUND_RESULT)
+        self.current_msg_type = ROUND_RESULT
+        json_data = json.dumps(round_result)
+        for player in self.room.player_list:
+            player.send(json_data)
 
     def destroy_room(self):
         '''
@@ -227,6 +236,7 @@ class GameServer:
         pass
 
     def _exit_handler(self, player):
+        logging.error("exit error handler")
         self.game_logic.on_error(player.get_pid())
         self.normal_game_playing = False
         for p in self.room.player_list:

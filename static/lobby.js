@@ -48,7 +48,8 @@ if ("WebSocket" in window) {
     var message = "";
 
     messageContainer.innerHTML = "WebSocket is supported by your Browser!";
-    var ws = new WebSocket("ws://localhost:9000/websocket");
+	//messageContainer.innerHTML = window.location.host
+	var ws = new WebSocket("ws://"+window.location.host+"/websocket");
 
     GoToLobby();
 
@@ -264,5 +265,4 @@ $("#id_searchTab_btn").bind('click', function() {
     $("#id_log").css('display','none');
     $("#id_search").css('display','flex');
 });
-
 
