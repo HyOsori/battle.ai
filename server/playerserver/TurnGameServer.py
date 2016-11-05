@@ -12,7 +12,7 @@ import server.ServerLog as logging
 
 class TurnGameServer(GameServer):
     def __init__(self, room, player_list, attendee_list, game_speed, game_logic = None):
-        game_logic = OthelloGameLogic(self)
+        game_logic = PixelsGameLogic(self)
         GameServer.__init__(self, room, player_list, attendee_list, game_logic, game_speed)
 
     @gen.coroutine
