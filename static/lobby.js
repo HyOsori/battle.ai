@@ -115,8 +115,8 @@ if ("WebSocket" in window) {
                 }
             }
         }
-
-        else if (data.msg == ""/*get log*/) {
+        /* get log
+        else if (data.msg == "") {
             var text = "";
             var log_ul = document.getElementById("id_log");
             var log_li = log_ul.getElementsByTagName("li");
@@ -125,7 +125,7 @@ if ("WebSocket" in window) {
             }
             $('<li />', {html: text}).prependTo("#id_log");
         }
-
+        */
         else if (data.msg == "response_match") {
             if (data.data.error == 0) {
                 gameStart(data);
