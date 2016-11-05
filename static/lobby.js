@@ -185,7 +185,7 @@ if ("WebSocket" in window) {
     $("#id_search_btn").bind('click', function() {/*send request search*/
         var input = document.getElementById('id_search_input');
         var keyword = input.value;
-        xmlhttp.open("Get", /*url*/ + "/log?name=" + keyword, true);
+        xmlhttp.open("Get", window.location.host + "/log?name=" + keyword, true);
         xmlhttp.send();
     });
 
