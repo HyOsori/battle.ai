@@ -180,8 +180,6 @@ class PixelsLoopPhase(Phase):
     def notify_to_front(self, ruler):
         print 'notify to front'
         notify_dict = {
-            'width': self.width,
-            'height': self.height,
             'color_array': self.color_array,
             'ruler_array': self.ruler_array,
             #'absorbed_area' :
