@@ -22,13 +22,13 @@ class TurnGameServer(GameServer):
             print player.get_pid()+": Player handler running"
             while True:
                 message = yield player.timeout_read()
+                logging.debug("recv  "+message)
                 res = json.loads(message)
-                logging.debug("kya")
-                logging.debug(res)
                 logging.debug(res[MSG_TYPE])
                 logging.debug(self.current_msg_type)
                 if res[MSG_TYPE] == self.current_msg_type:
                     if res[MSG_TYPE] == ROUND_RESULT:
+                        logging.error("task done DONE")
                         self.q.get()
                         self.q.task_done()
                         break
@@ -37,6 +37,9 @@ class TurnGameServer(GameServer):
                     self.game_logic.on_action(player.get_pid(), res[DATA])
                     logging.info('_player_handler onAction is done')
                     if res[MSG_TYPE] == FINISH:
+                        if self.game_end:
+                            logging.debug("after on end, send round result")
+                            self.send_round_result(self.round_result)
                         logging.debug("finish msg is come")
                 else:
                     # wrong message is come : kill player - finish all game
