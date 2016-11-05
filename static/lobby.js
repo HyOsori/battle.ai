@@ -1,6 +1,7 @@
 var MIN_MATCH_USER_CNT = 2;
 var MAX_MATCH_USER_CNT = 2;
 var Title = "PIXELS";
+var xmlhttp = new XMLHttpRequest();
 
 var list = [];
 var page_now = "Lobby";
@@ -124,12 +125,6 @@ if ("WebSocket" in window) {
             $('<li />', {html: text}).prependTo("#id_log");
         }
 
-        else if (data.msg == ""/*get search results*/) {
-            var text = "";
-            $("#id_searchResults_ul").empty();
-            $('<li />', {html: text}).prependTo("#id_searchResults_ul");
-        }
-
         else if (data.msg == "response_match") {
             if (data.data.error == 0) {
                 gameStart(data);
@@ -190,6 +185,8 @@ if ("WebSocket" in window) {
     $("#id_search_btn").bind('click', function() {/*send request search*/
         var input = document.getElementById('id_search_input');
         var keyword = input.value;
+        xmlhttp.open("Get", /*url*/ + "/log?name=" + keyword, true);
+        xmlhttp.send();
     });
 
     <!-- connect websocket button handler -->
@@ -210,7 +207,12 @@ else
     messageContainer.innerHTML = "WebSocket NOT supported by your Browser!";
 }
 
-
+xmlhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+        var myArr = JSON.parse(this.responseText);
+        GetSearchResults(myArr);
+    }
+};
 
 function GoToLobby() {
     $(".class_inGame").css("display","none");
@@ -243,6 +245,15 @@ function ResizeCanvas() {
     canvas_size = $("#id_side").css('height');
     $("#id_board_canvas").attr({"width": canvas_size, "height": canvas_size});
     ReadyAfterResize();
+}
+
+function GetSearchResults(arr) {
+    $("#id_searchResults_ul").empty();
+    var text;
+    for (var i = 0; i < arr.length; ++i) {
+        text = arr[i][1] + " : " + arr[i][2] + " / " + arr[i][3] + " : " + arr[i][4];
+        $('<li />', {html: text}).prependTo("#id_searchResults_ul");
+    }
 }
 
 $("#id_logTab_btn").bind('click', function() {
