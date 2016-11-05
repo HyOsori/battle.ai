@@ -21,7 +21,7 @@ button {
     border-radius:5px;
 }
 #id_title {
-    text-align:left;
+    text-align:center;
     padding:10px;
 }
 #id_setSpeed_text {
@@ -44,6 +44,9 @@ button {
 }
 #id_dummyclient_ul li {
     text-align:center;
+}
+#id_dummyclient_ul .class_selected {
+    background-color:whitesmoke;
 }
 #id_messages {
     background:black;

@@ -29,8 +29,9 @@ function gameStart(data) {
 }
 
 function roundStart(data) {
-    width = data.width;
+	width = data.width;
     height = data.height;
+
 	color_array = data.color_array;
 
     margin_width = (canvas.width - pixel_size * width) / 2;
@@ -41,12 +42,12 @@ function roundStart(data) {
 }
 
 function recvTurnResult(game_data) {
-    color_array_old = color_array;
+	color_array_old = color_array;
     color_array = game_data.data.color_array;
     ruler_array_old = ruler_array;
     ruler_array = game_data.data.ruler_array;
 
-    this_turn_color = 
+    this_turn_color = game_data.data.absorbed_area;
     this_turn_player = game_data.data.ruler_who;
 
     GetIndexNewTiles(ruler_array_old, ruler_array);

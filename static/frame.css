@@ -114,10 +114,10 @@ ul {
 	margin:0px;
 	margin-left:5px;
 	flex-grow:1;
-	flex-basis:14%;
+	flex-basis:10%;
 }
 #id_searchResults_ul {
-	flex-grow:6;
+	flex-grow:9;
 	flex-basis:90%;
 	margin:0px;
 }

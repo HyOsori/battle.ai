@@ -1,6 +1,6 @@
 var MIN_MATCH_USER_CNT = 2;
 var MAX_MATCH_USER_CNT = 2;
-var Title = "Othello";
+var Title = "PIXELS";
 
 var list = [];
 var page_now = "Lobby";
@@ -13,8 +13,14 @@ $(window).resize(ResizeCanvas);
 
 function checkSelected(){
     var count = 0;
+    var dummyClients = document.getElementById('id_dummyclient_ul');
     for(var i=0; i<userList.childNodes.length; i++){
         var child = userList.childNodes[i];
+        if (child.className == 'class_selected')
+            count++;
+    }
+    for(var i=0; i<dummyClients.childNodes.length; i++){
+        var child = dummyClients.childNodes[i];
         if (child.className == 'class_selected')
             count++;
     }
@@ -211,7 +217,7 @@ function GoToLobby() {
     $(".class_gameResult").css("display","none");
     $(".class_lobby").css("display","");
 
-    $("#id_title").html(Title).css("text-align","left");
+    $("#id_title").html(Title);
     page_now = "Lobby";
 }
 
