@@ -137,7 +137,7 @@ if ("WebSocket" in window) {
         }
 
         else if (data.msg == "game_data") {
-            if (data.msg_type == "notify_on_turn") {
+            if (data.msg_type == "notify_on_loop") {
                 recvTurnResult(data);
             }
             else if (data.msg_type == "notify_finish") {
