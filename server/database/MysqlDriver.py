@@ -6,7 +6,6 @@ class LogDB (DBBaseClass):
     def __init__(self):
         self.conn = ''
         self.curs = ''
-        self.open()
 
     def create_table(self):
         sql = "CREATE TABLE battle_table(" \
@@ -18,8 +17,8 @@ class LogDB (DBBaseClass):
 
         self.curs.execute(sql)
 
-    def open(self):
-        self.connect()
+    def open(self, host='localhost', port=3306, user='root', password='battle', db='tutor_db', charset='utf8'):
+        self.connect(host, port, user, password, db, charset)
 
     def close(self):
         self.close()
@@ -81,12 +80,12 @@ class LogDB (DBBaseClass):
             array.append(row)
         return array
 
-    def connect(self):
+    def connect(self, host, port, user, password, db, charset):
         # connect
         try:
             self.conn = pymysql.connect(
-                host='localhost', user='root', password='battle',
-                db='tutor_db', charset='utf8')
+                host=host, port=port, user=user, password=password,
+                db=db, charset=charset)
         except Exception, e:
             print repr(e)
 

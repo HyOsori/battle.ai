@@ -6,7 +6,8 @@ sys.path.insert(0,'../')
 
 from playerserver.PlayerServer import PlayerServer
 from webserver.WebServer import WebServer
-from webserver.WebServer import WebSocketServer
+from webserver.WebServer import WebSocketServer, LogHandler
+from server.database.MysqlDriver import LogDB
 
 import logging
 
@@ -24,9 +25,13 @@ class MainServer:
 
         self.tcp_server = PlayerServer(self.attendee_list, self.player_list)
 
+        db = LogDB()
+        db.open()
+
         self.app = tornado.web.Application(
             [
                 (r"/websocket", WebSocketServer, dict(player_list=self.player_list, attendee_list=self.attendee_list, player_server=self.tcp_server)),
+                (r'/log', LogHandler, dict(database_driver=db)),
                 (r"/", WebServer),
             ],
             template_path=os.path.join(os.path.dirname(__file__), "../templates"),
