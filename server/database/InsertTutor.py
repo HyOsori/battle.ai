@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from server.database.MYSQL import LogDB
+from server.database.MysqlDriver import LogDB
 
 db_base = LogDB()
 
