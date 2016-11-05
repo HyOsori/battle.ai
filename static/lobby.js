@@ -83,7 +83,7 @@ if ("WebSocket" in window) {
                     return;
             }
             if (text.length) {
-                $('<li />', {html: text}).bind('click', clickHandler).appendTo('#id_list_ul')
+                $('<li />', {html: text}).bind('click', clickHandler).appendTo('#id_list_ul');
                 list.push(text);
             }
         }
@@ -101,6 +101,22 @@ if ("WebSocket" in window) {
                         button.disabled='true';
                 }
             }
+        }
+
+        else if (data.msg == ""/*get log*/) {
+            var text = "";
+            var log_ul = document.getElementById("id_log");
+            var log_li = log_ul.getElementsByTagName("li");
+            if (log_li.length >= 10) {
+                log_li[10].remove();
+            }
+            $('<li />', {html: text}).prependTo("#id_log");
+        }
+
+        else if (data.msg == ""/*get search results*/) {
+            var text = "";
+            $("#id_searchResults_ul").empty();
+            $('<li />', {html: text}).prependTo("#id_searchResults_ul");
         }
 
         else if (data.msg == "response_match") {
@@ -160,6 +176,11 @@ if ("WebSocket" in window) {
         ws.send( req );
     });
 
+    $("#id_search_btn").bind('click', function() {
+        var input = document.getElementById('id_search_input');
+        var keyword = input.value;
+    });
+
     <!-- connect websocket button handler -->
     btnConn.addEventListener('click', function(){
         var json = new Object();
@@ -212,3 +233,14 @@ function ResizeCanvas() {
     $("#id_board_canvas").attr({"width": canvas_size, "height": canvas_size});
     ReadyAfterResize();
 }
+
+$("#id_logTab_btn").bind('click', function() {
+    $("#id_search").css('display','none');
+    $("#id_log").css('display','');
+});
+$("#id_searchTab_btn").bind('click', function() {
+    $("#id_log").css('display','none');
+    $("#id_search").css('display','flex');
+});
+
+

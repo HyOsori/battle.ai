@@ -14,10 +14,13 @@
             <div id="id_gameMessage_second" class="class_inGame"></div>
             <div id="id_context">
 				<div id="id_main">
-                    <div id="id_options" class="class_lobby">
-                        <div id="id_setSpeed_text">Speed</div>
-                        <input type="range" id="id_setSpeed" class="class_lobby" max="4" min="0"/>
-                        <div id="id_blank"></div>
+                    <div id="id_upperContainer" class="class_lobby">
+                        <button id="id_logTab_btn">Log</button>
+                        <button id="id_searchTab_btn">Search</button>
+                        <div id="id_options" class="class_lobby">
+                            <div id="id_setSpeed_text">Speed</div>
+                            <input type="range" id="id_setSpeed" class="class_lobby" max="4" min="0"/>
+                        </div>
                     </div>
 					<ul id="id_log" class="class_lobby">
                         <li>log1</li>
@@ -31,6 +34,13 @@
                         <li>log9</li>
                         <li>log10</li>
                     </ul>
+                    <div id="id_search" class="class_lobby">
+                        <div id="id_searchBox">
+                            <input type="text" id="id_search_input" />
+                            <button id="id_search_btn">Search</button>
+                        </div>
+                        <ul id="id_searchResults_ul"></ul>
+                    </div>
                     <div id ="id_canvasContainer" class="class_inGame class_gameResult">
                         <canvas id="id_board_canvas"></canvas>
                     </div>
