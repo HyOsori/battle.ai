@@ -24,6 +24,9 @@ button {
     text-align:left;
     padding:10px;
 }
+#id_setSpeed_text {
+    text-align:center;
+}
 #id_log {
     overflow-y:scroll;
 }
@@ -38,6 +41,9 @@ button {
 }
 #id_list_ul .class_selected {
     background-color:whitesmoke;
+}
+#id_dummyclient_ul li {
+    text-align:center;
 }
 #id_messages {
     background:black;

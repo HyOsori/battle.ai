@@ -22,6 +22,10 @@ button {
 	flex-grow:1;
 	margin:5px;
 }
+ul {
+	flex-grow:20;
+	margin:5px;
+}
 #id_container {
     display:flex;
 	margin:auto;
@@ -34,6 +38,8 @@ button {
 	left:0;
 	bottom:0;
 	padding:5px;
+	min-width:500px;
+	min-height:350px;
 
     border:1px solid black;
 }
@@ -52,22 +58,37 @@ button {
 	display:flex;
 	flex-direction:column;
 	flex-grow:5;
-}
-#id_setSpeed {
-
+	flex-basis:70%;
 }
 #id_side {
 	display:flex;
 	flex-direction:column;
 	flex-grow:2;
+	flex-basis:30%;
+}
+#id_options {
+	display:flex;
+	flex-grow:1;
+	flex-basis:5%;
+	margin:5px;
+}
+#id_setSpeed_text {
+	flex_grow:1;
+	flex-basis:13%;
+}
+#id_setSpeed {
+	flex_grow:3;
+	flex-basis:37%;
+}
+#id_blank {
+	flex-grow:4;
+	flex-basis:50%;
 }
 #id_log {
-	flex-grow:3;
+	flex-grow:12;
 	padding:5px;
 	margin:5px;
-}
-#id_log li {
-	margin:5px;
+	flex-basis:70%;
 }
 #id_canvasContainer {
 	flex-grow:1;
@@ -77,23 +98,27 @@ button {
 	position:relative;
 }
 #id_messages {
-	flex-grow:1;
+	flex-grow:4;
 	margin:5px;
 	max-height:250px;
+	flex-basis:25%;
 }
 #id_chart {
 	flex-grow:1;
 }
+#id_dummyclient_ul {
+	flex-grow:2;
+	flex-basis:7%;
+}
 #id_list_ul {
-	flex-grow:20;
 	padding:5px;
-	margin:5px;
+	flex-basis:84%;
 }
 #id_gameResults_ul {
-	flex-grow:20;
-	margin:5px;
+
 }
 #id_btnContainer {
 	display:flex;
 	flex-grow:1;
+	flex-basis:9%;
 }
