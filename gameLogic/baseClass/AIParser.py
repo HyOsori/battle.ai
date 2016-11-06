@@ -25,15 +25,18 @@ class AIParser(object):
 
     def parsing_data(self, decoding_data):
         self.decoding(decoding_data)
+        ret = None
         if self.msg_type == 'init':
-            return self.init_phase()
+            ret = self.init_phase()
         elif self.msg_type == 'finish':
-            return self.finish_phase()
+            ret = self.finish_phase()
         elif self.msg_type == 'round_result':
-            return self.make_send_msg(self.msg_type, {'response' : 'OK'})
+            ret = {'response' : 'OK'}
         elif self.msg_type == 'ready':
-            return self.make_send_msg(self.msg_type, {'response' : 'OK'})
-        return None
+            ret = {'response' : 'OK'}
+        if ret != None:
+            ret = self.make_send_msg(self.msg_type, ret)
+        return ret
 
     def make_send_msg(self, msg_type, game_data):
         send_msg = {"msg": "game_data"}

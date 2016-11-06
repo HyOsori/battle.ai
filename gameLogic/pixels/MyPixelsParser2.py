@@ -45,7 +45,5 @@ class MyPixelsParser2(PixelsParser):
                 max_num = num_of_each_color[i]
                 return_color = i
 
-        parsing_data = {'chosen_color': return_color}
-
-        send_msg = self.make_send_msg(self.msg_type, parsing_data)
-        return send_msg
+        output_data = {'chosen_color': return_color}
+        return output_data
