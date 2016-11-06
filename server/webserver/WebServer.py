@@ -20,9 +20,13 @@ class LogHandler(tornado.web.RequestHandler):
         self.db = database_driver
 
     def get(self):
-        name = self.get_argument('name')
+        name = self.get_argument('name', None)
         length = self.get_argument('length', default=10)
-        searched = self.db.search_game_log(name=name, cnt=length)
+        searched = ''
+        if name:
+            searched = self.db.search_game_log(cnt=length)
+        else:
+            searched = self.db.search_game_log(name=name, cnt=length)
         self.write(json.dumps(searched))
 
     def put(self): #log update
