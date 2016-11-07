@@ -8,7 +8,6 @@ var score = [];
 var width;
 var height;
 var color_array_init = [];
-var color_array_old = [];
 var color_array = [];
 var ruler_array_old = [];
 var ruler_array = [];
@@ -70,13 +69,13 @@ function recvTurnResult(data) {
 		DrawBoard(color_array_init);
 		loop_is_end = false;
 	} else {
-		color_array_old = color_array;
-		color_array = data.color_array;
 		ruler_array_old = ruler_array;
 		ruler_array = data.ruler_array;
 
 		this_turn_color = data.chosen_color;
 		this_turn_player = data.ruler_who;
+
+		tiles_get = [];
 
 		GetIndexNewTiles(ruler_array_old, ruler_array);
 		GetBorder(ruler_array_old, this_turn_player);
@@ -93,7 +92,6 @@ function recvTurnResult(data) {
 		}, sleep_time);
 	}
 }
-
 
 function GetBorder(array_old, this_turn) {
 	var x, y;
@@ -142,21 +140,25 @@ function PaintBorder(array_old, border, color, this_turn) {
 
 	if (x >= 1 && array_old[y][x - 1] == this_turn) {
 		PaintPixel(x - 1, y, color);
+		color_array[y][x - 1] = color;
 		array_old[y][x - 1] = 0;
 		borders.enqueue([x - 1, y]);
 	}
 	if (y >= 1 && array_old[y - 1][x] == this_turn) {
 		PaintPixel(x, y - 1, color);
+		color_array[y - 1][x] = color;
 		array_old[y - 1][x] = 0
 		borders.enqueue([x, y - 1]);
 	}
 	if (x <= (width - 2) && array_old[y][x + 1] == this_turn) {
 		PaintPixel(x + 1, y, color);
+		color_array[y][x + 1] = color;
 		array_old[y][x + 1] = 0;
 		borders.enqueue([x + 1, y]);
 	}
 	if (y <= (height - 2) && array_old[y + 1][x] == this_turn) {
 		PaintPixel(x, y + 1, color);
+		color_array[y + 1][x] = color;
 		array_old[y + 1][x] = 0;
 		borders.enqueue([x, y + 1]);
 	}
@@ -173,7 +175,7 @@ function ReadyAfterResize() {
 	if (page_now == "InGame") {
 		DrawBoard(color_array);	
 	} else if (page_now == "GameResult") {
-		DrawResultBoard();
+		DrawResultBoard(0);
 	}
 	
 }

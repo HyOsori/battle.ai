@@ -4,7 +4,9 @@ var roundResult = [];
 
 function DrawResultBoard(index) {
     var nav = document.getElementById('id_gameResults_ul');
+    console.log(index);
     DrawBoard(gameResults[index]["loop1"]["board"]);
+    console.log(gameResults);
 }
 
 function SaveRoundResult(winner){
@@ -33,6 +35,7 @@ function SaveRoundResult(winner){
         var player1_2r = gameResults[index]["loop2"]["score"][0];
         var player2_2r = gameResults[index]["loop2"]["score"][1];
 
+
         $(this).append('<br>', player1[0], " ", player1[1], " : ", player2[1], " ", player2[0],
                         '<br>', player1_2r[0], " ", player1_2r[1], " : ", player2_2r[1], " ", player2_2r[0]);
 
@@ -41,25 +44,30 @@ function SaveRoundResult(winner){
 }
 
 function recvLoopResult(data) {
-    var loop_num = "loop" + (data.round + 1);
     var first = data.first;
     var second = data.second;
-    var player = [];
+    var player1 = [];
+    var player2 = [];
     var players = [];
     
-    player[0] = first;
-    player[1] = 0;
-    players[0] = player;
-    
-    player[0] = second;
-    player[1] = 0;
-    players[1] = player;
+    player1[0] = first;
+    player1[1] = 0;
+    players[0] = player1;
+
+    player2[0] = second;
+    player2[1] = 0;
+    players[1] = player2;
     
     loopResult = [];
     loopResult["board"] = color_array;
     loopResult["score"] = players;
 
-    roundResult[loop_num] = loopResult;
+    if (data.round == 0) {
+        roundResult["loop1"] = loopResult;
+    } else if (data.round == 1) {
+        roundResult["loop2"] = loopResult;
+    }
+    
     loop_is_end = true;
 
 }
@@ -93,7 +101,7 @@ function recvGameResult(data) {
             }
         }
     }
-    
+
     GoToGameResult();
 
     if (!isDraw) {
