@@ -41,21 +41,25 @@ function SaveRoundResult(winner){
 }
 
 function recvLoopResult(data) {
-    var loop_num = data.round;
+    var loop_num = "loop" + data.round;
     var first = data.first;
     var second = data.second;
     var player = [];
-
-    loopResult = [];
-    loopResult["board"] = color_array;
+    var players = [];
+    
     player[0] = first;
     player[1] = 0;
-    loopResult["score"][0] = player;
+    players[0] = player;
+    
     player[0] = second;
     player[1] = 0;
-    loopResult["score"][1] = player;
+    players[1] = player;
+    
+    loopResult = [];
+    loopResult["board"] = color_array;
+    loopResult["score"] = players;
 
-    roundResult["loop" + loop_num] = loopResult;
+    roundResult[loop_num] = loopResult;
     DrawBoard(color_array_init);
 }
 
