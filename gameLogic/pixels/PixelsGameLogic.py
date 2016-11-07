@@ -31,8 +31,6 @@ class PixelsLoopPhase(Phase):
 
         # Pycharm recommends us not to define instance attribute outside __init__.
 
-
-
     def on_start(self):
         super(PixelsLoopPhase, self).on_start()
         logging.debug('PHASE_LOOP : START')
@@ -160,8 +158,6 @@ class PixelsLoopPhase(Phase):
     def notify_to_front(self, ruler):
         print 'notify to front'
         notify_dict = {
-            'color_array': self.color_array,
-            'ruler_array': self.ruler_array,
             'ruler_who': ruler,  # Who just finished absorbing
             'chosen_color': self.chosen_color,
             'score': self.score
@@ -182,8 +178,6 @@ class PixelsLoopPhase(Phase):
         info_dict = {
             'width': self.width,
             'height': self.height,
-            'color_array': self.color_array,
-            'ruler_array': self.ruler_array,
             'start_point_y': self.start_point_y,
             'start_point_x': self.start_point_x,
             'ruler_self': ruler_self,
