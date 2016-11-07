@@ -51,14 +51,16 @@ class PlayerServer(tornado.tcpserver.TCPServer):
 
         username = msg[DATA]["username"]
 
-        if username in self.player_list.keys():
-            for exist_user in self.player_list.keys():
-                if username == exist_user:
-                    logging.error("ID Already exists!!")
-                    return
-            # logging.info(str(unicode(username)))
-            # username = str(unicode(username))
-            pass
+        # temporary implementation ;;
+        if not username == 'Dummy3':
+            if username in self.player_list.keys():
+                for exist_user in self.player_list.keys():
+                    if username == exist_user:
+                        logging.error("ID Already exists!!")
+                        return
+                # logging.info(str(unicode(username)))
+                # username = str(unicode(username))
+                pass
 
         player = Player(username, stream)
         print(username + " enter the game")

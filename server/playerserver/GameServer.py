@@ -37,6 +37,8 @@ class GameServer:
         self.round_result = None
         self.game_end = False
 
+        self.score = [0, 0, 0]
+
         self.database = database
 
     @gen.coroutine
@@ -202,6 +204,13 @@ class GameServer:
             attendee.send(json_data)
 
     def send_round_result(self, round_result):
+        # save round result, temporary implementation ..;;
+        self.score[round_result[DATA]["win"]] += 1
+        self.score[round_result[DATA]["lose"]] += 1
+
+        if self.score[round_result[DATA]["lose"]] == 0:
+            self.score[2] += 1
+
         logging.error("cur msg_type :" + self.current_msg_type + "  changed msg_type :" + ROUND_RESULT)
         self.current_msg_type = ROUND_RESULT
         json_data = json.dumps(round_result)
@@ -214,7 +223,18 @@ class GameServer:
         When all round is ended, room is destroyed. Clients get back to robby.
         '''
         # TODO: game_result must chagned to real game_result, not round result
-        data = {MSG: GAME_HANDLER, MSG_TYPE: GAME_RESULT, DATA: self.game_result}
+
+        # make game result, temporary implementation.. ;;
+        result = []
+
+        info1 = [self.room.player_list[0].get_pid(), self.score[0]]
+        info2 = [self.room.player_list[1].get_pid(), self.score[1]]
+        result.append(info1)
+        result.append(info2)
+
+        data = {MSG: GAME_HANDLER, MSG_TYPE: GAME_RESULT, DATA: result}
+
+        logging.debug(data)
 
         json_data = json.dumps(data)
         for attendee in self.room.attendee_list:
