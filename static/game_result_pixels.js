@@ -41,7 +41,7 @@ function SaveRoundResult(winner){
 }
 
 function recvLoopResult(data) {
-    var loop_num = "loop" + data.round;
+    var loop_num = "loop" + (data.round + 1);
     var first = data.first;
     var second = data.second;
     var player = [];
@@ -92,6 +92,8 @@ function recvGameResult(data) {
             }
         }
     }
+    
+    GoToGameResult();
 
     if (!isDraw) {
         alertify.alert(data[winner_index][0] + " 승리!");
@@ -100,8 +102,6 @@ function recvGameResult(data) {
         alertify.alert("무승부!");
         $("#id_title").html("DRAW");
     }
-
-    GoToGameResult();
 }
 
 $('#id_goToLobby_btn').bind('click',function(){
