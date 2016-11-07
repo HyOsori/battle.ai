@@ -14,7 +14,7 @@ RealTimeGameServer (for real time games, not yet)
 
 
 class GameServer:
-    def __init__(self, room, player_list, attendee_list, game_logic, time_index=4):
+    def __init__(self, room, player_list, attendee_list, game_logic,  time_index=4, database=None):
         self.game_logic = game_logic
         self.room = room
         self.player_list = player_list  # WHY NEEDED? - when game room destroy - player added in list
@@ -36,6 +36,12 @@ class GameServer:
 
         self.round_result = None
         self.game_end = False
+
+        self.score = [0, 0, 0]
+
+        self.database = database
+
+        # self.game_log_manager = GameLogManager()
 
     @gen.coroutine
     def game_handler(self, round_num = 0):
@@ -200,9 +206,17 @@ class GameServer:
             attendee.send(json_data)
 
     def send_round_result(self, round_result):
+        # save round result, temporary implementation ..;;
+        self.score[round_result[DATA]["win"]] += 1
+        self.score[round_result[DATA]["lose"]] += 1
+
+        if self.score[round_result[DATA]["lose"]] == 0:
+            self.score[2] += 1
+
         logging.error("cur msg_type :" + self.current_msg_type + "  changed msg_type :" + ROUND_RESULT)
         self.current_msg_type = ROUND_RESULT
         json_data = json.dumps(round_result)
+        logging.debug("Send Round Result : " + json_data)
         for player in self.room.player_list:
             player.send(json_data)
 
@@ -211,7 +225,21 @@ class GameServer:
         When all round is ended, room is destroyed. Clients get back to robby.
         '''
         # TODO: game_result must chagned to real game_result, not round result
-        data = {MSG: GAME_HANDLER, MSG_TYPE: GAME_RESULT, DATA: self.game_result}
+
+        # make game result, temporary implementation.. ;;
+        result = []
+
+        info1 = [self.room.player_list[0].get_pid(), self.score[0]]
+        info2 = [self.room.player_list[1].get_pid(), self.score[1]]
+        result.append(info1)
+        result.append(info2)
+
+        # game_log_manager.add_game_log(info1[0], info1[1], info2[0], info2[1], info1[1] == info2[1])
+        # game_log_manager.print_all()
+
+        data = {MSG: GAME_HANDLER, MSG_TYPE: GAME_RESULT, DATA: result}
+
+        logging.debug(data)
 
         json_data = json.dumps(data)
         for attendee in self.room.attendee_list:

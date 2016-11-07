@@ -11,9 +11,9 @@ import server.ServerLog as logging
 
 
 class TurnGameServer(GameServer):
-    def __init__(self, room, player_list, attendee_list, game_speed, game_logic = None):
+    def __init__(self, room, player_list, attendee_list, game_speed, game_logic = None, database = None):
         game_logic = PixelsGameLogic(self)
-        GameServer.__init__(self, room, player_list, attendee_list, game_logic, game_speed)
+        GameServer.__init__(self, room, player_list, attendee_list, game_logic, game_speed, database)
 
     @gen.coroutine
     def _player_handler(self, player):
