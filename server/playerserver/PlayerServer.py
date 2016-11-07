@@ -44,33 +44,39 @@ class PlayerServer(tornado.tcpserver.TCPServer):
         :param stream:  ai_client's stream
         '''
         # TODO : set protocol of user_info, and handle exception of every case
+        try:
+            while True:
+                recv = yield stream.read_bytes(256, partial=True)
+                logging.debug(recv)
+                msg = json.loads(recv)
 
-        recv = yield stream.read_bytes(256, partial=True)
-        logging.debug(recv)
-        msg = json.loads(recv)
+                username = msg[DATA]["username"]
 
-        username = msg[DATA]["username"]
-
-        # temporary implementation ;;
-        if not username == 'Dummy3':
-            if username in self.player_list.keys():
-                for exist_user in self.player_list.keys():
-                    if username == exist_user:
+                # temporary implementation ;;
+                if not username == 'Dummy3':
+                    logging.error("user name : " + username)
+                    logging.error(self.player_list.keys())
+                    if username in self.player_list.keys():
                         logging.error("ID Already exists!!")
-                        return
-                # logging.info(str(unicode(username)))
-                # username = str(unicode(username))
-                pass
+                        msg = {MSG: USER_INFO, MSG_TYPE:INIT, DATA: {RESPONSE: NO}}
+                        json_data = json.dumps(msg)
+                        stream.write(json_data)
+                        continue
+                        # logging.info(str(unicode(username)))
+                        # username = str(unicode(username))
+                    break
 
-        player = Player(username, stream)
-        print(username + " enter the game")
+            player = Player(username, stream)
+            print(username + " enter the game")
 
-        self.player_list[username] = player
-        for attendee in self.attendee_list.values():
-            attendee.notice_user_added(username)
+            self.player_list[username] = player
+            for attendee in self.attendee_list.values():
+                attendee.notice_user_added(username)
 
-        on_close_func = functools.partial(self._on_close, username)
-        stream.set_close_callback(on_close_func)
+            on_close_func = functools.partial(self._on_close, username)
+            stream.set_close_callback(on_close_func)
+        except Exception as e:
+            logging.error(e)
 
 
     def _on_close(self, username):
