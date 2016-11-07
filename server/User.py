@@ -4,6 +4,8 @@ from tornado import gen
 import tornado.ioloop
 from functools import partial
 
+buffer_size = 4096
+
 class User:
     def __init__(self, conn):
         self.conn = conn
@@ -20,7 +22,7 @@ class Player(User):
 
     @gen.coroutine
     def timeout_read(self, timeout = 3):
-        future = self.conn.read_bytes(256, partial=True)
+        future = self.conn.read_bytes(buffer_size, partial=True)
         timeout_handle = self.io_loop.add_timeout(self.io_loop.time() + timeout, partial(self.__error_callback, future=future))
         future.add_done_callback(lambda r: self.io_loop.remove_timeout(timeout_handle))
         message = yield future

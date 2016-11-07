@@ -23,10 +23,11 @@ class LogHandler(tornado.web.RequestHandler):
         name = self.get_argument('name', None)
         length = self.get_argument('length', default=10)
         searched = ''
+
         if name:
             searched = self.db.search_game_log(cnt=length)
         else:
-            searched = self.db.search_game_log(name=name, cnt=length)
+			searched = self.db.search_game_log(name=name, cnt=length)
         self.write(json.dumps(searched))
 
     def put(self): #log update
@@ -41,7 +42,7 @@ class LogHandler(tornado.web.RequestHandler):
 
 class WebSocketServer(tornado.websocket.WebSocketHandler):
 
-    def initialize(self, attendee_list=dict(), player_list=dict(), player_server=None):
+    def initialize(self, attendee_list=dict(), player_list=dict(), player_server=None, database=None):
         '''
 
         :param attendee_list:
@@ -51,6 +52,7 @@ class WebSocketServer(tornado.websocket.WebSocketHandler):
         self.attendee_list = attendee_list  # dict() - key : conn
         self.player_list = player_list  # dict() - key : user_id
         self.player_server = player_server  # PlayerServer
+        self.database = database
 
     def open(self, *args, **kwargs):
         '''

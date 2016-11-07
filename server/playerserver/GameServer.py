@@ -14,7 +14,7 @@ RealTimeGameServer (for real time games, not yet)
 
 
 class GameServer:
-    def __init__(self, room, player_list, attendee_list, game_logic, time_index=4):
+    def __init__(self, room, player_list, attendee_list, game_logic,  time_index=4, database=None):
         self.game_logic = game_logic
         self.room = room
         self.player_list = player_list  # WHY NEEDED? - when game room destroy - player added in list
@@ -36,6 +36,8 @@ class GameServer:
 
         self.round_result = None
         self.game_end = False
+
+        self.database = database
 
     @gen.coroutine
     def game_handler(self, round_num = 0):
@@ -203,6 +205,7 @@ class GameServer:
         logging.error("cur msg_type :" + self.current_msg_type + "  changed msg_type :" + ROUND_RESULT)
         self.current_msg_type = ROUND_RESULT
         json_data = json.dumps(round_result)
+        logging.debug("Send Round Result : " + json_data)
         for player in self.room.player_list:
             player.send(json_data)
 

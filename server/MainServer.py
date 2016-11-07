@@ -25,12 +25,14 @@ class MainServer:
 
         self.tcp_server = PlayerServer(self.attendee_list, self.player_list)
 
-        db = LogDB()
-        db.open()
+
+        db = None
+        # db = LogDB()
+        # db.open()
 
         self.app = tornado.web.Application(
             [
-                (r"/websocket", WebSocketServer, dict(player_list=self.player_list, attendee_list=self.attendee_list, player_server=self.tcp_server)),
+                (r"/websocket", WebSocketServer, dict(player_list=self.player_list, attendee_list=self.attendee_list, player_server=self.tcp_server, database=db)),
                 (r'/log', LogHandler, dict(database_driver=db)),
                 (r"/", WebServer),
             ],
