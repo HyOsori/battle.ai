@@ -39,7 +39,6 @@ class LogHandler(tornado.web.RequestHandler):
         self.write('OK')
 
 
-
 class WebSocketServer(tornado.websocket.WebSocketHandler):
 
     def initialize(self, attendee_list=dict(), player_list=dict(), player_server=None, database=None):

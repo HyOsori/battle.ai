@@ -4,7 +4,7 @@ from tornado import gen
 import tornado.ioloop
 from functools import partial
 
-buffer_size = 4096
+buffer_size = 8192
 
 class User:
     def __init__(self, conn):

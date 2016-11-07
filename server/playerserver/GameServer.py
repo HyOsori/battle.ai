@@ -41,6 +41,8 @@ class GameServer:
 
         self.database = database
 
+        # self.game_log_manager = GameLogManager()
+
     @gen.coroutine
     def game_handler(self, round_num = 0):
         '''
@@ -231,6 +233,9 @@ class GameServer:
         info2 = [self.room.player_list[1].get_pid(), self.score[1]]
         result.append(info1)
         result.append(info2)
+
+        # game_log_manager.add_game_log(info1[0], info1[1], info2[0], info2[1], info1[1] == info2[1])
+        # game_log_manager.print_all()
 
         data = {MSG: GAME_HANDLER, MSG_TYPE: GAME_RESULT, DATA: result}
 
