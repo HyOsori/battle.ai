@@ -136,18 +136,6 @@ if ("WebSocket" in window) {
             }
         }
 
-        else if (data.msg == "game_data") {
-            if (data.msg_type == "notify_on_loop") {
-                recvTurnResult(data);
-            }
-            else if (data.msg_type == "notify_finish") {
-                recvRoundResult(data);
-            }
-            else if (data.msg_type == "round_result") {
-                
-            }
-        }
-
         else if (data.msg == "game_handler") {
             if (data.msg_type == "ready") {
                 if (data.data.response = "OK") {
@@ -158,6 +146,21 @@ if ("WebSocket" in window) {
                 }
             } else if (data.msg_type == "game_result") {
                 recvGameResult(data);
+            }
+        }
+
+        else if (data.msg == "game_data") {
+            if (data.msg_type == "notify_init_loop") {
+                loopStart(data.data)
+            }
+            else if (data.msg_type == "notify_loop") {
+                recvTurnResult(data);
+            }
+            else if (data.msg_type == "notify_finish") {
+                
+            }
+            else if (data.msg_type == "round_result") {
+                recvRoundResult(data);
             }
         }
     }

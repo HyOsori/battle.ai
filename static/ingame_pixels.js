@@ -23,18 +23,24 @@ var tiles_get;
 var this_turn_color;
 var border;
 
+var score = [];
+
 function gameStart(data) {
     speed = data.data.speed * 1000;
     GoToInGame();
 }
 
 function roundStart(data) {
+
+}
+
+function loopStart(data) {
 	width = data.width;
     height = data.height;
-
 	color_array = data.color_array;
+	ruler_array = data.ruler_array;
 
-    margin_width = (canvas.width - pixel_size * width) / 2;
+	margin_width = (canvas.width - pixel_size * width) / 2;
 	margin_height = (canvas.height - pixel_size * height) / 2;
     sleep_time = speed / (width * height);
 
@@ -47,7 +53,7 @@ function recvTurnResult(game_data) {
     ruler_array_old = ruler_array;
     ruler_array = game_data.data.ruler_array;
 
-    this_turn_color = game_data.data.absorbed_area;
+    this_turn_color = game_data.data.chosen_color;
     this_turn_player = game_data.data.ruler_who;
 
     GetIndexNewTiles(ruler_array_old, ruler_array);
