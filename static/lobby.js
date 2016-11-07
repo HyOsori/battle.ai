@@ -149,21 +149,21 @@ if ("WebSocket" in window) {
                     GoToLobby();
                 }
             } else if (data.msg_type == "game_result") {
-                recvGameResult(data);
+                recvGameResult(data.data);
             }
         }
 
         else if (data.msg == "game_data") {
             if (data.msg_type == "notify_init_loop") {
-                loopStart(data.data)
+                loopStart(data.data);
             }
             else if (data.msg_type == "notify_loop") {
-                recvTurnResult(data);
+                recvTurnResult(data.data);
+            }
+            else if (data.msg_type == "notify_change_round") {
+                recvLoopResult(data.data);
             }
             else if (data.msg_type == "notify_finish") {
-                
-            }
-            else if (data.msg_type == "round_result") {
                 recvRoundResult(data.data);
             }
         }

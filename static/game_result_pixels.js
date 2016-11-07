@@ -1,10 +1,10 @@
 var gameResults = [];
+var loopResult = [];
+var roundResult = [];
 
 function DrawResultBoard(index) {
     var nav = document.getElementById('id_gameResults_ul');
-    var index = 0;
-
-    DrawBoard(gameResults[index]["round1"]["board"]);
+    DrawBoard(gameResults[index]["loop1"]["board"]);
 }
 
 function SaveRoundResult(winner){
@@ -28,58 +28,75 @@ function SaveRoundResult(winner){
             }
         }
 
-        var player1 = gameResults[index]["round1"]["player"]["player1"];
-        var player2 = gameResults[index]["round1"]["player"]["player2"];
-        var player1_2r = gameResults[index]["round2"]["player"]["player1"];
-        var player2_2r = gameResults[index]["round2"]["player"]["player2"];
+        var player1 = gameResults[index]["loop1"]["score"][0];
+        var player2 = gameResults[index]["loop1"]["score"][1];
+        var player1_2r = gameResults[index]["loop2"]["score"][0];
+        var player2_2r = gameResults[index]["loop2"]["score"][1];
+
         $(this).append('<br>', player1[0], " ", player1[1], " : ", player2[1], " ", player2[0],
-                        '<br>', player1[0], " ", player1[1], " : ", player2[1], " ", player2[0]);
+                        '<br>', player1_2r[0], " ", player1_2r[1], " : ", player2_2r[1], " ", player2_2r[0]);
+
         DrawResultBoard(index);
     }).append('Round ', round, ' ', winner).appendTo('#id_gameResults_ul')
 }
 
+function recvLoopResult(data) {
+    var loop_num = data.round;
+    var first = data.first;
+    var second = data.second;
+    var player = [];
+
+    loopResult = [];
+    loopResult["board"] = color_array;
+    player[0] = first;
+    player[1] = 0;
+    loopResult["score"][0] = player;
+    player[0] = second;
+    player[1] = 0;
+    loopResult["score"][1] = player;
+
+    roundResult["loop" + loop_num] = loopResult;
+    DrawBoard(color_array_init);
+}
+
 function recvRoundResult(data) {
-    var roundResult = [];
-    var players = [];
-    var roundData = [];
-    //save winner
-    if (data.win == 0) {
-        roundResult["winner"] = "DRAW";
-    } else {
-        roundResult["winner"] = users[data.win - 1];
-    }
-    //save round1
-    players["player1"] = [users[0], data.ruler1_score];
-    players["player2"] = [users[1], data.ruler2_score];
-    roundData["player"] = players;
-    roundData["board"] = color_array;
-    roundResult["round1"] = roundData;
+    roundResult["winner"] = data.winner;
+    roundResult["loop1"]["score"][0][1] = data.score[0][0];
+    roundResult["loop1"]["score"][1][1] = data.score[0][1];
+    roundResult["loop2"]["score"][0][1] = data.score[1][0];
+    roundResult["loop2"]["score"][1][1] = data.score[1][1];
 
-    //save round2
-    players["player1"] = [users[1], data.ruler2_score];
-    players["player2"] = [users[0], data.ruler1_score];
-    roundData["player"] = players;
-    roundData["board"] = color_array;
-    roundResult["round2"] = roundData;
-    
     gameResults.push(roundResult);
-
     SaveRoundResult(roundResult["winner"]);
+
+    roundResult = [];
     round++;
     ClearBoard();
 }
 
 function recvGameResult(data) {
-    for (var key in data.game_data ) {
-        if (data.game_data[key] == "win") {
-            alertify.alert(key + " 승리!")
-            $("#id_title").html(key+" WIN!").css("text-align","center");
-        }
-        else if (data.game_data[key] == "draw") {
-            alertify.alert("무승부!")
-            $("#id_title").html("DRAW").css("text-align", "center");
+    var winner_index = 0;
+    var isDraw = false;
+
+    for (var i = 0; i < data.length; ++i) {
+        if (data[winner_index][1] == data[i][1]) {
+            isDraw = true;
+        } else {
+            isDraw = false;
+            if (data[winner_index][1] < data[i][1]) {
+                winner_index = i;
+            }
         }
     }
+
+    if (!isDraw) {
+        alertify.alert(data[winner_index][0] + " 승리!");
+        $("#id_title").html(data[winner_index][0] + " WIN!");
+    } else {
+        alertify.alert("무승부!");
+        $("#id_title").html("DRAW");
+    }
+
     GoToGameResult();
 }
 

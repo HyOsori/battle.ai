@@ -7,6 +7,7 @@ var score = [];
 
 var width;
 var height;
+var color_array_init = [];
 var color_array_old = [];
 var color_array = [];
 var ruler_array_old = [];
@@ -42,6 +43,7 @@ function roundStart(data) {
 function loopStart(data) {
 	width = data.width;
     height = data.height;
+	color_array_init = data.color_array;
 	color_array = data.color_array;
 	ruler_array = data.ruler_array;
 	
@@ -59,18 +61,17 @@ function loopStart(data) {
 		loop_num++;
 	}
 
-
-	DrawBoard(color_array);
+	DrawBoard(color_array_init);
 }
 
-function recvTurnResult(game_data) {
+function recvTurnResult(data) {
 	color_array_old = color_array;
-    color_array = game_data.data.color_array;
+    color_array = data.color_array;
     ruler_array_old = ruler_array;
-    ruler_array = game_data.data.ruler_array;
+    ruler_array = data.ruler_array;
 
-    this_turn_color = game_data.data.chosen_color;
-    this_turn_player = game_data.data.ruler_who;
+    this_turn_color = data.chosen_color;
+    this_turn_player = data.ruler_who;
 
     GetIndexNewTiles(ruler_array_old, ruler_array);
 	GetBorder(ruler_array_old, this_turn_player);
@@ -86,6 +87,7 @@ function recvTurnResult(game_data) {
 		}
 	}, sleep_time);
 }
+
 
 function GetBorder(array_old, this_turn) {
 	var x, y;
