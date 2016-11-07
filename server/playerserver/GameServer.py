@@ -21,9 +21,9 @@ class GameServer:
         self.attendee_list = attendee_list  # WHY NEEDED? - when game room destroy - attendee.notify_user_added
         self.q = None
 
-        self.time_delay_list = [2, 0.5, 0.3, 0.1, 0.05]
+        self.time_delay_list = [0.5, 0.3, 0.1, 0.05, 0]
 
-        self.delay_time = 0.3
+        self.delay_time = 0.001
         self.set_delay_time(self.time_delay_list[time_index])
 
         self.game_result = {}
@@ -207,11 +207,11 @@ class GameServer:
 
     def send_round_result(self, round_result):
         # save round result, temporary implementation ..;;
-        self.score[round_result[DATA]["win"]] += 1
-        self.score[round_result[DATA]["lose"]] += 1
+        #self.score[round_result[DATA]["win"]] += 1
+        #self.score[round_result[DATA]["lose"]] += 1
 
-        if self.score[round_result[DATA]["lose"]] == 0:
-            self.score[2] += 1
+        #if self.score[round_result[DATA]["lose"]] == 0:
+        #    self.score[2] += 1
 
         logging.error("cur msg_type :" + self.current_msg_type + "  changed msg_type :" + ROUND_RESULT)
         self.current_msg_type = ROUND_RESULT
@@ -227,17 +227,18 @@ class GameServer:
         # TODO: game_result must chagned to real game_result, not round result
 
         # make game result, temporary implementation.. ;;
-        result = []
 
-        info1 = [self.room.player_list[0].get_pid(), self.score[0]]
-        info2 = [self.room.player_list[1].get_pid(), self.score[1]]
-        result.append(info1)
-        result.append(info2)
+        #result = []
+
+        #info1 = [self.room.player_list[0].get_pid(), self.score[0]]
+        #info2 = [self.room.player_list[1].get_pid(), self.score[1]]
+        #result.append(info1)
+        #result.append(info2)
 
         # game_log_manager.add_game_log(info1[0], info1[1], info2[0], info2[1], info1[1] == info2[1])
         # game_log_manager.print_all()
 
-        data = {MSG: GAME_HANDLER, MSG_TYPE: GAME_RESULT, DATA: result}
+        data = {MSG: GAME_HANDLER, MSG_TYPE: GAME_RESULT, DATA: self.game_result}
 
         logging.debug(data)
 

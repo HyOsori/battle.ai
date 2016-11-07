@@ -24,7 +24,7 @@ class Player(User):
         future.set_exception(gen.TimeoutError("Timeout"))
 
     @gen.coroutine
-    def timeout_read(self, timeout=3):
+    def timeout_read(self, timeout=10):
         future = self.conn.read_bytes(buffer_size, partial=True)
         timeout_handle = self.io_loop.add_timeout(self.io_loop.time() + timeout, partial(self.__error_callback, future=future))
         future.add_done_callback(lambda r: self.io_loop.remove_timeout(timeout_handle))
@@ -32,7 +32,7 @@ class Player(User):
         raise gen.Return(message)
 
     def read(self):
-        return self.conn.read_bytes(256, partial=True)
+        return self.conn.read_bytes(buffer_size, partial=True)
 
     def get_pid(self):
         return self.pid
@@ -75,7 +75,7 @@ class Attendee(User):
         try:
             self.conn.write_message(self._trim(data))
         except Exception as e:
-            print "attendee bye bye"+e
+            print "attendee bye bye"+str(e)
 
     def room_enter(self):
         self.attendee_flag = True
