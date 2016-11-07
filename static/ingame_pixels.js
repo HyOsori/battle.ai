@@ -28,6 +28,7 @@ var tiles_get;
 var this_turn_color;
 var border;
 
+var loop_is_end = true;
 
 function gameStart(data) {
     loop_num = 1;
@@ -46,13 +47,13 @@ function loopStart(data) {
 	color_array_init = data.color_array;
 	color_array = data.color_array;
 	ruler_array = data.ruler_array;
-	
+
 	if ((canvas.width * 0.7 / width) < (canvas.height * 0.7 / height)) {
 		pixel_size = canvas.width * 0.7 / width;
 	} else {
 		pixel_size = canvas.height * 0.7 / height;
 	}
-	
+
 	margin_width = (canvas.width - pixel_size * width) / 2;
 	margin_height = (canvas.height - pixel_size * height) / 2;
 
@@ -65,27 +66,32 @@ function loopStart(data) {
 }
 
 function recvTurnResult(data) {
-	color_array_old = color_array;
-    color_array = data.color_array;
-    ruler_array_old = ruler_array;
-    ruler_array = data.ruler_array;
+	if (loop_is_end) {
+		DrawBoard(color_array_init);
+		loop_is_end = false;
+	} else {
+		color_array_old = color_array;
+		color_array = data.color_array;
+		ruler_array_old = ruler_array;
+		ruler_array = data.ruler_array;
 
-    this_turn_color = data.chosen_color;
-    this_turn_player = data.ruler_who;
+		this_turn_color = data.chosen_color;
+		this_turn_player = data.ruler_who;
 
-    GetIndexNewTiles(ruler_array_old, ruler_array);
-	GetBorder(ruler_array_old, this_turn_player);
+		GetIndexNewTiles(ruler_array_old, ruler_array);
+		GetBorder(ruler_array_old, this_turn_player);
 
-    var paint_border = setInterval(function() {
-		for (var i = 0; i < loop_num; ++i) {
-			if (!borders.isEmpty()) {
-				border = borders.dequeue();
-				PaintBorder(ruler_array_old, border, this_turn_color, this_turn_player);
-			} else {
-				clearInterval(paint_border);
+		var paint_border = setInterval(function () {
+			for (var i = 0; i < loop_num; ++i) {
+				if (!borders.isEmpty()) {
+					border = borders.dequeue();
+					PaintBorder(ruler_array_old, border, this_turn_color, this_turn_player);
+				} else {
+					clearInterval(paint_border);
+				}
 			}
-		}
-	}, sleep_time);
+		}, sleep_time);
+	}
 }
 
 

@@ -60,7 +60,8 @@ function recvLoopResult(data) {
     loopResult["score"] = players;
 
     roundResult[loop_num] = loopResult;
-    DrawBoard(color_array_init);
+    loop_is_end = true;
+
 }
 
 function recvRoundResult(data) {
