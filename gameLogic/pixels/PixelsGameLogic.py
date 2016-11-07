@@ -31,10 +31,16 @@ class PixelsLoopPhase(Phase):
 
         # Pycharm recommends us not to define instance attribute outside __init__.
 
+
+
+    def on_start(self):
+        super(PixelsLoopPhase, self).on_start()
+        logging.debug('PHASE_LOOP : START')
+
         # Initialize variables from outside.
         self.player_list = self.get_player_list()
         self.shared_dict = self.get_shared_dict()
-        self.next_phase = None
+        self.next_phase = self.shared_dict['PHASE_FINISH']
         self.width = self.shared_dict['width']
         self.height = self.shared_dict['height']
         self.start_point_y = self.shared_dict['start_point_y']
@@ -55,12 +61,6 @@ class PixelsLoopPhase(Phase):
         self.ruler_array_copy = [[0 for x in range(self.width)] for y in range(self.height)]
         # Copy ruler_array for complete absorbing at absorb().
 
-    def on_start(self):
-        super(PixelsLoopPhase, self).on_start()
-        logging.debug('PHASE_LOOP : START')
-
-        self.next_phase = self.shared_dict['PHASE_FINISH']
-
         # Initialize the arrays.
         self.initialize_arrays()
         # self.start_point = [3 / 8, 5 / 8]
@@ -77,7 +77,7 @@ class PixelsLoopPhase(Phase):
     def do_action(self, pid, dict_data):
         super(PixelsLoopPhase, self).do_action(pid, dict_data)
         logging.debug('PHASE_LOOP : DO_ACTION / pid : ' + pid)
-        '''
+
         if self.initialize:  # Initialize the arrays if new(2nd) round starts.
             self.initialize_arrays()
             # self.start_point = [3 / 8, 5 / 8]
@@ -98,7 +98,8 @@ class PixelsLoopPhase(Phase):
             self.shared_dict['score'] = self.score
             logging.debug('LoopPhase -> FinishPhase')
             self.change_phase(self.next_phase)
-        '''
+            return
+
         ruler = 0
         if pid == self.player_list[0]:
             ruler = 1
@@ -115,14 +116,17 @@ class PixelsLoopPhase(Phase):
 
         logging.debug('PHASE_LOOP : absorbing finished')
 
+        self.notify_to_front(ruler)
+
         if self.check_status():  # If check_status returns True, the round is finished.
+            '''
             self.shared_dict['score'] = self.score
             logging.debug('LoopPhase -> FinishPhase')
             self.change_phase(self.next_phase)
-            return
-
-            # self.round += 1
-            # self.initialize = True
+            '''
+            self.notify_to_front_change_round()
+            self.round += 1
+            self.initialize = True
 
         ruler_enemy = ruler  # Ruler who finished absorbing
         ruler_self = ruler % 2 + 1  # Ruler who will take the request
@@ -130,7 +134,6 @@ class PixelsLoopPhase(Phase):
         self.change_turn()
 
         self.request_to_client(ruler_self, ruler_enemy)
-        self.notify_to_front(ruler)
 
     def on_end(self):
         super(PixelsLoopPhase, self).on_end()
@@ -164,6 +167,15 @@ class PixelsLoopPhase(Phase):
             'score': self.score
         }
         self.notify(notify_dict)
+
+    def notify_to_front_change_round(self):
+        print 'notify to front end round'
+        notify_dict = {
+            'round': self.round,
+            'first': self.player_list[self.round],
+            'second': self.player_list[1-self.round]
+        }
+        self.notify_free('notify_change_round', notify_dict)
 
     def request_to_client(self, ruler_self, ruler_enemy):
         logging.debug('Request ' + self.now_turn() + '\'s decision')
@@ -240,17 +252,17 @@ class PixelsFinishPhase(Phase):
     def __init__(self, logic_server, message_type):
         super(PixelsFinishPhase, self).__init__(logic_server, message_type)
         logging.debug('PHASE_FINISH : INIT')
-        self.now_turn()
+
+    def on_start(self):
+        super(PixelsFinishPhase, self).on_start()
+        logging.debug('PHASE_FINISH : ON_START')
+
         # Initialize variables from outside.
         self.player_list = self.get_player_list()
         self.shared_dict = self.get_shared_dict()
 
         # Initialize variables.
         self.cnt_player = 2
-
-    def on_start(self):
-        super(PixelsFinishPhase, self).on_start()
-        logging.debug('PHASE_FINISH : ON_START')
 
         self.change_turn(0)
         self.send_game_over()
@@ -269,22 +281,18 @@ class PixelsFinishPhase(Phase):
             # ruler 2
             ruler2 = score[0][1] + score[1][1]
 
+            winner = 'DRAW'
+
             if ruler1 > ruler2:
-                win = 1
-                lose = 2
+                winner = self.player_list[0]
             elif ruler1 < ruler2:
-                win = 2
-                lose = 1
-            else:
-                win = 0
-                lose = 0
+                winner = self.player_list[1]
 
             logging.error(pid + ' **************************')
-            send_dict = {'win': win,
-                         'lose': lose,
-                         'ruler1_score': ruler1,
-                         'ruler2_score': ruler2}
-            print 'win', win, 'lose', lose, 'score', ruler1, ruler2
+            send_dict = {
+                         'winner': winner,
+                         'score': score}
+            print 'winner', winner, 'score', score
             self.notify_winner(send_dict)
             self.end(True, send_dict)
             return
@@ -321,10 +329,8 @@ class PixelsGameLogic(TurnGameLogic):
         self.color_array_init = [[0 for x in range(self.width)] for y in range(self.height)]
 
         # Initialize start_point.
-        # self.start_point_y = [self.height / 8 * 3 - 1, self.height / 8 * 5]
-        # self.start_point_x = [self.width / 8 * 3 - 1, self.width / 8 * 5]
-        self.start_point_y = [0, 7]
-        self.start_point_x = [0, 7]
+        self.start_point_y = [self.height / 8 * 3 - 1, self.height / 8 * 5]
+        self.start_point_x = [self.width / 8 * 3 - 1, self.width / 8 * 5]
         # logging.debug('start_point_y : ' + self.start_point_y)
         # logging.debug('start_point_x : ' + self.start_point_x)
         # If width or height = 8, [2, 5] (0 ~ 7)
