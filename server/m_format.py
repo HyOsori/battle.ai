@@ -16,6 +16,8 @@ ERROR = "error"
 USERS = "users"
 USER = "user"
 
+USER_INFO = "user_info"
+
 # USE : in game protocol
 
 MSG_TYPE = "msg_type"
@@ -34,4 +36,5 @@ READY = "ready"
 INIT = "init"
 FINISH = "finish"
 OK = "OK"
+NO = "NO"
 
