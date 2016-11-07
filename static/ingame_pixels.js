@@ -16,6 +16,7 @@ var ruler_array = [];
 var pixel_color = ["#FFFFFF", "#FF0000", "#FFA500", "#FFFF00", "#008000", "#0000FF", "#800080"];
 var speed;
 var sleep_time;
+var loop_num = 1;
 var pixel_size = 10;
 var margin_width;
 var margin_height;
@@ -28,7 +29,8 @@ var border;
 
 
 function gameStart(data) {
-    speed = data.data.speed * 1000;
+    loop_num = 1;
+	speed = data.data.speed * 1000;
     users = data.data.users;
 	GoToInGame();
 }
@@ -43,9 +45,16 @@ function loopStart(data) {
 	color_array = data.color_array;
 	ruler_array = data.ruler_array;
 
+	pixel_size = 20 ;
+	
 	margin_width = (canvas.width - pixel_size * width) / 2;
 	margin_height = (canvas.height - pixel_size * height) / 2;
-    sleep_time = speed / (width * height);
+
+	sleep_time = speed / (width * height);
+	while ((speed * loop_num) < (4 * width * height)) { // minimum delay of setInterval : 4
+		loop_num++;
+	}
+
 
 	DrawBoard(color_array);
 }
@@ -56,23 +65,23 @@ function recvTurnResult(game_data) {
     ruler_array_old = ruler_array;
     ruler_array = game_data.data.ruler_array;
 
-    this_turn_color = pixel_color[game_data.data.chosen_color];
+    this_turn_color = game_data.data.chosen_color;
     this_turn_player = game_data.data.ruler_who;
 
     GetIndexNewTiles(ruler_array_old, ruler_array);
 	GetBorder(ruler_array_old, this_turn_player);
 
     var paint_border = setInterval(function() {
-		if (!borders.isEmpty()) {
-			border = borders.dequeue();
-			PaintBorder(ruler_array_old, border, this_turn_color, this_turn_player);
-		} else {
-			clearInterval(paint_border);
+		for (var i = 0; i < loop_num; ++i) {
+			if (!borders.isEmpty()) {
+				border = borders.dequeue();
+				PaintBorder(ruler_array_old, border, this_turn_color, this_turn_player);
+			} else {
+				clearInterval(paint_border);
+			}
 		}
 	}, sleep_time);
 }
-
-
 
 function GetBorder(array_old, this_turn) {
 	var x, y;
@@ -102,7 +111,7 @@ function GetIndexNewTiles(array_old, array) {
 
 function PaintPixel(x, y, color) {
     ctx.beginPath();
-    ctx.fillStyle = color;
+    ctx.fillStyle = pixel_color[color];
     ctx.fillRect(margin_width + (x * pixel_size), margin_height + (y * pixel_size), pixel_size, pixel_size);
     ctx.closePath();
 }
@@ -110,7 +119,7 @@ function PaintPixel(x, y, color) {
 function DrawBoard(array) {
 	for (var y = 0; y < height; y++) {
 		for (var x = 0; x < width; x++) {
-			PaintPixel(x, y, pixel_color[array[y][x]]);
+			PaintPixel(x, y, array[y][x]);
 		}
 	}
 }
@@ -154,9 +163,5 @@ function ReadyAfterResize() {
 	} else if (page_now == "GameResult") {
 		DrawResultBoard();
 	}
-	
-}
-
-function HighLight() {
 	
 }

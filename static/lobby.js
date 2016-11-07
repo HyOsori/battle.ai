@@ -104,15 +104,19 @@ if ("WebSocket" in window) {
         else if (data.msg == "notice_user_removed") {
             var button = document.getElementById('id_match_btn');
             var text = data.user;
-            for (var i = 0; i < userList.childNodes.length; i++) {
-                var child = userList.childNodes[i];
-                if (text == child.innerText) {
-                    child.remove();
-                    list.splice((i - 1), 1);
-
-                    if (checkSelected()<MIN_MATCH_USER_CNT)
-                        button.disabled='true';
-                }
+            if (text == "DUMMY") {
+                $("#id_dummyclient_ul").empty();
+            } else {
+                for (var i = 0; i < userList.childNodes.length; i++) {
+                    var child = userList.childNodes[i];
+                    if (text == child.innerText) {
+                        child.remove();
+                        list.splice((i - 1), 1);
+    
+                        if (checkSelected()<MIN_MATCH_USER_CNT)
+                            button.disabled='true';
+                    }
+                }    
             }
         }
         /* get log
@@ -248,6 +252,7 @@ function GoToGameResult() {
 function ResizeCanvas() {
     canvas_size = $("#id_side").css('height');
     $("#id_board_canvas").attr({"width": canvas_size, "height": canvas_size});
+    //$("div, button, li").css("font-size", );
     ReadyAfterResize();
 }
 

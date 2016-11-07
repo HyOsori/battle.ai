@@ -81,6 +81,7 @@ $('#id_goToLobby_btn').bind('click',function(){
     round=1;
 
     $("#id_gameResults_ul").empty();
+    $("#id_dummyclient_ul").empty();
 
     var json = new Object();
     json.msg = "request_user_list";

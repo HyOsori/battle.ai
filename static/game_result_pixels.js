@@ -43,11 +43,11 @@ function recvRoundResult(data) {
     var players = [];
     var roundData = [];
     //save winner
-    roundResult["winner"] = users[data.win - 1];
-    console.log(users[data.win - 1]);
-    console.log(users);
-    console.log(data.win);
-    
+    if (data.win == 0) {
+        roundResult["winner"] = "DRAW";
+    } else {
+        roundResult["winner"] = users[data.win - 1];
+    }
     //save round1
     players["player1"] = [users[0], data.ruler1_score];
     players["player2"] = [users[1], data.ruler2_score];
@@ -88,6 +88,7 @@ $('#id_goToLobby_btn').bind('click',function(){
     GoToLobby();
 
     $("#id_gameResults_ul").empty();
+    $("#id_dummyclient_ul").empty();
 
     var json = new Object();
     json.msg = "request_user_list";
