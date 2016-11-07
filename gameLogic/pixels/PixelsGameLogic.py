@@ -53,8 +53,6 @@ class PixelsLoopPhase(Phase):
         # Declare arrays.
         # Use these arrays in the form of 'array[y][x]'.
         self.color_array = [[0 for x in range(self.width)] for y in range(self.height)]
-        self.color_array_old = [[0 for x in range(self.width)] for y in range(self.height)]
-        # Copy color_array to notify front_end of the before/after change in color_array.
         self.ruler_array = [[0 for x in range(self.width)] for y in range(self.height)]
         self.ruler_array_copy = [[0 for x in range(self.width)] for y in range(self.height)]
         # Copy ruler_array for complete absorbing at absorb().
@@ -104,11 +102,6 @@ class PixelsLoopPhase(Phase):
         if pid == self.player_list[1]:
             ruler = 2
         self.chosen_color = dict_data['chosen_color']
-
-        # Copy color_array to notify front_end of the before/after change in color_array.
-        for y in range(self.height):
-            for x in range(self.width):
-                self.color_array_old[y][x] = self.color_array[y][x]
 
         self.absorb(ruler, self.chosen_color)
 
