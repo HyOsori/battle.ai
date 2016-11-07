@@ -45,10 +45,10 @@ function loopStart(data) {
 	color_array = data.color_array;
 	ruler_array = data.ruler_array;
 	
-	if ((canvas.width * 0.8 / width) < (canvas.height * 0.8 / height)) {
-		pixel_size = canvas.width * 0.8 / width;	
+	if ((canvas.width * 0.7 / width) < (canvas.height * 0.7 / height)) {
+		pixel_size = canvas.width * 0.7 / width;
 	} else {
-		pixel_size = canvas.height * 0.8 / height;
+		pixel_size = canvas.height * 0.7 / height;
 	}
 	
 	margin_width = (canvas.width - pixel_size * width) / 2;
