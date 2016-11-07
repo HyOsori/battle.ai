@@ -25,8 +25,9 @@ class MainServer:
 
         self.tcp_server = PlayerServer(self.attendee_list, self.player_list)
 
-        db = LogDB()
-        db.open()
+        # db = LogDB()
+        # db.open()
+        db = None
 
         self.app = tornado.web.Application(
             [

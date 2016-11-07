@@ -45,6 +45,7 @@ ul {
 }
 #id_title {
 	flex-grow:1;
+	margin:0px;
 }
 #id_gameMessage_second {
 	flex-grow:1;

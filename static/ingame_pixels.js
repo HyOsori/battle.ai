@@ -17,7 +17,7 @@ var pixel_color = ["#FFFFFF", "#FF0000", "#FFA500", "#FFFF00", "#008000", "#0000
 var speed;
 var sleep_time;
 var loop_num = 1;
-var pixel_size = 10;
+var pixel_size = 2;
 var margin_width;
 var margin_height;
 
@@ -44,8 +44,12 @@ function loopStart(data) {
     height = data.height;
 	color_array = data.color_array;
 	ruler_array = data.ruler_array;
-
-	pixel_size = 20 ;
+	
+	if ((canvas.width * 0.8 / width) < (canvas.height * 0.8 / height)) {
+		pixel_size = canvas.width * 0.8 / width;	
+	} else {
+		pixel_size = canvas.height * 0.8 / height;
+	}
 	
 	margin_width = (canvas.width - pixel_size * width) / 2;
 	margin_height = (canvas.height - pixel_size * height) / 2;
