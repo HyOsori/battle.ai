@@ -4,6 +4,7 @@ class Phase(object):
         self.messageType = message_type
         self.notify_message_type = 'notify_' + message_type
         self.notify_init_message_type = 'notify_init_' + message_type
+        self.notify_finish_message_type = 'notify_finish_' + message_type
 
     def on_start(self):
         pass
@@ -52,7 +53,9 @@ class Phase(object):
 
     def notify_init(self, dict_data):
         self._logic_server.notify(self.notify_init_message_type, dict_data)
-'''
-    def notify(self, notify_message_type, dict_data):
+
+    def notify_finish(self, dict_data):
+        self._logic_server.notify(self.notify_finish_message_type, dict_data)
+
+    def notify_free(self, notify_message_type, dict_data):
         self._logic_server.notify(notify_message_type, dict_data)
-'''

@@ -4,12 +4,15 @@ from tornado import gen
 import tornado.ioloop
 from functools import partial
 
-buffer_size = 8192
+buffer_size = 50000
 
 class User:
     def __init__(self, conn):
         self.conn = conn
         self.io_loop = tornado.ioloop.IOLoop.instance()
+
+    def _trim(self, string):
+        return string.replace(" ", "")
 
 class Player(User):
     def __init__(self, pid, conn):
@@ -21,7 +24,7 @@ class Player(User):
         future.set_exception(gen.TimeoutError("Timeout"))
 
     @gen.coroutine
-    def timeout_read(self, timeout = 3):
+    def timeout_read(self, timeout=3):
         future = self.conn.read_bytes(buffer_size, partial=True)
         timeout_handle = self.io_loop.add_timeout(self.io_loop.time() + timeout, partial(self.__error_callback, future=future))
         future.add_done_callback(lambda r: self.io_loop.remove_timeout(timeout_handle))
@@ -36,7 +39,7 @@ class Player(User):
 
     def send(self, data):
         try:
-            self.conn.write(data)
+            self.conn.write(self._trim(data))
         except Exception as e:
             print "player bye bye"
             print e
@@ -52,25 +55,25 @@ class Attendee(User):
         if self.attendee_flag:
             return
 
-        msg = {MSG: NOTICE+USER_ADDED, USER: added_player}
+        msg = {MSG: NOTICE_USER_ADDED, USER: added_player}
         json_msg = json.dumps(msg)
         print json_msg
 
-        self.send(json_msg)
+        self.send(self._trim(json_msg))
 
     def notice_user_removed(self, removed_player):
         print "notice user removed ##"
         if self.attendee_flag:
             return
 
-        msg = {MSG: NOTICE + USER_REMOVED, USER: removed_player}
+        msg = {MSG: NOTICE_USER_REMOVED, USER: removed_player}
         json_msg = json.dumps(msg)
 
-        self.send(json_msg)
+        self.send(self._trim(json_msg))
 
     def send(self, data):
         try:
-            self.conn.write_message(data)
+            self.conn.write_message(self._trim(data))
         except Exception as e:
             print "attendee bye bye"+e
 
@@ -79,6 +82,3 @@ class Attendee(User):
 
     def room_out(self):
         self.attendee_flag = False
-
-
-
