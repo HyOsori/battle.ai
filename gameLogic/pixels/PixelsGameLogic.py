@@ -9,7 +9,6 @@ logging.basicConfig(level=logging.DEBUG)
 
 '''
 ShardDict Key
-PHASE_INIT -> 'init'->
 PHASE_LOOP -> 'loop'->
 PHASE_FINISH -> 'finish'->
 
@@ -23,29 +22,7 @@ start_point_x : [start_point_x of ruler1, start_point_x of ruler2]
 At PixelsLoopPhase
 score : [1st round[ruler1, ruler2], 2nd round[ruler1, ruler2]]
 '''
-'''
-class PixelsInitPhase(Phase):
-    def __init__(self, logic_server, message_type):
-        super(PixelsInitPhase, self).__init__(logic_server, message_type)
-        logging.debug('PHASE_INIT : INIT')
-        self.next_phase = None
 
-    def on_start(self):
-        super(PixelsInitPhase, self).on_start()
-        logging.debug('PHASE_INIT : START')
-        self.next_phase = self.shared_dict['PHASE_FINISH']
-
-    def do_action(self, pid, dict_data):
-        super(PixelsInitPhase, self).do_action(pid, dict_data)
-        logging.debug('PHASE_INIT : DO_ACTION / pid : ' + pid)
-
-        self.change_phase(self.next_phase)
-        return
-
-    def on_end(self):
-        super(PixelsInitPhase, self).on_end()
-        logging.debug('PHASE_INIT : ON_END')
-'''
 
 class PixelsLoopPhase(Phase):
     def __init__(self, logic_server, message_type):
@@ -175,17 +152,15 @@ class PixelsLoopPhase(Phase):
             'color_array': self.color_array,
             'ruler_array': self.ruler_array,
         }
-        self.notify(notify_dict)
+        self.notify_init(notify_dict)
 
     def notify_to_front(self, ruler):
         print 'notify to front'
         notify_dict = {
-            'width': self.width,
-            'height': self.height,
             'color_array': self.color_array,
             'ruler_array': self.ruler_array,
-            #'absorbed_area' :
             'ruler_who': ruler,  # Who just finished absorbing
+            'chosen_color': self.chosen_color,
             'score': self.score
         }
         self.notify(notify_dict)
@@ -376,11 +351,9 @@ class PixelsGameLogic(TurnGameLogic):
         shared_dict['start_point_y'] = self.start_point_y
         shared_dict['start_point_x'] = self.start_point_x
 
-        #init_phase = PixelsInitPhase(self, 'init')
         loop_phase = PixelsLoopPhase(self, 'loop')
         finish_phase = PixelsFinishPhase(self, 'finish')
 
-        #shared_dict['PHASE_INIT'] = self.append_phase(init_phase)
         shared_dict['PHASE_LOOP'] = self.append_phase(loop_phase)
         shared_dict['PHASE_FINISH'] = self.append_phase(finish_phase)
 
