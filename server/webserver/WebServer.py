@@ -69,7 +69,9 @@ class WebSocketServer(tornado.websocket.WebSocketHandler):
         request = json.loads(message)
         try:
             msg = request[MSG]
+            logging.debug("check0")
             if msg == REQUEST+MATCH:
+                logging.debug("check1")
                 self._response_match(request[DATA])
             elif msg == REQUEST+USER_LIST:
                 self._response_user_list()
@@ -99,10 +101,11 @@ class WebSocketServer(tornado.websocket.WebSocketHandler):
         except Exception as e:
             logging.error(e)
             return
-
+        logging.debug("check2")
         for pid in data[USERS]:
             for attendee in self.attendee_list.values():
                 attendee.notice_user_removed(pid)
+        logging.debug("check3")
         try:
             room = Room(players, self.attendee_list[self])
             game_server = TurnGameServer(room, self.player_list, self.attendee_list, int(data[SPEED]))

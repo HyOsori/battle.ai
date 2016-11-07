@@ -319,8 +319,8 @@ class PixelsGameLogic(TurnGameLogic):
         logging.debug('GameLogic : INIT')
 
         # Initialize constants.
-        self.width = 8
-        self.height = 8
+        self.width = 128
+        self.height = 128
         # Width and height must be multiples of 8.
         # Because start_point of rulers are 3/8 and 5/8 points of board.
         self.num_of_color = 6
