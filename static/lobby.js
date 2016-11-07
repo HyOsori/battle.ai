@@ -160,7 +160,7 @@ if ("WebSocket" in window) {
                 
             }
             else if (data.msg_type == "round_result") {
-                recvRoundResult(data);
+                recvRoundResult(data.data);
             }
         }
     }

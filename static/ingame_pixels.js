@@ -1,7 +1,10 @@
 var canvas = $("#id_board_canvas")[0];
 var ctx = canvas.getContext("2d");
 
+var users = [];
 var round = 1;
+var score = [];
+
 var width;
 var height;
 var color_array_old = [];
@@ -9,11 +12,11 @@ var color_array = [];
 var ruler_array_old = [];
 var ruler_array = [];
 
-//  red, orange, yellow, green, blue, purple
-var pixel_color = ["#FF0000", "#FFA500", "#FFFF00", "#008000", "#0000FF", "#800080"];
+//  white, red, orange, yellow, green, blue, purple
+var pixel_color = ["#FFFFFF", "#FF0000", "#FFA500", "#FFFF00", "#008000", "#0000FF", "#800080"];
 var speed;
 var sleep_time;
-var pixel_size = 2;
+var pixel_size = 10;
 var margin_width;
 var margin_height;
 
@@ -23,11 +26,11 @@ var tiles_get;
 var this_turn_color;
 var border;
 
-var score = [];
 
 function gameStart(data) {
     speed = data.data.speed * 1000;
-    GoToInGame();
+    users = data.data.users;
+	GoToInGame();
 }
 
 function roundStart(data) {
@@ -53,7 +56,7 @@ function recvTurnResult(game_data) {
     ruler_array_old = ruler_array;
     ruler_array = game_data.data.ruler_array;
 
-    this_turn_color = game_data.data.chosen_color;
+    this_turn_color = pixel_color[game_data.data.chosen_color];
     this_turn_player = game_data.data.ruler_who;
 
     GetIndexNewTiles(ruler_array_old, ruler_array);
@@ -69,19 +72,7 @@ function recvTurnResult(game_data) {
 	}, sleep_time);
 }
 
-function recvGameResult(data) {
-    for (var key in data.game_data ) {
-        if (data.game_data[key] == "win") {
-            alertify.alert(key + " 승리!")
-            $("#id_title").html(key+" WIN!").css("text-align","center");
-        }
-        else if (data.game_data[key] == "draw") {
-            alertify.alert("무승부!")
-            $("#id_title").html("DRAW").css("text-align", "center");
-        }
-    }
-    GoToGameResult();
-}
+
 
 function GetBorder(array_old, this_turn) {
 	var x, y;

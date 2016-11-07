@@ -14,17 +14,20 @@ function SaveRoundResult(winner){
         for (var i=0; i<nav.childNodes.length; i++){
             var child = nav.childNodes[i];
             if (child.className == 'class_selected') {
-                child.innerHTML = 'Round ' + round + ' ' + gameResults[i]["winner"];
+                child.innerHTML = 'Round ' + (i + 1) + ' ' + gameResults[i]["winner"];
             }
             child.className = '';
         }
+        
+        event.target.className = 'class_selected';
+        
         for(index; index<nav.childNodes.length; index++){
             var child = nav.childNodes[index];
             if (child.className == 'class_selected') {
                 break;
             }
         }
-        event.target.className = 'class_selected';
+
         var player1 = gameResults[index]["round1"]["player"]["player1"];
         var player2 = gameResults[index]["round1"]["player"]["player2"];
         var player1_2r = gameResults[index]["round2"]["player"]["player1"];
@@ -40,21 +43,24 @@ function recvRoundResult(data) {
     var players = [];
     var roundData = [];
     //save winner
-    //roundResult["winner"] = data.winner;
+    roundResult["winner"] = users[data.win - 1];
+    console.log(users[data.win - 1]);
+    console.log(users);
+    console.log(data.win);
     
     //save round1
-    //players["data.player1_name"] = data.score_player1_round1;
-    //players["data.player2_name"] = data.score_player2_round1;
-    //roundData["player"] = players;
-    //roundData["board"] = data.board_round1;
-    //roundResult["round1"] = roundData;
+    players["player1"] = [users[0], data.ruler1_score];
+    players["player2"] = [users[1], data.ruler2_score];
+    roundData["player"] = players;
+    roundData["board"] = color_array;
+    roundResult["round1"] = roundData;
 
     //save round2
-    //players["data.player1_name"] = data.score_player1_round2;
-    //players["data.player2_name"] = data.score_player2_round2;
-    //roundData["player"] = players;
-    //roundData["board"] = data.board_round2;
-    //roundResult["round2"] = roundData;
+    players["player1"] = [users[1], data.ruler2_score];
+    players["player2"] = [users[0], data.ruler1_score];
+    roundData["player"] = players;
+    roundData["board"] = color_array;
+    roundResult["round2"] = roundData;
     
     gameResults.push(roundResult);
 
@@ -63,7 +69,22 @@ function recvRoundResult(data) {
     ClearBoard();
 }
 
+function recvGameResult(data) {
+    for (var key in data.game_data ) {
+        if (data.game_data[key] == "win") {
+            alertify.alert(key + " 승리!")
+            $("#id_title").html(key+" WIN!").css("text-align","center");
+        }
+        else if (data.game_data[key] == "draw") {
+            alertify.alert("무승부!")
+            $("#id_title").html("DRAW").css("text-align", "center");
+        }
+    }
+    GoToGameResult();
+}
+
 $('#id_goToLobby_btn').bind('click',function(){
+    round = 1;
     GoToLobby();
 
     $("#id_gameResults_ul").empty();
