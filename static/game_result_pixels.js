@@ -4,9 +4,7 @@ var roundResult = [];
 
 function DrawResultBoard(index) {
     var nav = document.getElementById('id_gameResults_ul');
-    console.log(index);
     DrawBoard(gameResults[index]["loop1"]["board"]);
-    console.log(gameResults);
 }
 
 function SaveRoundResult(winner){
@@ -68,8 +66,8 @@ function recvLoopResult(data) {
         roundResult["loop2"] = loopResult;
     }
     
-    loop_is_end = true;
-
+    DrawBoard(color_array_init);
+    console.log(color_array_init);
 }
 
 function recvRoundResult(data) {
