@@ -8,6 +8,7 @@ var score = [];
 var width;
 var height;
 var color_array_init = [];
+var ruler_array_init = [];
 var color_array = [];
 var ruler_array = [];
 
@@ -18,11 +19,9 @@ var margin_width;
 var margin_height;
 var ratio = 0.8;
 
-var borders;
 var this_turn_player;
-var tiles_get;
 var this_turn_color;
-var border;
+var border1, border2;
 
 function gameStart(data) {
     users = data.users;
@@ -36,29 +35,32 @@ function roundStart(data) {
 function loopStart(data) {
 	//get PIXELS board size
 	width = data.width;
-    height = data.height;
+	height = data.height;
 
 	//save initial color_array
 	color_array_init = data.color_array;
-	color_array = data.color_array;
+	ruler_array_init = data.ruler_array;
 
-	//initialize ruler_array
+	//initialize ruler_array, color_array;
 	ruler_array = new Array(height);
+	color_array = new Array(height);
 	for (var y = 0; y < height; ++y) {
 		ruler_array[y] = new Array(width);
+		color_array[y] = new Array(width);
 		for (var x = 0; x < width; ++x) {
-			ruler_array[y][x] = 0;
+			ruler_array[y][x] = ruler_array_init[y][x];
+			color_array[y][x] = color_array_init[y][x];
 		}
 	}
 
+	border1 = new Queue();
+	border2 = new Queue();
+	
 	//TODO:get starting points and push them in ruler_array
-	/*
-	for (var i = 0; i < users.length; ++i) {
-		borders[i] = new Queue();
-		border[i].enqueue();
-		ruler_array[][] =;
-	}
-	*/
+	var start_points = GetStartingPoint();
+
+	border1.enqueue(start_points[0]);
+	border2.enqueue(start_points[1]);
 	
 	//calculate pixel size
 	if ((canvas.width * ratio / width) < (canvas.height * ratio / height)) {
@@ -77,10 +79,26 @@ function loopStart(data) {
 function recvTurnResult(data) {
 	this_turn_color = data.chosen_color;
 	this_turn_player = data.ruler_who;
+	ruler_array = data.ruler_array;
+	color_array = data.color_array;
 
 	RenewArray(this_turn_color, this_turn_player);
 	DrawBoard(color_array);
-}	
+}
+
+function GetStartingPoint() {
+	var array = new Array(2);
+	for (var y = 0; y < height; ++y) {
+		for (var x = 0; x < width; ++x) {
+			if (ruler_array[y][x] == 1) {
+				array[0] = [x, y];
+			} else if (ruler_array[y][x] == 2) {
+				array[1] = [x, y];
+			}
+		}
+	}
+	return array;
+}
 
 function PaintPixel(x, y, color) {
     ctx.beginPath();
@@ -105,36 +123,44 @@ function RenewArray(color, ruler) {
 			}
 		}
 	}
-	RenewRulerArray(borders[ruler], color, ruler);
+	RenewRulerArray(color, ruler);
 }
 
-function RenewRulerArray(ruler_queue, color, ruler) {
+//Error
+function RenewRulerArray(color, ruler) {
 	var border, x, y, count;
 	var buffer_queue = new Queue();
+	var buffer_queue2 = new Queue();
+	var i = 0;
+	if (ruler == 1) {
+		buffer_queue2 = border1;
+	} else if (ruler == 2) {
+		buffer_queue2 = border2;
+	}
 	
 	while (true) {
-		border = ruler_queue.dequeue();
+		border = buffer_queue2.dequeue();
 		count = 0;
 		x = border[0];
 		y = border[1];
 		
-		if (x >= 1 && color_array[y][x - 1] == color) {
-			ruler_queue.enqueue([x - 1, y]);
+		if (x >= 1 && color_array[y][x - 1] == color && ruler_array[y][x - 1] != ruler) {
+			buffer_queue2.enqueue([x - 1, y]);
 			ruler_array[y][x - 1] = ruler;
 			count++;
 		} 
-		if (y >= 1 && color_array[y - 1][x] == color) {
-			ruler_queue.enqueue([x, y - 1]);
+		if (y >= 1 && color_array[y - 1][x] == color && ruler_array[y - 1][x] != ruler) {
+			buffer_queue2.enqueue([x, y - 1]);
 			ruler_array[y - 1][x] = ruler;
 			count++;
 		}
-		if (x <= (width - 2) && color_array[y][x + 1] == color) {
-			ruler_queue.enqueue([x + 1, y]);
+		if (x <= (width - 2) && color_array[y][x + 1] == color && ruler_array[y][x + 1] != ruler) {
+			buffer_queue2.enqueue([x + 1, y]);
 			ruler_array[y][x + 1] = ruler;
 			count++;
 		}
-		if (y <= (height - 2) && color_array[y + 1][x] == color) {
-			ruler_queue.enqueue([x, y + 1]);
+		if (y <= (height - 2) && color_array[y + 1][x] == color && ruler_array[y + 1][x] != ruler) {
+			buffer_queue2.enqueue([x, y + 1]);
 			ruler_array[y + 1][x] = ruler;
 			count++;
 		}
@@ -143,8 +169,12 @@ function RenewRulerArray(ruler_queue, color, ruler) {
 			buffer_queue.enqueue([x, y]);
 		}
 
-		if (ruler_queue.isEmpty()) {
-			ruler_queue = buffer_queue;
+		if (buffer_queue2.isEmpty()) {
+			if (ruler == 1) {
+				border1 = buffer_queue;
+			} else if (ruler == 2) {
+				border2 = buffer_queue;
+			}
 			break;
 		}
 	}

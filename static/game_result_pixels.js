@@ -66,8 +66,27 @@ function recvLoopResult(data) {
         roundResult["loop2"] = loopResult;
     }
     
-    DrawBoard(color_array_init);
-    console.log(color_array_init);
+    border1 = new Queue();
+	border2 = new Queue();
+	ruler_array = new Array(height);
+	color_array = new Array(height);
+	for (var y = 0; y < height; ++y) {
+		ruler_array[y] = new Array(width);
+		color_array[y] = new Array(width);
+		for (var x = 0; x < width; ++x) {
+			ruler_array[y][x] = ruler_array_init[y][x];
+			color_array[y][x] = color_array_init[y][x];
+		}
+	}
+    var start_points = GetStartingPoint();
+
+	border1.enqueue(start_points[1]);
+	border2.enqueue(start_points[0]);
+    
+    if (data.round == 0) {
+        DrawBoard(color_array_init);
+        console.log(color_array_init);    
+    }
 }
 
 function recvRoundResult(data) {
