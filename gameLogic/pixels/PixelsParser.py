@@ -12,6 +12,10 @@ class PixelsParser(AIParser):
         ret = None
         if self.msg_type == 'loop':
             ret = self.loop_phase()
+        if self.msg_type == 'notify_init_loop':
+            ret = self.notify_loop_init()
+        if self.msg_type == 'notify_change_round':
+            ret = self.notify_change_round()
         if ret == None:
             return base
         else:
@@ -23,3 +27,21 @@ class PixelsParser(AIParser):
         :return:
         '''
         pass
+
+    def notify_loop_init(self):
+        print 'notify_loop_init get!'
+        self.color_array = self.game_data['color_array']
+        self.ruler_array = self.game_data['ruler_array']
+        self.width = self.game_data['width']
+        self.height = self.game_data['height']
+
+        self.color_array_old = self.game_data['color_array']
+        self.ruler_array_old = self.game_data['ruler_array']
+        return None
+
+    def notify_change_round(self):
+        print 'notify_change_round get!'
+        self.color_array = self.color_array_old
+        self.ruler_array = self.ruler_array_old
+        print self.color_array, self.ruler_array
+        return None

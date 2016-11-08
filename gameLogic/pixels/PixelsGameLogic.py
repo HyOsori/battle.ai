@@ -128,6 +128,7 @@ class PixelsLoopPhase(Phase):
             self.round += 1
             self.initialize = True
 
+
         ruler_enemy = ruler  # Ruler who finished absorbing
         ruler_self = ruler % 2 + 1  # Ruler who will take the request
 
