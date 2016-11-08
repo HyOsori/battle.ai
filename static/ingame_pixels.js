@@ -52,12 +52,14 @@ function loopStart(data) {
 	}
 
 	//TODO:get starting points and push them in ruler_array
+	/*
 	for (var i = 0; i < users.length; ++i) {
 		borders[i] = new Queue();
-		border[i].enqueue(/*starting point of player i*/);
-		ruler_array[/*start_y*/][/*start_x*/] = /*player i*/;
+		border[i].enqueue();
+		ruler_array[][] =;
 	}
-
+	*/
+	
 	//calculate pixel size
 	if ((canvas.width * ratio / width) < (canvas.height * ratio / height)) {
 		pixel_size = canvas.width * ratio / width;
