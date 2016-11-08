@@ -43,18 +43,14 @@ function clickHandler(event) {
 }
 
 if ("WebSocket" in window) {
-
-    var btnConn = document.getElementById('id_conn_btn');
     var message = "";
 
     messageContainer.innerHTML = "WebSocket is supported by your Browser!";
 	//messageContainer.innerHTML = window.location.host
 	var ws = new WebSocket("ws://"+window.location.host+"/websocket");
 
-    GoToLobby();
-
     ws.onopen = function (evt) {
-        
+        GoToLobby();
     };
     ws.onmessage = function (evt) {
         var received_msg = evt.data;
@@ -149,21 +145,21 @@ if ("WebSocket" in window) {
                     GoToLobby();
                 }
             } else if (data.msg_type == "game_result") {
-                recvGameResult(data);
+                recvGameResult(data.data);
             }
         }
 
         else if (data.msg == "game_data") {
             if (data.msg_type == "notify_init_loop") {
-                loopStart(data.data)
+                loopStart(data.data);
             }
             else if (data.msg_type == "notify_loop") {
-                recvTurnResult(data);
+                recvTurnResult(data.data);
+            }
+            else if (data.msg_type == "notify_change_round") {
+                recvLoopResult(data.data);
             }
             else if (data.msg_type == "notify_finish") {
-                
-            }
-            else if (data.msg_type == "round_result") {
                 recvRoundResult(data.data);
             }
         }
@@ -197,14 +193,6 @@ if ("WebSocket" in window) {
         xmlhttp.send();
     });
 
-    <!-- connect websocket button handler -->
-    btnConn.addEventListener('click', function(){
-        var json = new Object();
-        json.msg = "request_user_list";
-        var req = JSON.stringify(json);
-        ws.send( req );
-    });
-
     ws.onclose = function() {
         message = "";
         messageContainer.innerHTML = "Connection is closed...";
@@ -226,9 +214,14 @@ function GoToLobby() {
     $(".class_inGame").css("display","none");
     $(".class_gameResult").css("display","none");
     $(".class_lobby").css("display","");
-
+    
     $("#id_title").html(Title);
     page_now = "Lobby";
+    
+    var json = new Object();
+    json.msg = "request_user_list";
+    var req = JSON.stringify(json);
+    ws.send( req );
 }
 
 function GoToInGame() {
