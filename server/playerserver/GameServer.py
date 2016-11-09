@@ -208,21 +208,15 @@ class GameServer:
     def send_round_result(self, round_result):
         # save round result, temporary implementation ..;;
         try:
-            score_sum = [0, 0]
-
-            score_data = round_result[DATA]["score"]
-            score_sum[0] = score_data[0][0] + score_data[1][0]
-            score_sum[1] = score_data[1][0] + score_data[1][1]
-
-            if score_sum[0] > score_sum[1]:
-                self.score[0] += 1
-            elif score_sum[0] < score_sum[1]:
-                self.score[1] += 1
+            if not bool(round_result[DATA]["draw"]):
+                tmp_l = [p.get_pid() for p in self.room.player_list]
+                self.score[tmp_l.index(round_result[DATA]["winner"])] += 1
 
             logging.error("cur msg_type :" + self.current_msg_type + "  changed msg_type :" + ROUND_RESULT)
             self.current_msg_type = ROUND_RESULT
             json_data = json.dumps(round_result)
         except Exception as e:
+            print e.message
             logging.error(round_result)
             json_data = "error"
 
