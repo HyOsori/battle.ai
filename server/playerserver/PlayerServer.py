@@ -65,6 +65,9 @@ class PlayerServer(tornado.tcpserver.TCPServer):
                         # logging.info(str(unicode(username)))
                         # username = str(unicode(username))
                     break
+                else:
+                    print "dummy add"
+                    break
 
             player = Player(username, stream)
             print(username + " enter the game")
