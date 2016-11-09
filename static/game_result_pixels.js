@@ -150,10 +150,5 @@ $('#id_goToLobby_btn').bind('click',function(){
     $("#id_gameResults_ul").empty();
     $("#id_dummyclient_ul").empty();
 
-    var json = new Object();
-    json.msg = "request_user_list";
-    var req = JSON.stringify(json);
-    ws.send( req );
-
     ClearBoard();
 });
