@@ -33,6 +33,7 @@ function SaveRoundResult(winner){
         var player1_2r = gameResults[index]["loop2"]["score"][0];
         var player2_2r = gameResults[index]["loop2"]["score"][1];
 
+
         $(this).append('<br>', player1[0], " ", player1[1], " : ", player2[1], " ", player2[0],
                         '<br>', player1_2r[0], " ", player1_2r[1], " : ", player2_2r[1], " ", player2_2r[0]);
 
@@ -41,27 +42,59 @@ function SaveRoundResult(winner){
 }
 
 function recvLoopResult(data) {
-    var loop_num = "loop" + (data.round + 1);
     var first = data.first;
     var second = data.second;
-    var player = [];
+    var player1 = [];
+    var player2 = [];
     var players = [];
     
-    player[0] = first;
-    player[1] = 0;
-    players[0] = player;
-    
-    player[0] = second;
-    player[1] = 0;
-    players[1] = player;
+    player1[0] = first;
+    player1[1] = 0;
+    players[0] = player1;
+
+    player2[0] = second;
+    player2[1] = 0;
+    players[1] = player2;
     
     loopResult = [];
     loopResult["board"] = color_array;
     loopResult["score"] = players;
 
-    roundResult[loop_num] = loopResult;
-    loop_is_end = true;
+    if (data.round == 0) {
+        roundResult["loop1"] = loopResult;
+    } else if (data.round == 1) {
+        roundResult["loop2"] = loopResult;
+    }
 
+    var start_points =  new Array(2);
+	start_points[0] = data.start_point_x;
+	start_points[1] = data.start_point_y;
+
+    border1 = new Queue();
+	border2 = new Queue();
+
+	//initialize ruler_array, color_array;
+	ruler_array = new Array(height);
+	color_array = new Array(height);
+	for (var y = 0; y < height; ++y) {
+		ruler_array[y] = new Array(width);
+		color_array[y] = new Array(width);
+		for (var x = 0; x < width; ++x) {
+			ruler_array[y][x] = 0
+			color_array[y][x] = color_array_init[y][x];
+		}
+	}
+
+	ruler_array[start_points[1][0]][start_points[0][0]] = 1;
+	ruler_array[start_points[1][1]][start_points[0][1]] = 2;
+
+	border1.enqueue([start_points[0][0], start_points[1][0]]);
+	border2.enqueue([start_points[0][1], start_points[1][1]]);
+    
+    if (data.round == 0) {
+        DrawBoard(color_array_init);
+        console.log(color_array_init);    
+    }
 }
 
 function recvRoundResult(data) {
@@ -93,7 +126,7 @@ function recvGameResult(data) {
             }
         }
     }
-    
+
     GoToGameResult();
 
     if (!isDraw) {
