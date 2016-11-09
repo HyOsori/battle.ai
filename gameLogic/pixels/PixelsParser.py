@@ -11,7 +11,16 @@ class PixelsParser(AIParser):
         base = super(PixelsParser, self).parsing_data(decoding_data)
         ret = None
         if self.msg_type == 'loop':
+            if self.game_data['enemy_chosen_color'] != None:
+                self.absorb(self.game_data['ruler_enemy'], self.game_data['enemy_chosen_color'])
             ret = self.loop_phase()
+            self.absorb(self.game_data['ruler_self'], ret['chosen_color'])
+            self.print_array(self.ruler_array)
+            self.print_array(self.color_array)
+        if self.msg_type == 'notify_init_loop':
+            ret = self.notify_loop_init()
+        if self.msg_type == 'notify_change_round':
+            ret = self.notify_change_round()
         if ret == None:
             return base
         else:
@@ -23,6 +32,28 @@ class PixelsParser(AIParser):
         :return:
         '''
         pass
+
+    def notify_loop_init(self):
+        print 'notify_loop_init get!'
+        self.color_array = self.game_data['color_array']
+        self.ruler_array = self.game_data['ruler_array']
+        self.width = self.game_data['width']
+        self.height = self.game_data['height']
+
+        self.color_array_old = self.copy_array(self.game_data['color_array'])
+        self.ruler_array_old = self.copy_array(self.game_data['ruler_array'])
+        return None
+
+    def notify_change_round(self):
+        print 'notify_change_round get!'
+        self.color_array = self.copy_array(self.color_array_old)
+        self.ruler_array = self.copy_array(self.ruler_array_old)
+
+        ys = self.game_data['start_point_y']
+        xs = self.game_data['start_point_x']
+        self.ruler_array[ys[0]][xs[0]] = 1
+        self.ruler_array[ys[1]][ys[1]] = 2
+        return None
 
     def absorb(self, ruler, chosen_color):
         ruler_array_copy = [[0 for x in range(self.width)] for y in range(self.height)]
@@ -61,3 +92,19 @@ class PixelsParser(AIParser):
                         absorb_repeat = True
                         check_stop = True  # To escape from outer for loop.
                         break
+
+    def copy_array(self, array):
+        retrun_array = [[array[y][x] for x in range(self.width)] for y in range(self.height)]
+        return retrun_array
+
+    def print_array(self, array):
+        '''
+        for debug
+        :param array:
+        :return:
+        '''
+        print 'array print: '
+        for y in range(self.height):
+            for x in range(self.width):
+                sys.stdout.write(str(array[y][x])+' ')
+            print ''

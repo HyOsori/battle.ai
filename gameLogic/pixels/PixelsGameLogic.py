@@ -87,6 +87,7 @@ class PixelsLoopPhase(Phase):
         self.notify_to_front(ruler)
 
         if self.check_status():  # If check_status returns True, the round is finished.
+            self.switch_start_point()
             self.notify_to_front_change_round()
             self.round += 1
             self.initialize = True
@@ -94,16 +95,18 @@ class PixelsLoopPhase(Phase):
         if self.initialize:  # Initialize the arrays if new(2nd) round starts.
             self.initialize_arrays()
             # self.start_point = [3 / 8, 5 / 8]
-            self.switch_start_point()
+#            self.switch_start_point()
             # self.start_point = [5 / 8, 3 / 8]
 
             # ruler2 starts at 5/8 point of board.
             self.ruler_array[self.start_point_y[0]][self.start_point_x[0]] = 1
+            self.color_array[self.start_point_y[0]][self.start_point_x[0]] = 0
             # ruler1 starts at 3/8 point of board.
             self.ruler_array[self.start_point_y[1]][self.start_point_x[1]] = 2
+            self.color_array[self.start_point_y[1]][self.start_point_x[1]] = 0
 
             self.initialize = False
-            self.chosen_color = 0
+            self.chosen_color = None
 
             if pid == self.player_list[1]:
                 self.change_turn()
@@ -141,15 +144,15 @@ class PixelsLoopPhase(Phase):
             'color_array': self.color_array,
             'ruler_array': self.ruler_array,
             'start_point_y': self.start_point_y,
-            'start_point_x': self.start_point_x,
+            'start_point_x': self.start_point_x
         }
         self.notify_init(notify_dict)
 
     def notify_to_front(self, ruler):
         print 'notify to front'
         notify_dict = {
-            'color_array': self.color_array,
-            'ruler_array': self.ruler_array,
+#            'color_array': self.color_array,
+#            'ruler_array': self.ruler_array,
             'ruler_who': ruler,  # Who just finished absorbing
             'chosen_color': self.chosen_color,
             'score': self.score
@@ -163,17 +166,18 @@ class PixelsLoopPhase(Phase):
             'first': self.player_list[self.round],
             'second': self.player_list[1-self.round],
             'start_point_y': self.start_point_y,
-            'start_point_x': self.start_point_x,
+            'start_point_x': self.start_point_x
         }
+        self.chosen_color = None
         self.notify_free('notify_change_round', notify_dict)
 
     def request_to_client(self, ruler_self, ruler_enemy):
         logging.debug('Request ' + self.now_turn() + '\'s decision')
         info_dict = {
-            'width': self.width,
-            'height': self.height,
-            'color_array': self.color_array,
-            'ruler_array': self.ruler_array,
+#            'width': self.width,
+#            'height': self.height,
+#            'color_array': self.color_array,
+#            'ruler_array': self.ruler_array,
             'start_point_y': self.start_point_y,
             'start_point_x': self.start_point_x,
             'ruler_self': ruler_self,
@@ -313,8 +317,10 @@ class PixelsGameLogic(TurnGameLogic):
         logging.debug('GameLogic : INIT')
 
         # Initialize constants.
+
         self.width = 16
         self.height = 16
+
         # Width and height must be multiples of 8.
         # Because start_point of rulers are 3/8 and 5/8 points of board.
         self.num_of_color = 6
