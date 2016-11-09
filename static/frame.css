@@ -135,8 +135,13 @@ ul {
 	max-height:250px;
 	flex-basis:25%;
 }
-#id_chart {
+#id_chart1 {
 	flex-grow:1;
+	flex-basis:50%;
+}
+#id_chart2 {
+	flex-grow:1;
+	flex-basis:50%;
 }
 #id_dummyclient_ul {
 	flex-grow:2;

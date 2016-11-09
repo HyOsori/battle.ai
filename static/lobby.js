@@ -166,11 +166,18 @@ if ("WebSocket" in window) {
     }
 
     $('#id_match_btn').bind('click',function() {
+        var dummyList = document.getElementById("id_dummyclient_ul");
         var selectedUser = [];
         var speed = setSpeed.value;
         var data = new Object();
         for (var i=0; i<userList.childNodes.length; i++){
             var child = userList.childNodes[i];
+            if (child.className == 'class_selected'){
+                selectedUser.push(child.innerText);
+            }
+        }
+        for (var i=0; i<dummyList.childNodes.length; i++){
+            var child = dummyList.childNodes[i];
             if (child.className == 'class_selected'){
                 selectedUser.push(child.innerText);
             }

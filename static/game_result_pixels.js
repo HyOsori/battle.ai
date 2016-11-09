@@ -95,6 +95,11 @@ function recvLoopResult(data) {
         DrawBoard(color_array_init);
         console.log(color_array_init);    
     }
+    
+    //google.charts.setOnLoadCallback(drawRoundChart());
+    turn = 0;
+    loop++;
+    loop_score[0] = ['Turn', 'Player1', 'Player2'];
 }
 
 function recvRoundResult(data) {

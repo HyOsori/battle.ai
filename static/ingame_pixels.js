@@ -1,10 +1,14 @@
+google.charts.load('current', {'packages':['corechart']});
+
 var canvas = $("#id_board_canvas")[0];
 var ctx = canvas.getContext("2d");
 
 var users = [];
 var round = 1;
+var turn = 1;
+var loop = 0;
 var loop_score = [['Turn', 'Player1', 'Player2']];
-var round_score = [];
+var round_score = [['Round', 'Player1', 'Player2']];
 
 var width;
 var height;
@@ -82,11 +86,15 @@ function loopStart(data) {
 }
 
 function recvTurnResult(data) {
+	var score = data.score[loop];
 	this_turn_color = data.chosen_color;
 	this_turn_player = data.ruler_who;
 
 	RenewArray(this_turn_color, this_turn_player);
 	DrawBoard(color_array);
+	loop_score.push([turn, score[0], score[1]]);
+	google.charts.setOnLoadCallback(drawLoopChart());
+	turn++;
 }
 
 function PaintPixel(x, y, color) {
@@ -117,7 +125,6 @@ function RenewArray(color, ruler) {
 	RenewRulerArray(color, ruler);
 }
 
-//Error
 function RenewRulerArray(color, ruler) {
 	var border, x, y, count;
 	var buffer_queue = new Queue();
@@ -175,19 +182,29 @@ function ClearBoard() {
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 	ctx.beginPath();
 }
-/*
-function drawChart() {
+
+function drawLoopChart() {
 	var data = google.visualization.arrayToDataTable(loop_score);
 	var options = {
-	  title: 'Company Performance',
-	  hAxis: {title: 'Year',  titleTextStyle: {color: '#333'}},
+	  title: 'This Game',
+	  hAxis: {title: 'Turn',  titleTextStyle: {color: '#333'}},
 	  vAxis: {minValue: 0}
 	};
-
-	var chart = new google.visualization.AreaChart(document.getElementById('chart_div'));
+	var chart = new google.visualization.AreaChart(document.getElementById('id_chart1'));
 	chart.draw(data, options);
 }
-*/
+
+function drawRoundChart() {
+	var data = google.visualization.arrayToDataTable(round_score);
+	var options = {
+	  title: 'Total Round',
+	  hAxis: {title: 'Round',  titleTextStyle: {color: '#333'}},
+	  vAxis: {minValue: 0}
+	};
+	var chart = new google.visualization.AreaChart(document.getElementById('id_chart2'));
+	chart.draw(data, options);
+}
+
 function ReadyAfterResize() {
 	if ((canvas.width * ratio / width) < (canvas.height * ratio / height)) {
 		pixel_size = canvas.width * ratio / width;
