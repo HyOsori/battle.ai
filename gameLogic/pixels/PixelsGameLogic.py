@@ -140,6 +140,8 @@ class PixelsLoopPhase(Phase):
             'height': self.height,
             'color_array': self.color_array,
             'ruler_array': self.ruler_array,
+            'start_point_y': self.start_point_y,
+            'start_point_x': self.start_point_x,
         }
         self.notify_init(notify_dict)
 
@@ -159,7 +161,9 @@ class PixelsLoopPhase(Phase):
         notify_dict = {
             'round': self.round,
             'first': self.player_list[self.round],
-            'second': self.player_list[1-self.round]
+            'second': self.player_list[1-self.round],
+            'start_point_y': self.start_point_y,
+            'start_point_x': self.start_point_x,
         }
         self.notify_free('notify_change_round', notify_dict)
 
@@ -309,8 +313,8 @@ class PixelsGameLogic(TurnGameLogic):
         logging.debug('GameLogic : INIT')
 
         # Initialize constants.
-        self.width = 64
-        self.height = 64
+        self.width = 16
+        self.height = 16
         # Width and height must be multiples of 8.
         # Because start_point of rulers are 3/8 and 5/8 points of board.
         self.num_of_color = 6

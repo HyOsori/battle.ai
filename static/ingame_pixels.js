@@ -84,8 +84,6 @@ function loopStart(data) {
 function recvTurnResult(data) {
 	this_turn_color = data.chosen_color;
 	this_turn_player = data.ruler_who;
-	ruler_array = data.ruler_array;
-	color_array = data.color_array;
 
 	RenewArray(this_turn_color, this_turn_player);
 	DrawBoard(color_array);
