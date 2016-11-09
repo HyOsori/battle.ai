@@ -189,12 +189,31 @@ function drawChart() {
 }
 */
 function ReadyAfterResize() {
+	if ((canvas.width * ratio / width) < (canvas.height * ratio / height)) {
+		pixel_size = canvas.width * ratio / width;
+	} else {
+		pixel_size = canvas.height * ratio / height;
+	}
+
+	pixel_size--;
+
 	margin_width = (canvas.width - (pixel_size + 1) * width) / 2;
 	margin_height = (canvas.height - (pixel_size + 1) * height) / 2;
 	if (page_now == "InGame") {
 		DrawBoard(color_array);	
 	} else if (page_now == "GameResult") {
-		DrawResultBoard(0);
+		var nav = document.getElementById('id_gameResults_ul');
+		var index = 0;
+		for(index; index<nav.childNodes.length; index++){
+            var child = nav.childNodes[index];
+            if (child.className == 'class_selected') {
+                break;
+            }
+        }
+		if (index >= nav.childNodes.length) {
+			index = 0;
+		}
+		DrawResultBoard(index);
 	}
 	
 }
