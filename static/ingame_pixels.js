@@ -8,7 +8,6 @@ var score = [];
 var width;
 var height;
 var color_array_init = [];
-var ruler_array_init = [];
 var color_array = [];
 var ruler_array = [];
 
@@ -37,9 +36,11 @@ function loopStart(data) {
 	width = data.width;
 	height = data.height;
 
+	border1 = new Queue();
+	border2 = new Queue();
+
 	//save initial color_array
 	color_array_init = data.color_array;
-	ruler_array_init = data.ruler_array;
 
 	//initialize ruler_array, color_array;
 	ruler_array = new Array(height);
@@ -48,19 +49,16 @@ function loopStart(data) {
 		ruler_array[y] = new Array(width);
 		color_array[y] = new Array(width);
 		for (var x = 0; x < width; ++x) {
-			ruler_array[y][x] = ruler_array_init[y][x];
+			ruler_array[y][x] = 0
 			color_array[y][x] = color_array_init[y][x];
 		}
 	}
-
-	border1 = new Queue();
-	border2 = new Queue();
 	
-	//TODO:get starting points and push them in ruler_array
-	var start_points = GetStartingPoint();
-
-	border1.enqueue(start_points[0]);
-	border2.enqueue(start_points[1]);
+	ruler_array[data.start_point_y[0]][data.start_point_x[0]] = 1;
+	ruler_array[data.start_point_y[1]][data.start_point_x[1]] = 2;
+	
+	border1.enqueue([data.start_point_x[0], data.start_point_y[0]]);
+	border2.enqueue([data.start_point_x[1], data.start_point_y[1]]);
 	
 	//calculate pixel size
 	if ((canvas.width * ratio / width) < (canvas.height * ratio / height)) {
@@ -84,20 +82,6 @@ function recvTurnResult(data) {
 
 	RenewArray(this_turn_color, this_turn_player);
 	DrawBoard(color_array);
-}
-
-function GetStartingPoint() {
-	var array = new Array(2);
-	for (var y = 0; y < height; ++y) {
-		for (var x = 0; x < width; ++x) {
-			if (ruler_array[y][x] == 1) {
-				array[0] = [x, y];
-			} else if (ruler_array[y][x] == 2) {
-				array[1] = [x, y];
-			}
-		}
-	}
-	return array;
 }
 
 function PaintPixel(x, y, color) {
