@@ -42,10 +42,6 @@ class PixelsParser(AIParser):
 
         self.color_array_old = self.copy_array(self.game_data['color_array'])
         self.ruler_array_old = self.copy_array(self.game_data['ruler_array'])
-
-        print 'ruler_array_old'
-        self.print_array(self.ruler_array_old)
-        self.print_array(self.color_array_old)
         return None
 
     def notify_change_round(self):
