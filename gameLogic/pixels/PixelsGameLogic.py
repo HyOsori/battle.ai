@@ -280,16 +280,21 @@ class PixelsFinishPhase(Phase):
             ruler2 = score[0][1] + score[1][1]
 
             winner = 'DRAW'
+            draw = False
 
             if ruler1 > ruler2:
                 winner = self.player_list[0]
             elif ruler1 < ruler2:
                 winner = self.player_list[1]
+            else:
+                draw = True
 
             logging.error(pid + ' **************************')
             send_dict = {
                          'winner': winner,
-                         'score': score}
+                         'score': score,
+                         'draw': draw
+                        }
             print 'winner', winner, 'score', score
             self.notify_winner(send_dict)
             self.end(True, send_dict)
