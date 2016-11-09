@@ -65,7 +65,11 @@ function recvLoopResult(data) {
     } else if (data.round == 1) {
         roundResult["loop2"] = loopResult;
     }
-    
+
+    var start_points =  new Array(2);
+	start_points[0] = data.start_point_x;
+	start_points[1] = data.start_point_y;
+
     border1 = new Queue();
 	border2 = new Queue();
 
@@ -81,11 +85,11 @@ function recvLoopResult(data) {
 		}
 	}
 
-	ruler_array[data.start_point_y[0]][data.start_point_x[0]] = 1;
-	ruler_array[data.start_point_y[1]][data.start_point_x[1]] = 2;
+	ruler_array[start_points[1][0]][start_points[0][0]] = 1;
+	ruler_array[start_points[1][1]][start_points[0][1]] = 2;
 
-	border1.enqueue([data.start_point_x[0], data.start_point_y[0]]);
-	border2.enqueue([data.start_point_x[1], data.start_point_y[1]]);
+	border1.enqueue([start_points[0][0], start_points[1][0]]);
+	border2.enqueue([start_points[0][1], start_points[1][1]]);
     
     if (data.round == 0) {
         DrawBoard(color_array_init);

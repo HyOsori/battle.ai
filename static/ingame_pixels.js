@@ -3,7 +3,8 @@ var ctx = canvas.getContext("2d");
 
 var users = [];
 var round = 1;
-var score = [];
+var loop_score = [['Turn', 'Player1', 'Player2']];
+var round_score = [];
 
 var width;
 var height;
@@ -32,6 +33,10 @@ function roundStart(data) {
 }
 
 function loopStart(data) {
+	var start_points =  new Array(2);
+	start_points[0] = data.start_point_x;
+	start_points[1] = data.start_point_y;
+	
 	//get PIXELS board size
 	width = data.width;
 	height = data.height;
@@ -54,11 +59,11 @@ function loopStart(data) {
 		}
 	}
 	
-	ruler_array[data.start_point_y[0]][data.start_point_x[0]] = 1;
-	ruler_array[data.start_point_y[1]][data.start_point_x[1]] = 2;
+	ruler_array[start_points[1][0]][start_points[0][0]] = 1;
+	ruler_array[start_points[1][1]][start_points[0][1]] = 2;
 	
-	border1.enqueue([data.start_point_x[0], data.start_point_y[0]]);
-	border2.enqueue([data.start_point_x[1], data.start_point_y[1]]);
+	border1.enqueue([start_points[0][0], start_points[1][0]]);
+	border2.enqueue([start_points[0][1], start_points[1][1]]);
 	
 	//calculate pixel size
 	if ((canvas.width * ratio / width) < (canvas.height * ratio / height)) {
@@ -67,9 +72,11 @@ function loopStart(data) {
 		pixel_size = canvas.height * ratio / height;
 	}
 
+	pixel_size--;
+
 	//calculate margin
-	margin_width = (canvas.width - pixel_size * width) / 2;
-	margin_height = (canvas.height - pixel_size * height) / 2;
+	margin_width = (canvas.width - (pixel_size + 1) * width) / 2;
+	margin_height = (canvas.height - (pixel_size + 1) * height) / 2;
 	
 	DrawBoard(color_array_init);
 }
@@ -87,8 +94,10 @@ function recvTurnResult(data) {
 function PaintPixel(x, y, color) {
     ctx.beginPath();
     ctx.fillStyle = colors[color];
-    ctx.fillRect(margin_width + (x * pixel_size), margin_height + (y * pixel_size), pixel_size, pixel_size);
-    ctx.closePath();
+    ctx.fillRect(margin_width + (x * (pixel_size + 1)), margin_height + (y * (pixel_size + 1)), pixel_size, pixel_size);
+    ctx.strokeStyle="#FFFFFF";
+	ctx.strokeRect(margin_width + (x * (pixel_size + 1)), margin_height + (y * (pixel_size + 1)), (pixel_size + 1), (pixel_size + 1));
+	ctx.closePath();
 }
 
 function DrawBoard(array) {
@@ -168,10 +177,22 @@ function ClearBoard() {
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 	ctx.beginPath();
 }
+/*
+function drawChart() {
+	var data = google.visualization.arrayToDataTable(loop_score);
+	var options = {
+	  title: 'Company Performance',
+	  hAxis: {title: 'Year',  titleTextStyle: {color: '#333'}},
+	  vAxis: {minValue: 0}
+	};
 
+	var chart = new google.visualization.AreaChart(document.getElementById('chart_div'));
+	chart.draw(data, options);
+}
+*/
 function ReadyAfterResize() {
-	margin_width = (canvas.width - pixel_size * width) / 2;
-	margin_height = (canvas.height - pixel_size * height) / 2;
+	margin_width = (canvas.width - (pixel_size + 1) * width) / 2;
+	margin_height = (canvas.height - (pixel_size + 1) * height) / 2;
 	if (page_now == "InGame") {
 		DrawBoard(color_array);	
 	} else if (page_now == "GameResult") {
