@@ -5,10 +5,10 @@ import random
 
 class MyPixelsParser2(PixelsParser):
     def loop_phase(self):
-        width = self.game_data['width']
-        height = self.game_data['height']
-        color_array = self.game_data['color_array']
-        ruler_array = self.game_data['ruler_array']
+        width = self.width
+        height = self.height
+        color_array = self.color_array
+        ruler_array = self.ruler_array
         start_point_y = self.game_data['start_point_y']
         start_point_x = self.game_data['start_point_x']
         ruler_self = self.game_data['ruler_self']

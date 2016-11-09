@@ -6,10 +6,10 @@ import random
 class MyPixelsParser(PixelsParser):
     def loop_phase(self):
 
-        width = self.game_data['width']
-        height = self.game_data['height']
-        color_array = self.game_data['color_array']
-        ruler_array = self.game_data['ruler_array']
+        width = self.width
+        height = self.height
+        color_array = self.color_array
+        ruler_array = self.ruler_array
         start_point_y = self.game_data['start_point_y']
         start_point_x = self.game_data['start_point_x']
         ruler_self = self.game_data['ruler_self']
@@ -25,7 +25,5 @@ class MyPixelsParser(PixelsParser):
         while return_color == enemy_chosen_color or return_color == my_color:
             return_color = random.randint(1, 6)
 
-        parsing_data = {'chosen_color': return_color}
-
-        send_msg = self.make_send_msg(self.msg_type, parsing_data)
-        return send_msg
+        output_data = {'chosen_color': return_color}
+        return output_data
