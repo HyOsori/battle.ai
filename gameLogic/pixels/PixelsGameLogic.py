@@ -150,7 +150,7 @@ class PixelsLoopPhase(Phase):
             'width': self.width,
             'height': self.height,
             'color_array': self.color_array,
-            'ruler_array': self.ruler_array,
+#            'ruler_array': self.ruler_array,
             'start_point_y': self.start_point_y,
             'start_point_x': self.start_point_x
         }
