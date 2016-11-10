@@ -11,7 +11,6 @@ class ConfigReader:
                 continue
 
             tmp = line.split('=')
-            print tmp
             if len(tmp) == 2:
                 config_value[tmp[0]] = int(tmp[1])
 

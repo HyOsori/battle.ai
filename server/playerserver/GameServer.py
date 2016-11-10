@@ -17,6 +17,7 @@ class GameServer:
     def __init__(self, room, player_list, attendee_list, game_logic,  time_index=4, database=None):
         self.game_logic = game_logic
         self.room = room
+        self.pid_list = [p.get_pid() for p in self.room.player_list]
         self.player_list = player_list  # WHY NEEDED? - when game room destroy - player added in list
         self.attendee_list = attendee_list  # WHY NEEDED? - when game room destroy - attendee.notify_user_added
         self.q = None
@@ -50,33 +51,31 @@ class GameServer:
 
         :param round_num: number of round to play game
         '''
+
         self.turns = self._select_turns(self.room.player_list)
 
         self.q = queues.Queue(len(self.room.player_list))
-
         for turn in self.turns:
             # check game normal flag
             if not self.normal_game_playing:
                 break
 
-            logging.info("=====Are You Ready=====")
+            logging.info("=====Are You Ready=====" + str(turn))
             ready = yield self.__ready_check(self.room.player_list)
             logging.debug("ready status : " + str(ready))
             if not ready:
                 return
 
-            logging.info("==================Game Start==================")
+            logging.info("=====Game Start=====" + str(turn))
             self.game_logic.on_start(turn)
-
-            logging.debug("normal game playinng ........")
 
             for player in self.room.player_list:
                 self.q.put(player)
                 self._player_handler(player)
             yield self.q.join()
-            logging.info("==============Game End=============")
+            logging.info("=====Game End=====" + str(turn))
         self.destroy_room()
-        logging.info("==========Destroy Room==========")
+        logging.info("=====Destroy Room=====" + str(self.turns[0]))
 
     def _select_turns(self, players):
         turn = [player.get_pid() for player in players]
@@ -95,8 +94,8 @@ class GameServer:
 
         # send Are you ready message
         return_flag = True
-        msg = {MSG: GAME_HANDLER, MSG_TYPE: READY, DATA: {}}
         cur_player = None
+        msg = {MSG: GAME_HANDLER, MSG_TYPE: READY, DATA: {}}
         try:
             data = json.dumps(msg)
             for player in players:
@@ -104,7 +103,6 @@ class GameServer:
                 player.send(data)
                 recv_data = yield player.read()
                 recv_msg = json.loads(recv_data)
-                logging.debug(recv_msg)
                 if not recv_msg[DATA][RESPONSE] == 'OK':
                     return_flag = False
                     raise gen.Return(False)
@@ -115,7 +113,6 @@ class GameServer:
             data = json.dumps(recv_msg)
             for attendee in self.room.attendee_list:
                 attendee.send(data)
-            logging.debug("return True")
             return_flag = True
             raise gen.Return(True)
         except Exception as e:
@@ -124,8 +121,6 @@ class GameServer:
             for p in self.room.player_list:
                 if not p.get_pid() == cur_player.get_pid():
                     self.player_list[p.get_pid()] = p
-            logging.error(e)
-            logging.error("ready error")
             raise gen.Return(False)
 
     def _error_handler(self):
@@ -152,14 +147,10 @@ class GameServer:
                 player = p
                 break
 
-        logging.error("cur msg_type :"+msg_type + "  changed msg_type :" + self.current_msg_type)
         self.current_msg_type = msg_type
 
         message = {MSG: GAME_DATA, MSG_TYPE: msg_type, DATA: data}
         json_data = json.dumps(message)
-
-        logging.info("request to "+player.get_pid())
-        logging.info(json_data)
 
         player.send(json_data)
 
@@ -172,8 +163,6 @@ class GameServer:
         '''
         message = {MSG: GAME_DATA, MSG_TYPE: msg_type, DATA: data}
         json_data = json.dumps(message)
-
-        logging.info(json_data)
 
         for player in self.room.player_list:
             player.send(json_data)
@@ -188,7 +177,6 @@ class GameServer:
         :param is_valid_end: 0 (normal end), 1 (abnormal end)
         :param message: game result information
         """
-        logging.info("on_end() function is called")
 
         self.game_result = message
 
@@ -197,7 +185,12 @@ class GameServer:
             message = {MSG: GAME_DATA, MSG_TYPE: ROUND_RESULT, DATA: message}
             self.round_result = message
         else:
-            logging.error("logic error end")
+            # temporary implementation
+            if message[self.pid_list[0]] == "win":
+                self.score[0] += 1
+            else:
+                self.score[1] += 1
+            logging.debug("logic error occured")
             raise Exception
 
         json_data = json.dumps(message)
@@ -209,18 +202,15 @@ class GameServer:
         # save round result, temporary implementation ..;;
         try:
             if not bool(round_result[DATA]["draw"]):
-                tmp_l = [p.get_pid() for p in self.room.player_list]
+                tmp_l = self.pid_list
                 self.score[tmp_l.index(round_result[DATA]["winner"])] += 1
 
-            logging.error("cur msg_type :" + self.current_msg_type + "  changed msg_type :" + ROUND_RESULT)
             self.current_msg_type = ROUND_RESULT
             json_data = json.dumps(round_result)
         except Exception as e:
-            print e.message
-            logging.error(round_result)
+            logging.error(e.message)
             json_data = "error"
 
-        logging.debug("Send Round Result : " + json_data)
         for player in self.room.player_list:
             player.send(json_data)
 
@@ -231,14 +221,18 @@ class GameServer:
         # TODO: game_result must chagned to real game_result, not round result
 
         # make game result, temporary implementation.. ;;
-        result = []
+        # TODO: result = { "pid1" : score, "pid2" : score, "error_code": (num) }
+        # error_code : 0 - success, 1 - logic_error, 2 - timeout_error, 3 - unexpected error
+        result = {}
         try:
-            info1 = [self.room.player_list[0].get_pid(), self.score[0]]
-            info2 = [self.room.player_list[1].get_pid(), self.score[1]]
-            result.append(info1)
-            result.append(info2)
+            result[self.pid_list[0]] = self.score[0]
+            result[self.pid_list[1]] = self.score[1]
+            if not self.normal_game_playing:
+                result[ERROR_CODE] = 1
+            else:
+                result[ERROR_CODE] = 0
         except Exception as e:
-            logging.error(e)
+            logging.error(e.message)
 
         # game_log_manager.add_game_log(info1[0], info1[1], info2[0], info2[1], info1[1] == info2[1])
         # game_log_manager.print_all()
@@ -250,9 +244,6 @@ class GameServer:
         json_data = json.dumps(data)
         for attendee in self.room.attendee_list:
             attendee.send(json_data)
-
-        logging.info(str(self.room.player_list))
-        logging.info("-----------------Destory room----------------------------")
 
         for player in self.room.player_list:
             self.player_list[player.get_pid()] = player
@@ -270,12 +261,12 @@ class GameServer:
         pass
 
     def _exit_handler(self, player):
-        logging.error("exit error handler")
+        logging.error("** exit error handler **")
         self.game_logic.on_error(player.get_pid())
         self.normal_game_playing = False
-        for p in self.room.player_list:
-            if p.get_pid() == player.get_pid():
-                self.room.player_list.remove(p)
+        for pid in self.pid_list:
+            if pid == player.get_pid():
+                self.room.player_list.remove(player)
             self.q.get()
             self.q.task_done()
         gen.Return(None)

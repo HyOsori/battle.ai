@@ -3,6 +3,7 @@ from server.m_format import *
 from tornado import gen
 import tornado.ioloop
 from functools import partial
+import server.ServerLog as logging
 
 buffer_size = 256
 
@@ -41,8 +42,7 @@ class Player(User):
         try:
             self.conn.write(self._trim(data))
         except Exception as e:
-            print "player bye bye"
-            print e
+            logging.error(e.message)
 
 
 class Attendee(User):
@@ -51,7 +51,6 @@ class Attendee(User):
         self.attendee_flag = True
 
     def notice_user_added(self, added_player):
-        print "notice user added ##"
         if self.attendee_flag:
             return
 
@@ -62,7 +61,6 @@ class Attendee(User):
         self.send(self._trim(json_msg))
 
     def notice_user_removed(self, removed_player):
-        print "notice user removed ##"
         if self.attendee_flag:
             return
 
@@ -75,7 +73,7 @@ class Attendee(User):
         try:
             self.conn.write_message(self._trim(data))
         except Exception as e:
-            print "attendee bye bye"+str(e)
+            logging.error(e.message)
 
     def room_enter(self):
         self.attendee_flag = True
