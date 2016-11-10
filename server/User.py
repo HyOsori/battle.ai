@@ -4,7 +4,6 @@ from tornado import gen
 import tornado.ioloop
 from functools import partial
 import server.ServerLog as logging
-
 import zlib
 
 buffer_size = 256
@@ -42,11 +41,8 @@ class Player(User):
 
     def send(self, data):
         try:
-            ####### temporary
+            # temporary implementation
             self.conn.write(zlib.compress(self._trim(data)))
-            #######
-            # self.conn.write(self._trim(data))
-            # print len(self._trim(data))
         except Exception as e:
             logging.error(e.message)
 
@@ -87,19 +83,3 @@ class Attendee(User):
     def room_out(self):
         self.attendee_flag = False
 
-import random
-
-l = [[random.randrange(1, 7) for col in range(128)] for row in range(128)]
-print len(str(l))
-print l
-
-b = {"data" : l}
-
-a = json.dumps(b)
-data = zlib.compress(a)
-print len(data)
-k = zlib.decompress(data)
-print k
-print type(k)
-result = json.loads(k)
-print result["data"][0]
