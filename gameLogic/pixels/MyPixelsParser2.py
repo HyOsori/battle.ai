@@ -19,9 +19,9 @@ class MyPixelsParser2(PixelsParser):
         num_of_each_color = [0 for i in range(num_of_color + 1)]
 
         if ruler_self == 1:
-            my_color = color_array[start_point_x[0]][start_point_y[0]]
+            my_color = color_array[start_point_y[0]][start_point_x[0]]
         elif ruler_self == 2:
-            my_color = color_array[start_point_x[1]][start_point_y[1]]
+            my_color = color_array[start_point_y[1]][start_point_x[1]]
 
         for y in range(height):
             for x in range(width):

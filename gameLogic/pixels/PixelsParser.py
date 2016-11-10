@@ -41,7 +41,7 @@ class PixelsParser(AIParser):
         ys = self.game_data['start_point_y']
         xs = self.game_data['start_point_x']
         self.ruler_array[ys[0]][xs[0]] = 1
-        self.ruler_array[ys[1]][ys[1]] = 2
+        self.ruler_array[ys[1]][xs[1]] = 2
 
         self.color_array_old = self.copy_array(self.color_array)
         self.ruler_array_old = self.copy_array(self.ruler_array)
@@ -55,7 +55,7 @@ class PixelsParser(AIParser):
         ys = self.game_data['start_point_y']
         xs = self.game_data['start_point_x']
         self.ruler_array[ys[0]][xs[0]] = 1
-        self.ruler_array[ys[1]][ys[1]] = 2
+        self.ruler_array[ys[1]][xs[1]] = 2
         return None
 
     def absorb(self, ruler, chosen_color):
