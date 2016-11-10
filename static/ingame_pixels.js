@@ -8,7 +8,7 @@ var round = 1;
 var turn = 1;
 var loop = 0;
 var loop_score = [['Turn', 'Player1', 'Player2']];
-var round_score = [['Round', 'Player1', 'Player2']];
+var round_score = [['Round', 'Player1', 'Player2'], [1, 0, 0], [2, 0, 0], [3, 0, 0], [4, 0, 0]];
 
 var width;
 var height;
@@ -83,6 +83,7 @@ function loopStart(data) {
 	margin_height = (canvas.height - (pixel_size + 1) * height) / 2;
 	
 	DrawBoard(color_array_init);
+	google.charts.setOnLoadCallback(drawRoundChart());
 }
 
 function recvTurnResult(data) {
@@ -92,6 +93,14 @@ function recvTurnResult(data) {
 
 	RenewArray(this_turn_color, this_turn_player);
 	DrawBoard(color_array);
+	if (round > 1) {
+		round_score[loop + round + 1][1] = score[0];
+		round_score[loop + round + 1][2] = score[1];
+	} else {
+		round_score[loop + round][2] = score[0];
+		round_score[loop + round][1] = score[1];
+	}
+	
 	loop_score.push([turn, score[0], score[1]]);
 	google.charts.setOnLoadCallback(drawLoopChart());
 	turn++;
@@ -230,7 +239,7 @@ function ReadyAfterResize() {
 		if (index >= nav.childNodes.length) {
 			index = 0;
 		}
-		DrawResultBoard(index);
+		SpreadList(index);
+		DrawResultBoard(index, 0);
 	}
-	
 }
