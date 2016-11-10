@@ -125,7 +125,7 @@ function recvLoopResult(data) {
     turn = 0;
     loop++;
     loop_score = [];
-    loop_score[0] = ['Turn', 'Player1', 'Player2'];
+    loop_score[0] = ['Turn', users[0], users[1]];
 }
 
 function recvRoundResult(data) {
@@ -147,28 +147,22 @@ function recvRoundResult(data) {
 
 function recvGameResult(data) {
     var array = [];
-    var inner_array = [];
+    var score = [];
     var winner_index = 0;
     var isDraw = false;
-    
-    $.each(data, function (key) {
+    for (key in data) {
         if (key != "error_code") {
-            inner_array.push(key);
-            inner_array.push(data.key);
-            array.push(inner_array);
-            inner_array = [];
+            score.push(key);
+            score.push(data.key);
+            array.push(score);
+            score = [];
         }
-    })
+    }
 
-    for (var i = 0; i < data.length; ++i) {
-        if (array[winner_index][1] == array[i][1]) {
-            isDraw = true;
-        } else {
-            isDraw = false;
-            if (array[winner_index][1] < array[i][1]) {
-                winner_index = i;
-            }
-        }
+    if (array[0][1] == array[1][1]) {
+        isDraw = true;
+    } else if (array[0][1] < array[1][1]) {
+        winner_index = 1;
     }
 
     GoToGameResult();

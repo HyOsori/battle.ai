@@ -146,7 +146,7 @@ if ("WebSocket" in window) {
                 }
             } else if (data.msg_type == "game_result") {
                 if (data.data.error_code != 0) {
-                    
+                    alertify.alert("비정상 종료되었습니다.");
                 } 
                 recvGameResult(data.data);
             }

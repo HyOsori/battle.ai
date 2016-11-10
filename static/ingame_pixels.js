@@ -29,11 +29,13 @@ var border1, border2;
 
 function gameStart(data) {
     users = data.users;
+	loop_score[0] = ['Turn', users[0], users[1]];
+	round_score[0] = ['Round', users[0], users[1]];
 	GoToInGame();
 }
 
 function roundStart(data) {
-
+	
 }
 
 function loopStart(data) {
@@ -94,14 +96,15 @@ function recvTurnResult(data) {
 	RenewArray(this_turn_color, this_turn_player);
 	DrawBoard(color_array);
 	if (round > 1) {
-		round_score[loop + round + 1][1] = score[0];
-		round_score[loop + round + 1][2] = score[1];
+		round_score[loop + round + 1][2] = score[0];
+		round_score[loop + round + 1][1] = score[1];
+		loop_score.push([turn, score[1], score[0]]);
 	} else {
-		round_score[loop + round][2] = score[0];
-		round_score[loop + round][1] = score[1];
+		round_score[loop + round][1] = score[0];
+		round_score[loop + round][2] = score[1];
+		loop_score.push([turn, score[0], score[1]]);
 	}
 	
-	loop_score.push([turn, score[0], score[1]]);
 	google.charts.setOnLoadCallback(drawLoopChart());
 	turn++;
 }
@@ -195,9 +198,10 @@ function ClearBoard() {
 function drawLoopChart() {
 	var data = google.visualization.arrayToDataTable(loop_score);
 	var options = {
-	  title: 'This Game',
-	  hAxis: {title: 'Turn',  titleTextStyle: {color: '#333'}},
-	  vAxis: {minValue: 0}
+	  	title: 'This Game',
+		legend: {position: 'bottom', maxLines: 2},
+	  	hAxis: {title: 'Turn',  titleTextStyle: {color: '#333'}},
+	  	vAxis: {minValue: 0}
 	};
 	var chart = new google.visualization.AreaChart(document.getElementById('id_chart1'));
 	chart.draw(data, options);
@@ -206,9 +210,10 @@ function drawLoopChart() {
 function drawRoundChart() {
 	var data = google.visualization.arrayToDataTable(round_score);
 	var options = {
-	  title: 'Total Round',
-	  hAxis: {title: 'Round',  titleTextStyle: {color: '#333'}},
-	  vAxis: {minValue: 0}
+	  	title: 'Total Round',
+	  	legend: {position: 'bottom', maxLines: 2},
+		hAxis: {title: 'Round',  titleTextStyle: {color: '#333'}},
+	  	vAxis: {minValue: 0}
 	};
 	var chart = new google.visualization.AreaChart(document.getElementById('id_chart2'));
 	chart.draw(data, options);
