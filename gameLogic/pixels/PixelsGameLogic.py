@@ -321,8 +321,8 @@ class PixelsGameLogic(TurnGameLogic):
 
         # Initialize constants.
 
-        self.width = 16
-        self.height = 16
+        self.width = 64
+        self.height = 64
 
         # Width and height must be multiples of 8.
         # Because start_point of rulers are 3/8 and 5/8 points of board.
