@@ -3,6 +3,7 @@ from gameLogic.baseClass.TurnGameLogic import TurnGameLogic
 from gameLogic.baseClass.Phase import Phase
 import logging
 import random
+import zlib
 
 sys.path.insert(0, '../')
 logging.basicConfig(level=logging.DEBUG)

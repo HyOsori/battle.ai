@@ -1,6 +1,5 @@
 
 #-*-coding:utf-8-*-
-import zlib
 
 class AIParser(object):
     def init_parser(self, client, username):
@@ -20,9 +19,9 @@ class AIParser(object):
     #고로 이 부분이 사용자가 코딩할 부분!
 
     def decoding(self, decoding_data):
-        self.msg = zlib.decompress(decoding_data['msg'])
-        self.msg_type = zlib.decompress(decoding_data['msg_type'])
-        self.game_data = zlib.decompress(decoding_data['data'])
+        self.msg = decoding_data['msg']
+        self.msg_type = decoding_data['msg_type']
+        self.game_data = decoding_data['data']
 
     def parsing_data(self, decoding_data):
         self.decoding(decoding_data)

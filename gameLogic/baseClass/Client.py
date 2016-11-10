@@ -1,6 +1,7 @@
 #-*-coding:utf-8-*-
 from socket import *
 import json
+import zlib
 
 # 사용자가 tcp 소켓에 신경 쓰지 않고 클라이언트를 제작 할수
 #있도록 주요 함수들을 제공하자.
@@ -59,6 +60,9 @@ class Client(object):
     #데이터가 따로 오는 경우 처리를 해야함
     def recv_game_data(self):
         print 'waiting...'
+        game_data = self._sock.recv(18000)
+        return game_data
+
         if self.__remain_packet == "":
             game_data = self._sock.recv(18000)
 
@@ -145,7 +149,8 @@ class Client(object):
             return
 
         while True:
-            decoding_data = self.recv_game_data()
+            decoding_data = json.loads(zlib.decompress(self.recv_game_data()))
+            print decoding_data
             if decoding_data['msg'] == 'game_result':
                 print decoding_data['data']
                 continue
