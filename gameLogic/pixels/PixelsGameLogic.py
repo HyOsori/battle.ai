@@ -3,6 +3,7 @@ from gameLogic.baseClass.TurnGameLogic import TurnGameLogic
 from gameLogic.baseClass.Phase import Phase
 import logging
 import random
+import zlib
 
 sys.path.insert(0, '../')
 logging.basicConfig(level=logging.DEBUG)
@@ -48,7 +49,7 @@ class PixelsLoopPhase(Phase):
         self.round = 0  # Check Rounds.
         self.initialize = False  # Initialize arrays if new round starts.
         self.score = [[0, 0], [0, 0]]  # Record the scores of two rounds.
-        self.chosen_color = 0
+        self.chosen_color = None
 
         # Declare arrays.
         # Use these arrays in the form of 'array[y][x]'.
@@ -72,13 +73,21 @@ class PixelsLoopPhase(Phase):
 
     def do_action(self, pid, dict_data):
         super(PixelsLoopPhase, self).do_action(pid, dict_data)
-        logging.debug('PHASE_LOOP : DO_ACTION / pid : ' + pid)
+        #logging.debug('PHASE_LOOP : DO_ACTION / pid : ' + pid)
 
         ruler = 0
         if pid == self.player_list[0]:
             ruler = 1
         if pid == self.player_list[1]:
             ruler = 2
+
+        # Not accept absorbing other's color
+        if self.chosen_color == dict_data['chosen_color']:
+            result = dict(zip(self.player_list, ['win'] * len(self.player_list)))
+            result[pid] = 'lose'
+            logging.error(pid + ' invalid Chosen')
+            self.end(False, result)
+            return
 
         self.chosen_color = dict_data['chosen_color']
 
@@ -113,7 +122,7 @@ class PixelsLoopPhase(Phase):
 
         if self.round == 2:  # Change phase if two rounds are finished.
             self.shared_dict['score'] = self.score
-            logging.debug('LoopPhase -> FinishPhase')
+            #logging.debug('LoopPhase -> FinishPhase')
             self.change_phase(self.next_phase)
             return
 
@@ -126,7 +135,7 @@ class PixelsLoopPhase(Phase):
 
     def on_end(self):
         super(PixelsLoopPhase, self).on_end()
-        logging.debug('PHASE LOOP : ON_END')
+        #logging.debug('PHASE LOOP : ON_END')
 
     def switch_start_point(self):
         temp_y = self.start_point_y[0]
@@ -137,22 +146,17 @@ class PixelsLoopPhase(Phase):
         self.start_point_x[1] = temp_x
 
     def notify_to_front_init(self):
-        print 'notify to front init'
         notify_dict = {
             'width': self.width,
             'height': self.height,
             'color_array': self.color_array,
-            'ruler_array': self.ruler_array,
             'start_point_y': self.start_point_y,
             'start_point_x': self.start_point_x
         }
         self.notify_init(notify_dict)
 
     def notify_to_front(self, ruler):
-        print 'notify to front'
         notify_dict = {
-#            'color_array': self.color_array,
-#            'ruler_array': self.ruler_array,
             'ruler_who': ruler,  # Who just finished absorbing
             'chosen_color': self.chosen_color,
             'score': self.score
@@ -172,12 +176,8 @@ class PixelsLoopPhase(Phase):
         self.notify_free('notify_change_round', notify_dict)
 
     def request_to_client(self, ruler_self, ruler_enemy):
-        logging.debug('Request ' + self.now_turn() + '\'s decision')
+        #logging.debug('Request ' + self.now_turn() + '\'s decision')
         info_dict = {
-#            'width': self.width,
-#            'height': self.height,
-#            'color_array': self.color_array,
-#            'ruler_array': self.ruler_array,
             'start_point_y': self.start_point_y,
             'start_point_x': self.start_point_x,
             'ruler_self': ruler_self,
@@ -187,7 +187,7 @@ class PixelsLoopPhase(Phase):
         self.request(self.now_turn(), info_dict)
 
     def initialize_arrays(self):  # Initialize arrays if new round starts.
-        logging.debug('Start initializing arrays')
+        # logging.debug('Start initializing arrays')
         for y in range(self.height):
             for x in range(self.width):
                 self.color_array[y][x] = self.shared_dict['color_array_init'][y][x]
@@ -195,7 +195,6 @@ class PixelsLoopPhase(Phase):
         logging.debug('Finish initializing arrays')
 
     def absorb(self, ruler, chosen_color):
-        logging.debug('Start absorbing')
         for y in range(self.height):  # Fill ruled area with chosen_color.
             for x in range(self.width):
                 if self.ruler_array[y][x] == ruler:
@@ -230,7 +229,6 @@ class PixelsLoopPhase(Phase):
                         absorb_repeat = True
                         check_stop = True  # To escape from outer for loop.
                         break
-        logging.debug('Finish absorbing')
 
     def check_status(self):
         self.score[self.round] = [0, 0]
@@ -280,16 +278,21 @@ class PixelsFinishPhase(Phase):
             ruler2 = score[0][1] + score[1][1]
 
             winner = 'DRAW'
+            draw = False
 
             if ruler1 > ruler2:
                 winner = self.player_list[0]
             elif ruler1 < ruler2:
                 winner = self.player_list[1]
+            else:
+                draw = True
 
             logging.error(pid + ' **************************')
             send_dict = {
                          'winner': winner,
-                         'score': score}
+                         'score': score,
+                         'draw': draw
+                        }
             print 'winner', winner, 'score', score
             self.notify_winner(send_dict)
             self.end(True, send_dict)
@@ -318,8 +321,8 @@ class PixelsGameLogic(TurnGameLogic):
 
         # Initialize constants.
 
-        self.width = 16
-        self.height = 16
+        self.width = 64
+        self.height = 64
 
         # Width and height must be multiples of 8.
         # Because start_point of rulers are 3/8 and 5/8 points of board.

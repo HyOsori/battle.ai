@@ -46,7 +46,7 @@ class PlayerServer(tornado.tcpserver.TCPServer):
         # TODO : set protocol of user_info, and handle exception of every case
         try:
             while True:
-                recv = yield stream.read_bytes(256, partial=True)
+                recv = yield stream.read_bytes(128, partial=True)
                 logging.debug(recv)
                 msg = json.loads(recv)
 
@@ -54,20 +54,17 @@ class PlayerServer(tornado.tcpserver.TCPServer):
 
                 # temporary implementation ;;
                 if not username == 'Dummy3':
-                    logging.error("user name : " + username)
-                    logging.error(self.player_list.keys())
                     if username in self.player_list.keys():
-                        logging.error("ID Already exists!!")
                         msg = {MSG: USER_INFO, MSG_TYPE:INIT, DATA: {RESPONSE: NO}}
                         json_data = json.dumps(msg)
                         stream.write(json_data)
                         continue
-                        # logging.info(str(unicode(username)))
-                        # username = str(unicode(username))
+                    break
+                else:
                     break
 
             player = Player(username, stream)
-            print(username + " enter the game")
+            logging.info(username + " enter BATTLE.AI")
 
             self.player_list[username] = player
             for attendee in self.attendee_list.values():
@@ -77,20 +74,20 @@ class PlayerServer(tornado.tcpserver.TCPServer):
             stream.set_close_callback(on_close_func)
         except Exception as e:
             logging.error(e)
-
+            msg = {MSG: USER_INFO, MSG_TYPE: INIT, DATA: {RESPONSE: NO}}
+            json_data = json.dumps(msg)
+            stream.write(json_data)
 
     def _on_close(self, username):
         '''
         when stream is closed this funciton is run
         :param username: ai client user name
         '''
-
-        logging.debug(str(username)+"'s stream is closed")
-
+        logging.info(str(username)+" out from BATTLE.AI")
         try:
             self.player_list.pop(username)
-        except Exception as e:
-            logging.debug("In player stream closed, pop error")
+        except Exception:
+            pass
 
         for attendee in self.attendee_list.values():
             attendee.notice_user_removed(username)

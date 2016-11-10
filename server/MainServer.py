@@ -62,7 +62,8 @@ class MainServer:
         self.tcp_server.listen(tcp_port)
         self.app.listen(web_port)
 
-        logging.info("IOLoop is started")
+        print "******************* Battle.AI operate *******************"
+        print "                     ...... Created By GreedyOsori ......\n"
         io_loop.start()
 
 if __name__ == "__main__":

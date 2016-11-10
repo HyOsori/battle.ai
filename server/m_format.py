@@ -11,6 +11,7 @@ NOTICE_USER_REMOVED = "notice_user_removed"
 RESPONSE = "response"
 
 ERROR = "error"
+ERROR_CODE = "error_code"
 
 
 USERS = "users"
