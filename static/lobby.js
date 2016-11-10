@@ -145,6 +145,9 @@ if ("WebSocket" in window) {
                     GoToLobby();
                 }
             } else if (data.msg_type == "game_result") {
+                if (data.data.error_code != 0) {
+                    
+                } 
                 recvGameResult(data.data);
             }
         }
@@ -246,13 +249,14 @@ function GoToGameResult() {
     $(".class_gameResult").css("display","");
     
     page_now = "GameResult";
+    
     ResizeCanvas();
 }
 
 function ResizeCanvas() {
-    canvas_size = $("#id_side").css('height');
+    canvas_size = $("#id_side").innerHeight();
+    canvas_size = canvas_size - 20;
     $("#id_board_canvas").attr({"width": canvas_size, "height": canvas_size});
-    //$("div, button, li").css("font-size", );
     ReadyAfterResize();
 }
 
