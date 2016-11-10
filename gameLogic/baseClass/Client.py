@@ -61,69 +61,8 @@ class Client(object):
     def recv_game_data(self):
         print 'waiting...'
         game_data = self._sock.recv(18000)
-        return game_data
+        return json.loads(zlib.decompress(game_data))
 
-        if self.__remain_packet == "":
-            game_data = self._sock.recv(18000)
-
-            cnt_open_brace = 0
-            i = 0
-            while i < len(game_data):
-                if game_data[i] == '{':
-                    cnt_open_brace += 1
-                elif game_data[i] == '}':
-                    cnt_open_brace -= 1
-                    if cnt_open_brace == 0:
-                        break
-                i += 1
-
-            if i < len(game_data) - 1:  # JSON 하나 자르고 남은 것이 있는 상태
-                self.__remain_packet = game_data[i + 1:]
-                game_data = game_data[:i + 1]
-                print 'cut game_data', game_data
-                decoding_data = json.loads(game_data)
-                return decoding_data
-            elif i == len(game_data) - 1:  # 딱 떨어지는 JSON을 받음
-                self.__remain_packet = ""
-                decoding_data = json.loads(game_data)
-                print 'recv :\n',decoding_data
-                return decoding_data
-            else:  # 미완성된 JSON을 받아놓은 상태
-                self.__remain_packet = game_data[i + 1:]
-
-        while True:
-            cnt_open_brace = 0
-            i = 0
-            while i < len(self.__remain_packet):
-                if self.__remain_packet[i] == '{':
-                    cnt_open_brace += 1
-                elif self.__remain_packet[i] == '}':
-                    cnt_open_brace -= 1
-                    if cnt_open_brace == 0:
-                        break
-                i += 1
-
-            if i < len(self.__remain_packet) - 1:  # JSON 하나 자르고 남은 것이 있는 상태
-                game_data = self.__remain_packet[:i + 1]
-                self.__remain_packet = self.__remain_packet[i + 1:]
-                print 'cut game_data', game_data
-                decoding_data = json.loads(game_data)
-                print 'recv :\n', decoding_data
-                return decoding_data
-            elif i == len(self.__remain_packet) - 1:  # 딱 떨어지는 JSON을 받음
-                game_data = self.__remain_packet
-                self.__remain_packet = ""
-                decoding_data = json.loads(game_data)
-                print 'recv :\n', decoding_data
-                return decoding_data
-            else:  # 미완성된 JSON을 받아놓은 상태
-                game_data = self._sock.recv(18000)
-                print "yet",game_data
-                self.__remain_packet += game_data
-
-                continue
-
-    #이 부분도 그냥 Parser에 생성 해도 좋을듯
     def make_send_msg(self, msg_type, game_data):
         send_msg = {"msg": "game_data"}
         send_msg["msg_type"] = msg_type
@@ -149,7 +88,7 @@ class Client(object):
             return
 
         while True:
-            decoding_data = json.loads(zlib.decompress(self.recv_game_data()))
+            decoding_data = self.recv_game_data()
             print decoding_data
             if decoding_data['msg'] == 'game_result':
                 print decoding_data['data']
