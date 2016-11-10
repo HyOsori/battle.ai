@@ -83,7 +83,7 @@ class PlayerServer(tornado.tcpserver.TCPServer):
         when stream is closed this funciton is run
         :param username: ai client user name
         '''
-        logging.INFO(str(username)+" out from BATTLE.AI")
+        logging.info(str(username)+" out from BATTLE.AI")
         try:
             self.player_list.pop(username)
         except Exception:

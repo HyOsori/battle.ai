@@ -266,7 +266,7 @@ class GameServer:
         self.normal_game_playing = False
         for pid in self.pid_list:
             if pid == player.get_pid():
-                self.room.player_list.remove(pid)
+                self.room.player_list.remove(player)
             self.q.get()
             self.q.task_done()
         gen.Return(None)
