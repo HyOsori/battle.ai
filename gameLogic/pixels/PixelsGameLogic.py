@@ -48,7 +48,7 @@ class PixelsLoopPhase(Phase):
         self.round = 0  # Check Rounds.
         self.initialize = False  # Initialize arrays if new round starts.
         self.score = [[0, 0], [0, 0]]  # Record the scores of two rounds.
-        self.chosen_color = 0
+        self.chosen_color = None
 
         # Declare arrays.
         # Use these arrays in the form of 'array[y][x]'.
@@ -79,6 +79,14 @@ class PixelsLoopPhase(Phase):
             ruler = 1
         if pid == self.player_list[1]:
             ruler = 2
+
+        # Not accept absorbing other's color
+        if self.chosen_color == dict_data['chosen_color']:
+            result = dict(zip(self.player_list, ['win'] * len(self.player_list)))
+            result[pid] = 'lose'
+            logging.error(pid + ' invalid Chosen')
+            self.end(False, result)
+            return
 
         self.chosen_color = dict_data['chosen_color']
 
