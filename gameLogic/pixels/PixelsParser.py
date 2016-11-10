@@ -15,8 +15,6 @@ class PixelsParser(AIParser):
                 self.absorb(self.game_data['ruler_enemy'], self.game_data['enemy_chosen_color'])
             ret = self.loop_phase()
             self.absorb(self.game_data['ruler_self'], ret['chosen_color'])
-            self.print_array(self.ruler_array)
-            self.print_array(self.color_array)
         if self.msg_type == 'notify_init_loop':
             ret = self.notify_loop_init()
         if self.msg_type == 'notify_change_round':
