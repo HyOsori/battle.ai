@@ -46,7 +46,7 @@ class PlayerServer(tornado.tcpserver.TCPServer):
         # TODO : set protocol of user_info, and handle exception of every case
         try:
             while True:
-                recv = yield stream.read_bytes(256, partial=True)
+                recv = yield stream.read_bytes(128, partial=True)
                 logging.debug(recv)
                 msg = json.loads(recv)
 
@@ -80,7 +80,9 @@ class PlayerServer(tornado.tcpserver.TCPServer):
             stream.set_close_callback(on_close_func)
         except Exception as e:
             logging.error(e)
-
+            msg = {MSG: USER_INFO, MSG_TYPE: INIT, DATA: {RESPONSE: NO}}
+            json_data = json.dumps(msg)
+            stream.write(json_data)
 
     def _on_close(self, username):
         '''
