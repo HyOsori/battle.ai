@@ -1,8 +1,10 @@
 import sys
 from gameLogic.baseClass.TurnGameLogic import TurnGameLogic
 from gameLogic.baseClass.Phase import Phase
+import base64
 import logging
 import random
+import json
 import zlib
 
 sys.path.insert(0, '../')
@@ -149,7 +151,7 @@ class PixelsLoopPhase(Phase):
         notify_dict = {
             'width': self.width,
             'height': self.height,
-            'color_array': self.color_array,
+            'color_array': base64.b64encode(zlib.compress(json.dumps(self.color_array))),
             'start_point_y': self.start_point_y,
             'start_point_x': self.start_point_x
         }
