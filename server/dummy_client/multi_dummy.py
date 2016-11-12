@@ -104,6 +104,7 @@ class DummyClient(object):
 
     #데이터가 따로 오는 경우 처리를 해야함
     def recv_game_data(self):
+        print 'waiting...'
         if self.__remain_packet == "":
             game_data = self._sock.recv(4096)
 
@@ -202,4 +203,5 @@ class DummyClient(object):
                 break # 더미 클라이언트는 한번 붙고 종료
             send_msg = self._parser.parsing_data(decoding_data)
             self.send_game_data(send_msg)
+
 
