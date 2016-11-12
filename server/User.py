@@ -6,7 +6,7 @@ from functools import partial
 import server.ServerLog as logging
 import zlib
 
-buffer_size = 256
+buffer_size = 512
 
 class User:
     def __init__(self, conn):
@@ -42,7 +42,7 @@ class Player(User):
     def send(self, data):
         try:
             # temporary implementation
-            self.conn.write(zlib.compress(self._trim(data)))
+            self.conn.write(data)
         except Exception as e:
             logging.error(e.message)
 
