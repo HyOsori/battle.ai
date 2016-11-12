@@ -39,6 +39,14 @@ function roundStart(data) {
 }
 
 function loopStart(data) {
+	var b64Data = data.color_array;
+	var strData = atob(b64Data);
+	var charData = strData.split('').map(function(x){return x.charCodeAt(0);});
+	var binData = new Uint8Array(charData);
+	var Data = pako.inflate(binData);
+	var str_data = String.fromCharCode.apply(null, new Uint16Array(Data));
+	var color_arr_decompressed = jQuery.parseJSON(str_data);
+	
 	var start_points =  new Array(2);
 	start_points[0] = data.start_point_x;
 	start_points[1] = data.start_point_y;
@@ -51,7 +59,8 @@ function loopStart(data) {
 	border2 = new Queue();
 
 	//save initial color_array
-	color_array_init = data.color_array;
+	color_array_init = color_arr_decompressed;
+	console.log(color_array_init);
 
 	//initialize ruler_array, color_array;
 	ruler_array = new Array(height);
