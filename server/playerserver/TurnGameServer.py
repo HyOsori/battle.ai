@@ -43,6 +43,7 @@ class TurnGameServer(GameServer):
             # wrong message is come : kill play - finish all game
             logging.error(e.message)
             logging.debug("in error case at player_handler (Exception)")
+            yield gen.sleep(5)
             if self.normal_game_playing:
                 self._exit_handler(player)
             else:
