@@ -154,7 +154,12 @@ if ("WebSocket" in window) {
 
         else if (data.msg == "game_data") {
             if (data.msg_type == "notify_init_loop") {
-                loopStart(data.data);
+                var decodeText = Base64.decode(data.data);
+                var inflateData = pako.inflate(decodeText);
+                var plain = String.fromCharCode.apply(null, new Uint16Array(inflateData));
+                var gameData = jQuery.parseJSON(plain);
+
+                loopStart(gameData);
             }
             else if (data.msg_type == "notify_loop") {
                 recvTurnResult(data.data);
