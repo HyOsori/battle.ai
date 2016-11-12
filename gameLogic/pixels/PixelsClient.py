@@ -5,7 +5,7 @@ from gameLogic.pixels.MyPixelsParser import MyPixelsParser
 from gameLogic.pixels.MyPixelsParser2 import MyPixelsParser2
 
 HOST = '104.199.218.103'
-# HOST = '127.0.0.1'
+#HOST = '127.0.0.1'
 PORT = 9001
 
 client = Client()
