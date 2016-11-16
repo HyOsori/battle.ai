@@ -22,7 +22,7 @@ class GameServer:
         self.attendee_list = attendee_list  # WHY NEEDED? - when game room destroy - attendee.notify_user_added
         self.q = None
 
-        self.time_delay_list = [1.3, 1, 0.7, 0.5, 0.3]
+        self.time_delay_list = [1, 0.7, 0.5, 0.3, 0.2]
 
         self.delay_time = 0.3
         self.set_delay_time(self.time_delay_list[time_index])
