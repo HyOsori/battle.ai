@@ -21,7 +21,6 @@ class TurnGameServer(GameServer):
             while True:
                 yield self.delay_action()
                 message = yield player.timeout_read()
-                logging.error(message)
                 res = json.loads(message)
                 if res[MSG_TYPE] == self.current_msg_type:
                     # temporary implementation ;; must be del

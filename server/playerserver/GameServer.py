@@ -256,6 +256,9 @@ class GameServer:
             attendee.send(json_data)
 
         for player in self.room.player_list:
+            # temporary implementation
+            if player.get_pid() == 'Dummy3':
+                continue
             self.player_list[player.get_pid()] = player
             for attendee in self.attendee_list.values():
                 attendee.notice_user_added(player.get_pid())
