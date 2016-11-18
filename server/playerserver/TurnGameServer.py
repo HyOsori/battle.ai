@@ -19,6 +19,7 @@ class TurnGameServer(GameServer):
     def _player_handler(self, player):
         try:
             while True:
+                yield self.delay_action()
                 message = yield player.timeout_read()
                 res = json.loads(message)
                 if res[MSG_TYPE] == self.current_msg_type:
@@ -27,7 +28,6 @@ class TurnGameServer(GameServer):
                         self.q.task_done()
                         break
                     # correct message is come
-                    yield self.delay_action()
                     self.game_logic.on_action(player.get_pid(), res[DATA])
                     if res[MSG_TYPE] == FINISH:
                         if self.game_end:

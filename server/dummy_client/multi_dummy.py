@@ -4,8 +4,8 @@ import zlib
 
 class DummyManager:
 
-    def __init__(self, parser, name, max_waiting_dummies = 1, max_dummies = 50):
-        self.parser = parser
+    def __init__(self, parser_class, name, max_waiting_dummies = 1, max_dummies = 50):
+        self.parser_class = parser_class
         self.name = name
         self.waitings = []
         self.gammings = []
@@ -33,8 +33,9 @@ class DummyManager:
 
         dummy = DummyClient()
         dummy.set_username(self.name)
-        dummy.set_parser(parser=self.parser)
+        dummy.set_parser(parser=self.parser_class())
         dummy.connect_server(self.host, self.port)
+        print "{0} dummy connected to server".format(str(dummy))
         dummy.send_name()
         th = threading.Thread(target=dummy.client_run,
                               args=(self._succeed_waiting,
@@ -42,6 +43,9 @@ class DummyManager:
         dummy.th = th
         th.start()
         self.waitings.append(dummy)
+        print "new dummy is spawned"
+        print "current waiting dummy : " + str(self.waitings)
+        print "current gaming dummy : " + str(self.gammings)
 
     def kill_all_dummies(self, waitings=True, gammings=True):
         if waitings:
@@ -75,6 +79,9 @@ class DummyClient(object):
         self.__remain_packet = "";
         self._username = 'Dummy'
 
+    def __str__(self):
+        return str(self._sock)
+
     def connect_server(self, host, port):
         self._sock = socket(AF_INET, SOCK_STREAM)
         # try:
@@ -104,9 +111,9 @@ class DummyClient(object):
 
     #데이터가 따로 오는 경우 처리를 해야함
     def recv_game_data(self):
-        print 'waiting...'
+        # print 'waiting...'
         if self.__remain_packet == "":
-            game_data = self._sock.recv(4096)
+            game_data = self._sock.recv(18000)
 
             cnt_open_brace = 0
             i = 0
@@ -122,13 +129,13 @@ class DummyClient(object):
             if i < len(game_data) - 1:  # JSON 하나 자르고 남은 것이 있는 상태
                 self.__remain_packet = game_data[i + 1:]
                 game_data = game_data[:i + 1]
-                print 'cut game_data', game_data
+                # print 'cut game_data', game_data
                 decoding_data = json.loads(game_data)
                 return decoding_data
             elif i == len(game_data) - 1:  # 딱 떨어지는 JSON을 받음
                 self.__remain_packet = ""
                 decoding_data = json.loads(game_data)
-                print 'recv :\n', decoding_data
+                # print 'recv :\n', decoding_data
                 return decoding_data
             else:  # 미완성된 JSON을 받아놓은 상태
                 self.__remain_packet = game_data[i + 1:]
@@ -154,11 +161,11 @@ class DummyClient(object):
                 game_data = self.__remain_packet
                 self.__remain_packet = ""
                 decoding_data = json.loads(game_data)
-                print 'recv :\n', decoding_data
+                # print 'recv :\n', decoding_data
                 return decoding_data
             else:  # 미완성된 JSON을 받아놓은 상태
-                game_data = self._sock.recv(4096)
-                print "seungmin", self.__remain_packet
+                game_data = self._sock.recv(18000)
+                # print "seungmin", self.__remain_packet
                 self.__remain_packet += game_data
 
                 continue
@@ -175,8 +182,8 @@ class DummyClient(object):
     def send_game_data(self, send_msg):
         if send_msg == None:
             return
-        print "sending :"
-        print send_msg
+        # print "sending :"
+        # print send_msg
         self._sock.send(json.dumps(send_msg))
 
     #클라이언트의 실행
@@ -196,12 +203,14 @@ class DummyClient(object):
                     on_new_game(self)
                 is_new_game = False
             if decoding_data['msg'] == 'game_result':
-                print decoding_data['data']
+                # print decoding_data['data']
                 is_new_game = True
-                if on_end_game:
-                    on_end_game()
-                break # 더미 클라이언트는 한번 붙고 종료
+                continue
             send_msg = self._parser.parsing_data(decoding_data)
             self.send_game_data(send_msg)
+            if decoding_data['msg_type'] == 'game_result':
+                if on_end_game:
+                    on_end_game()
+                break
 
 

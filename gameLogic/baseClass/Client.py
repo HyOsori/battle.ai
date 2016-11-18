@@ -61,7 +61,7 @@ class Client(object):
     def recv_game_data(self):
         print 'waiting...'
         if self.__remain_packet == "":
-            game_data = self._sock.recv(4096)
+            game_data = self._sock.recv(18000)
 
             cnt_open_brace = 0
             i = 0
@@ -112,7 +112,7 @@ class Client(object):
                 print 'recv :\n', decoding_data
                 return decoding_data
             else:  # 미완성된 JSON을 받아놓은 상태
-                game_data = self._sock.recv(4096)
+                game_data = self._sock.recv(18000)
                 print "seungmin", self.__remain_packet
                 self.__remain_packet += game_data
 
