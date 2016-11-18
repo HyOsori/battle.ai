@@ -102,7 +102,8 @@ function recvTurnResult(data) {
 	this_turn_player = data.ruler_who;
 
 	RenewArray(this_turn_color, this_turn_player);
-	DrawBoard(color_array);
+	//DrawBoard(color_array);
+	DrawParts(ruler_array, this_turn_color, this_turn_player);
 	if (round > 1) {
 		round_score[loop + round + 1][2] = score[0];
 		round_score[loop + round + 1][1] = score[1];
@@ -130,6 +131,16 @@ function DrawBoard(array) {
 	for (var y = 0; y < height; y++) {
 		for (var x = 0; x < width; x++) {
 			PaintPixel(x, y, array[y][x]);
+		}
+	}
+}
+
+function DrawParts(ruler_array, color, ruler) {
+	for (var y = 0; y < height; ++y) {
+		for (var x = 0; x < width; ++x) {
+			if (ruler_array[y][x] == ruler) {
+				PaintPixel(x, y, color);
+			}
 		}
 	}
 }
