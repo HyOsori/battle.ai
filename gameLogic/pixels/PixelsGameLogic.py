@@ -93,6 +93,13 @@ class PixelsLoopPhase(Phase):
 
         self.chosen_color = dict_data['chosen_color']
 
+        if self.chosen_color > 6 or self.chosen_color < 0:
+            result = dict(zip(self.player_list, ['win'] * len(self.player_list)))
+            result[pid] = 'lose'
+            logging.error(pid + ' invalid Chosen')
+            self.end(False, result)
+            return
+
         self.absorb(ruler, self.chosen_color)
 
         self.notify_to_front(ruler)
