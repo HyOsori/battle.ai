@@ -52,6 +52,7 @@ button {
     background:black;
     color:white;
     overflow-y:auto;
+    overflow-x:hidden;
 }
 #id_btnContainer {
 

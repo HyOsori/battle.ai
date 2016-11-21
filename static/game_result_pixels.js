@@ -153,7 +153,7 @@ function recvGameResult(data) {
     for (key in data) {
         if (key != "error_code") {
             score.push(key);
-            score.push(data.key);
+            score.push(data[key]);
             array.push(score);
             score = [];
         }
