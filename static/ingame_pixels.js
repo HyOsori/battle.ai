@@ -29,8 +29,9 @@ var border1, border2;
 
 function gameStart(data) {
     users = data.users;
-	loop_score[0] = ['Turn', users[0], users[1]];
-	round_score[0] = ['Round', users[0], users[1]];
+	loop_score = [];
+    loop_score[0] = ['Turn', users[0], users[1]];
+    round_score = [['Round', users[0], users[1]], [1, 0, 0], [2, 0, 0], [3, 0, 0], [4, 0, 0]];
 	GoToInGame();
 }
 
