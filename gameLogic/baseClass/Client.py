@@ -9,17 +9,26 @@ import zlib
 # 클라이언트 생성시 소켓 연결
 import AIParser
 
-# 사용자는 자신의 게임에 맞는 client와 parser를 구현하는게 아니라
-# 자신의 게임의 맞는 parser만 구현하면 되게 만들자!
+# 사용자는 자신의 게임에 맞는 client 와 parser 를 구현하는게 아니라
+# 자신의 게임의 맞는 parser 만 구현하면 되게 만들자!
 
 
 class Client(object):
     def __init__(self):
+        """
+        :return: None
+        """
         self._sock = None
         self._parser = None
         self.__remain_packet = ""
+        self._username = None
 
     def connect_server(self, host, port):
+        """
+        :param host: host address (string)
+        :param port: port number (number)
+        :return: None
+        """
         self._sock = socket(AF_INET, SOCK_STREAM)
         try:
             self._sock.connect((host, port))
@@ -32,17 +41,30 @@ class Client(object):
         self.set_send_username()
 
     def __del__(self):
+        """
+        :return: None
+        """
         self._sock.close()
 
     def get_username(self):
+        """
+        :return: User name (string)
+        """
         return self._username
 
     def set_parser(self, parser):
+        """
+        :param parser: Parser instance to use in AI battle (AIParser Instance)
+        :return: None
+        """
         parser.init_parser(self, self._username)
         self._parser = parser
 
-    # user name을 룸이 받는 프로토콜을 확인한후에 작성 할것
+    # user Name 을 룸이 받는 프로토콜을 확인한후에 작성 할것
     def set_send_username(self):
+        """
+        :return: None
+        """
         print '사용할 닉네임을 결정 하세요.'
         self._username = raw_input()
 
@@ -51,7 +73,7 @@ class Client(object):
             self.set_send_username()
             return
 
-        send_msg = {}
+        send_msg = dict()
         send_msg['msg'] = 'user_info'
         send_msg['msg_tpye'] = 'init'
         send_msg['data'] = {'username' : self._username}
@@ -60,6 +82,9 @@ class Client(object):
 
     # 데이터가 따로 오는 경우 처리를 해야함
     def recv_game_data(self):
+        """
+        :return: None
+        """
         print 'waiting...'
         if self.__remain_packet == "":
             game_data = self._sock.recv(18000)
@@ -82,13 +107,13 @@ class Client(object):
                 print 'cut game_data', game_data
                 decoding_data = json.loads(game_data)
                 return decoding_data
-            # 딱 떨어지는 JSON을 받음
+            # 딱 떨어지는 JSON 을 받음
             elif i == len(game_data) - 1:
                 self.__remain_packet = ""
                 decoding_data = json.loads(game_data)
                 print 'recv :\n', decoding_data
                 return decoding_data
-            # 미완성된 JSON을 받아놓은 상태
+            # 미완성된 JSON 을 받아놓은 상태
             else:
                 self.__remain_packet = game_data[i + 1:]
 
@@ -110,14 +135,14 @@ class Client(object):
                 self.__remain_packet = self.__remain_packet[i + 1:]
                 decoding_data = json.loads(game_data)
                 return decoding_data
-            # 딱 떨어지는 JSON을 받음
+            # 딱 떨어지는 JSON 을 받음
             elif i == len(self.__remain_packet) - 1:
                 game_data = self.__remain_packet
                 self.__remain_packet = ""
                 decoding_data = json.loads(game_data)
                 print 'recv :\n', decoding_data
                 return decoding_data
-            # 미완성된 JSON을 받아놓은 상태
+            # 미완성된 JSON 을 받아놓은 상태
             else:
                 game_data = self._sock.recv(18000)
                 print "seungmin", self.__remain_packet
@@ -127,6 +152,11 @@ class Client(object):
 
     @staticmethod
     def make_send_msg(msg_type, game_data):
+        """
+        :param msg_type: Type of message to send (string)
+        :param game_data: Game data to send(dict)
+        :return: response of AI client (dict)
+        """
         send_msg = dict()
         send_msg["msg"] = "game_data"
         send_msg["msg_type"] = msg_type
@@ -135,6 +165,10 @@ class Client(object):
 
     # 인공지능 게임이 끝났을 때 정보를 받아야할까?
     def send_game_data(self, send_msg):
+        """
+        :param send_msg: response of AI client (dict)
+        :return: None
+        """
         if send_msg is None:
             return
         print "sending :"
@@ -143,6 +177,9 @@ class Client(object):
 
     # 클라이언트의 실행
     def client_run(self):
+        """
+        :return: None
+        """
         if self._sock is None:
             print '소켓연결이 안되었습니다. connectServer(host, port)를 호출해주십시오'
             return
