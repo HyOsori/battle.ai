@@ -1,7 +1,7 @@
 class Phase(object):
     def __init__(self, logic_server, message_type):
         self._logic_server = logic_server
-        self.messageType = message_type
+        self.message_type = message_type
         self.notify_message_type = 'notify_' + message_type
         self.notify_init_message_type = 'notify_init_' + message_type
         self.notify_finish_message_type = 'notify_finish_' + message_type
@@ -25,10 +25,10 @@ class Phase(object):
         return self._logic_server.now_turn()
 
     def request(self, pid, dict_data):
-        self._logic_server.request(pid, self.messageType, dict_data)
+        self._logic_server.request(pid, self.message_type, dict_data)
 
     def request_all(self, dict_data):
-        self._logic_server.request_all(self.messageType, dict_data)
+        self._logic_server.request_all(self.message_type, dict_data)
 
     def end(self, is_valid_end, result_list=None):
         self._logic_server.end(is_valid_end, result_list)

@@ -17,6 +17,7 @@ class Client(object):
     def __init__(self):
         self._sock = None
         self._parser = None
+        self._username = None
         self.__remain_packet = ""
 
     def connect_server(self, host, port):
