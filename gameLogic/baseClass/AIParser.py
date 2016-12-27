@@ -3,6 +3,9 @@
 
 class AIParser(object):
     def __init__(self):
+        """
+        :return: None
+        """
         self._client = None
         self.pid = None
         self.msg = None
@@ -25,11 +28,19 @@ class AIParser(object):
     # 고로 이 부분이 사용자가 코딩할 부분!
 
     def decoding(self, decoding_data):
+        """
+        :param decoding_data: received data from server (dict)
+        :return: None
+        """
         self.msg = decoding_data['msg']
         self.msg_type = decoding_data['msg_type']
         self.game_data = decoding_data['data']
 
     def parsing_data(self, decoding_data):
+        """
+        :param decoding_data: Received data from server (dict)
+        :return: response of AI client (dict)
+        """
         self.decoding(decoding_data)
         ret = None
         if self.msg_type == 'init':
@@ -37,15 +48,21 @@ class AIParser(object):
         elif self.msg_type == 'finish':
             ret = self.finish_phase()
         elif self.msg_type == 'round_result':
-            ret = {'response' : 'OK'}
+            ret = {'response': 'OK'}
         elif self.msg_type == 'ready':
-            ret = {'response' : 'OK'}
+            ret = {'response': 'OK'}
         if ret is not None:
             ret = self.make_send_msg(self.msg_type, ret)
         return ret
 
     @staticmethod
     def make_send_msg(msg_type, game_data):
+        """
+        :param msg_type: Type of message to send (string)
+        :param game_data: Game data to send(dict)
+        :return: response of AI client (dict)
+        """
+        # 서버와 통신이 가능한 프로토콜로 포장하는 역할을 하는 메소드
         send_msg = {"msg": "game_data"}
         if msg_type == 'ready':
             send_msg["msg"] = "game_handler"
@@ -54,12 +71,18 @@ class AIParser(object):
         return send_msg
 
     def init_phase(self):
+        """
+        :return: response of AI client (dict)
+        """
         parsing_data = dict()
         parsing_data['response'] = 'OK'
         send_msg = self.make_send_msg(self.msg_type, parsing_data)
         return send_msg
 
     def finish_phase(self):
+        """
+        :return: response of AI client (dict)
+        """
         parsing_data = dict()
         parsing_data['response'] = 'OK'
         send_msg = self.make_send_msg(self.msg_type, parsing_data)
