@@ -6,7 +6,7 @@ At 2016.11 first AI competition for game PIXEL is held in Osori and finished suc
 
 More progress is expected in future
 
-### Detail description of each part
+## Detail description of each part
 
 * [FrontEnd](https://github.com/HyOsori/battle.ai/wiki/Frontend "Frontend")
 
@@ -14,9 +14,9 @@ More progress is expected in future
 
 * [BackEnd](https://github.com/HyOsori/battle.ai/wiki/Backend "Backend")
 
-### Installation
+## Installation
 
-##### needed library
+### needed library
 **python 2.7 ver** and **Tornado 4.4.0**
 
 
@@ -24,7 +24,7 @@ More progress is expected in future
 git clone https://github.com/HyOsori/battle.ai.git
 ```
 
-### Usage
+## Usage
 
 ```
 cd battle.ai/server
@@ -33,32 +33,32 @@ python Mainserver.py
 
 configuration of this project is in file **my.conf**
 
-### Contribution
+## Contribution
 
-*pioneer*
+### ***pioneer***
 
-###### Frontend
+**Frontend**
 
 [kimjieun02](https://github.com/kimjieun02 "" ), 
 [ZombieKim](https://github.com/ZombieKim "" )
 
-###### GameLogic
+**GameLogic**
 
 [greedy0110](https://github.com/greedy0110 "" ), 
 [coyone](https://github.com/coyone "" ), 
 [Cona19](https://github.com/Cona19 "" )
 
-###### Backeend
+**Backend**
 
 [eunjiChung](https://github.com/eunjiChung ""), 
 [jeongdujin](https://github.com/jeongdujin ""), 
 [JunsuLime](https://github.com/JunsuLime ""), 
 [wrlawodms](https://github.com/wrlawodms "")
 
-### Credits
+## Credits
 
 TODO ...
 
-### License
+## License
 
 TODO ...
