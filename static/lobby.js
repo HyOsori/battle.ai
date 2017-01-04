@@ -9,6 +9,8 @@ var page_now = "Lobby";
 var messageContainer = document.getElementById('id_messages');
 var userList = document.getElementById('id_list_ul');
 var setSpeed = document.getElementById('id_setSpeed');
+var msg_container_size;
+var chart_size;
 
 $(window).resize(ResizeCanvas);
 
@@ -227,6 +229,7 @@ function GoToLobby() {
     
     $("#id_title").html(Title);
     page_now = "Lobby";
+    ResizeCanvas();
     
     var json = new Object();
     json.msg = "request_user_list";
@@ -256,7 +259,15 @@ function GoToGameResult() {
 function ResizeCanvas() {
     canvas_size = $("#id_side").innerHeight();
     canvas_size = canvas_size - 20;
+    msg_container_size = $("#id_log").width();
+    msg_container_size = msg_container_size + 10;
+    chart_size = $("#id_side").innerHeight();
+    chart_size = chart_size / 2;
+    
     $("#id_board_canvas").attr({"width": canvas_size, "height": canvas_size});
+    $("#id_messages").css("width", msg_container_size);
+    $("#id_chart1").css("height", chart_size);
+    $("#id_chart2").css("height", chart_size);
     ReadyAfterResize();
 }
 

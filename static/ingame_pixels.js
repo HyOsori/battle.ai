@@ -29,8 +29,9 @@ var border1, border2;
 
 function gameStart(data) {
     users = data.users;
-	loop_score[0] = ['Turn', users[0], users[1]];
-	round_score[0] = ['Round', users[0], users[1]];
+	loop_score = [];
+    loop_score[0] = ['Turn', users[0], users[1]];
+    round_score = [['Round', users[0], users[1]], [1, 0, 0], [2, 0, 0], [3, 0, 0], [4, 0, 0]];
 	GoToInGame();
 }
 
@@ -60,7 +61,6 @@ function loopStart(data) {
 
 	//save initial color_array
 	color_array_init = color_arr_decompressed;
-	console.log(color_array_init);
 
 	//initialize ruler_array, color_array;
 	ruler_array = new Array(height);
@@ -69,7 +69,7 @@ function loopStart(data) {
 		ruler_array[y] = new Array(width);
 		color_array[y] = new Array(width);
 		for (var x = 0; x < width; ++x) {
-			ruler_array[y][x] = 0
+			ruler_array[y][x] = 0;
 			color_array[y][x] = color_array_init[y][x];
 		}
 	}
@@ -103,7 +103,8 @@ function recvTurnResult(data) {
 	this_turn_player = data.ruler_who;
 
 	RenewArray(this_turn_color, this_turn_player);
-	DrawBoard(color_array);
+	//DrawBoard(color_array);
+	DrawParts(ruler_array, this_turn_color, this_turn_player);
 	if (round > 1) {
 		round_score[loop + round + 1][2] = score[0];
 		round_score[loop + round + 1][1] = score[1];
@@ -135,6 +136,16 @@ function DrawBoard(array) {
 	}
 }
 
+function DrawParts(ruler_array, color, ruler) {
+	for (var y = 0; y < height; ++y) {
+		for (var x = 0; x < width; ++x) {
+			if (ruler_array[y][x] == ruler) {
+				PaintPixel(x, y, color);
+			}
+		}
+	}
+}
+
 function RenewArray(color, ruler) {
 	for (var y = 0; y < height; ++y) {
 		for (var x = 0; x < width; ++x) {
@@ -150,7 +161,7 @@ function RenewRulerArray(color, ruler) {
 	var border, x, y, count;
 	var buffer_queue = new Queue();
 	var buffer_queue2 = new Queue();
-	var i = 0;
+
 	if (ruler == 1) {
 		buffer_queue2 = border1;
 	} else if (ruler == 2) {
@@ -208,7 +219,7 @@ function drawLoopChart() {
 	var data = google.visualization.arrayToDataTable(loop_score);
 	var options = {
 	  	title: 'This Game',
-		legend: {position: 'bottom', maxLines: 2},
+		legend: {position: 'bottom', maxLines: MAX_MATCH_USER_CNT},
 	  	hAxis: {title: 'Turn',  titleTextStyle: {color: '#333'}},
 	  	vAxis: {minValue: 0}
 	};
@@ -220,7 +231,7 @@ function drawRoundChart() {
 	var data = google.visualization.arrayToDataTable(round_score);
 	var options = {
 	  	title: 'Total Round',
-	  	legend: {position: 'bottom', maxLines: 2},
+	  	legend: {position: 'bottom', maxLines: MAX_MATCH_USER_CNT},
 		hAxis: {title: 'Round',  titleTextStyle: {color: '#333'}},
 	  	vAxis: {minValue: 0}
 	};

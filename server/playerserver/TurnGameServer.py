@@ -23,10 +23,17 @@ class TurnGameServer(GameServer):
                 message = yield player.timeout_read()
                 res = json.loads(message)
                 if res[MSG_TYPE] == self.current_msg_type:
+                    # temporary implementation ;; must be del
+                    if res[MSG_TYPE] == GAME_RESULT:
+                        logging.error("game result receive!!!!!!")
+                        break
+
                     if res[MSG_TYPE] == ROUND_RESULT:
+                        logging.error("roudn result reciv")
                         self.q.get()
                         self.q.task_done()
                         break
+
                     # correct message is come
                     self.game_logic.on_action(player.get_pid(), res[DATA])
                     if res[MSG_TYPE] == FINISH:
@@ -44,6 +51,8 @@ class TurnGameServer(GameServer):
             logging.error(e.message)
             logging.debug("in error case at player_handler (Exception)")
             yield gen.sleep(5)
+            logging.error("normal game playing")
+            logging.error(self.normal_game_playing)
             if self.normal_game_playing:
                 self._exit_handler(player)
             else:

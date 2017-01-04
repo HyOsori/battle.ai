@@ -153,7 +153,7 @@ function recvGameResult(data) {
     for (key in data) {
         if (key != "error_code") {
             score.push(key);
-            score.push(data.key);
+            score.push(data[key]);
             array.push(score);
             score = [];
         }
@@ -166,8 +166,6 @@ function recvGameResult(data) {
     }
 
     GoToGameResult();
-    round_score = [];
-    round_score = [['Round', 'Player1', 'Player2'], [1, 0, 0], [2, 0, 0], [3, 0, 0], [4, 0, 0]];
 
     if (!isDraw) {
         alertify.alert(array[winner_index][0] + " 승리!");
@@ -180,6 +178,11 @@ function recvGameResult(data) {
 
 $('#id_goToLobby_btn').bind('click',function(){
     round = 1;
+    gameResults = [];
+    loopResult = [];
+    roundResult = [];
+    loopNum = 0;
+
     GoToLobby();
 
     $("#id_gameResults_ul").empty();

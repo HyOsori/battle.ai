@@ -202,13 +202,10 @@ class DummyClient(object):
                 if on_new_game:
                     on_new_game(self)
                 is_new_game = False
-            if decoding_data['msg'] == 'game_result':
-                # print decoding_data['data']
-                is_new_game = True
-                continue
             send_msg = self._parser.parsing_data(decoding_data)
             self.send_game_data(send_msg)
             if decoding_data['msg_type'] == 'game_result':
+                print "end!!"
                 if on_end_game:
                     on_end_game()
                 break

@@ -74,7 +74,7 @@ class GameServer:
                 self._player_handler(player)
             yield self.q.join()
             logging.info("=====Game End=====" + str(turn))
-        self.destroy_room()
+        yield self.destroy_room()
         logging.info("=====Destroy Room=====" + str(self.turns[0]))
 
     def _select_turns(self, players):
@@ -214,6 +214,7 @@ class GameServer:
         for player in self.room.player_list:
             player.send(json_data)
 
+    @gen.coroutine
     def destroy_room(self):
         '''
         When all round is ended, room is destroyed. Clients get back to robby.
@@ -242,10 +243,22 @@ class GameServer:
         logging.debug(data)
 
         json_data = json.dumps(data)
+
+        # temporary implemenation ;; must be del
+        if self.normal_game_playing:
+            for player in self.room.player_list:
+                player.send(json_data)
+
+            for player in self.room.player_list:
+                yield player.read()
+
         for attendee in self.room.attendee_list:
             attendee.send(json_data)
 
         for player in self.room.player_list:
+            # temporary implementation
+            if player.get_pid() == 'Dummy3':
+                continue
             self.player_list[player.get_pid()] = player
             for attendee in self.attendee_list.values():
                 attendee.notice_user_added(player.get_pid())
@@ -264,11 +277,33 @@ class GameServer:
         logging.error("** exit error handler **")
         self.game_logic.on_error(player.get_pid())
         self.normal_game_playing = False
+
         for pid in self.pid_list:
             if pid == player.get_pid():
                 self.room.player_list.remove(player)
+            logging.error("task_done call!")
             self.q.get()
             self.q.task_done()
+
+        # temporary implementation ;; must be del
+        result = {}
+        try:
+            result[self.pid_list[0]] = self.score[0]
+            result[self.pid_list[1]] = self.score[1]
+            if not self.normal_game_playing:
+                result[ERROR_CODE] = 1
+            else:
+                result[ERROR_CODE] = 0
+        except Exception as e:
+            logging.error(e.message)
+
+        data = {MSG: GAME_HANDLER, MSG_TYPE: GAME_RESULT, DATA: result}
+        self.current_msg_type = GAME_RESULT
+
+        for p in self.room.player_list:
+            logging.error("[!!]" + str(data))
+            p.send(json.dumps(data))
+
         gen.Return(None)
 
 
