@@ -20,6 +20,7 @@ class Client(object):
         """
         self._sock = None
         self._parser = None
+        self._username = None
         self.__remain_packet = ""
         self._username = None
 
