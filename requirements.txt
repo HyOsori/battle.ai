@@ -1,2 +1,1 @@
-tornado==4.4
-pymysql==0.7.9
+tornado==4.4.1

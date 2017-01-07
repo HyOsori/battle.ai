@@ -1,9 +1,9 @@
 #-*- coding:utf-8 -*-
 from tornado import queues, gen
 import json
-from server.m_format import *
+from server.string import *
 
-import server.ServerLog as logging
+import server.debugger as logging
 
 """
 GameServer (for all games, abstract class)

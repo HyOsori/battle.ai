@@ -1,19 +1,17 @@
 # -*- coding: utf-8 -*-
 
+import functools
 import json
+import logging
 import tornado.httpserver
 import tornado.ioloop
+import tornado.tcpserver
 import tornado.web
 import tornado.websocket
-import tornado.tcpserver
-import functools
-from server.m_format import *
-
-from server.User import Player
-
 from tornado import gen
 
-import logging
+from server.string import *
+from server.gameobject.user import Player
 
 
 class PlayerServer(tornado.tcpserver.TCPServer):

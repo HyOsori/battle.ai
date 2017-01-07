@@ -1,14 +1,13 @@
-import tornado.ioloop
-import tornado.websocket
-import tornado.web
-from server.User import Attendee
-
-from server.Room import Room
-from server.playerserver.TurnGameServer import TurnGameServer
 import json
-from server.m_format import *
-
 import logging
+import tornado.ioloop
+import tornado.web
+import tornado.websocket
+from server.gameobject.room import Room
+
+from server.handler.turngamehandler import TurnGameServer
+from server.string import *
+from server.gameobject.user import Attendee
 
 
 class WebServer(tornado.web.RequestHandler):
@@ -27,7 +26,7 @@ class LogHandler(tornado.web.RequestHandler):
         if name:
             searched = self.db.search_game_log(cnt=length)
         else:
-			searched = self.db.search_game_log(name=name, cnt=length)
+            searched = self.db.search_game_log(name=name, cnt=length)
         self.write(json.dumps(searched))
 
     def put(self): #log update

@@ -1,28 +1,23 @@
-import tornado.ioloop
 import os.path
 import sys
+import tornado.ioloop
+
 sys.path.insert(0,'../')
 # TODO : find out how to control path and error
 
-from playerserver.PlayerServer import PlayerServer
-from webserver.WebServer import WebServer
-from webserver.WebServer import WebSocketServer, LogHandler
-from server.database.MysqlDriver import LogDB
-from config_reader import ConfigReader
-
-from server.game_log_manager import GameLogManager
-
-import logging
+from server.handler.playerhandler import PlayerServer
+from server.handler.webhandler import WebServer
+from server.handler.webhandler import WebSocketServer, LogHandler
+from server.conf.conf_reader import ConfigReader
 
 TCP_PORT = 9001
 WEB_PORT = 9000
 
-game_log_manager = GameLogManager()
 
 class MainServer:
     def __init__(self):
 
-        # TODO: game_logic selection must be added, tcp_port, web_port, playing game will be argument of MainServer.py
+        # TODO: game_logic selection must be added, tcp_port, web_port, playing game will be argument of playground.py
 
         self.player_list = dict()
         self.attendee_list = dict()
@@ -62,8 +57,8 @@ class MainServer:
         self.tcp_server.listen(tcp_port)
         self.app.listen(web_port)
 
-        print "******************* Battle.AI operate *******************"
-        print "                     ...... Created By GreedyOsori ......\n"
+        print("******************* Battle.AI operate *******************")
+        print("                     ...... Created By GreedyOsori ......\n")
         io_loop.start()
 
 if __name__ == "__main__":

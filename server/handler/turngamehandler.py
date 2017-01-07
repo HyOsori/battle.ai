@@ -1,13 +1,12 @@
 #-*- coding:utf-8 -*-
 import json
 
-from server.m_format import *
+from server.string import *
 from tornado import gen
-from server.playerserver.GameServer import GameServer
-from gameLogic.othello.OthelloGameLogic import OthelloGameLogic
+from server.handler.gamehandler import GameServer
 from gameLogic.pixels.PixelsGameLogic import PixelsGameLogic
 
-import server.ServerLog as logging
+import server.debugger as logging
 
 
 class TurnGameServer(GameServer):

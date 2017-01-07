@@ -1,7 +1,7 @@
 class ConfigReader:
 
     def __init__(self):
-        self.f = open("config", "r")
+        self.f = open("my.conf", "r")
 
     def read(self):
         config_value = {}

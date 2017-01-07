@@ -1,9 +1,9 @@
 import json
-from server.m_format import *
+from server.string import *
 from tornado import gen
 import tornado.ioloop
 from functools import partial
-import server.ServerLog as logging
+import server.debugger as logging
 import zlib
 
 buffer_size = 512
@@ -58,7 +58,7 @@ class Attendee(User):
 
         msg = {MSG: NOTICE_USER_ADDED, USER: added_player}
         json_msg = json.dumps(msg)
-        print json_msg
+        logging.info(json)
 
         self.send(self._trim(json_msg))
 
