@@ -4,9 +4,9 @@ from tornado import gen
 import tornado.ioloop
 from functools import partial
 import server.debugger as logging
-import zlib
 
 buffer_size = 512
+
 
 class User:
     def __init__(self, conn):
@@ -15,6 +15,7 @@ class User:
 
     def _trim(self, string):
         return string.replace(" ", "")
+
 
 class Player(User):
     def __init__(self, pid, conn):
@@ -47,13 +48,13 @@ class Player(User):
             logging.error(e.message)
 
 
-class Attendee(User):
+class Observer(User):
     def __init__(self, conn):
         User.__init__(self, conn)
-        self.attendee_flag = True
+        self.observer_flag = True
 
     def notice_user_added(self, added_player):
-        if self.attendee_flag:
+        if self.observer_flag:
             return
 
         msg = {MSG: NOTICE_USER_ADDED, USER: added_player}
@@ -63,7 +64,7 @@ class Attendee(User):
         self.send(self._trim(json_msg))
 
     def notice_user_removed(self, removed_player):
-        if self.attendee_flag:
+        if self.observer_flag:
             return
 
         msg = {MSG: NOTICE_USER_REMOVED, USER: removed_player}
@@ -78,8 +79,8 @@ class Attendee(User):
             logging.error(e.message)
 
     def room_enter(self):
-        self.attendee_flag = True
+        self.observer_flag = True
 
     def room_out(self):
-        self.attendee_flag = False
+        self.observer_flag = False
 

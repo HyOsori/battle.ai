@@ -3,19 +3,19 @@ import json
 
 from server.string import *
 from tornado import gen
-from server.handler.gamehandler import GameServer
+from server.handler.gamehandler import GameHandler
 from gameLogic.pixels.PixelsGameLogic import PixelsGameLogic
 
 import server.debugger as logging
 
 
-class TurnGameServer(GameServer):
-    def __init__(self, room, player_list, attendee_list, game_speed, game_logic = None, database = None):
+class TurnGameHandler(GameHandler):
+    def __init__(self, room, players, observers, game_speed, game_logic = None, database = None):
         game_logic = PixelsGameLogic(self)
-        GameServer.__init__(self, room, player_list, attendee_list, game_logic, game_speed, database)
+        GameHandler.__init__(self, room, players, observers, game_logic, game_speed, database)
 
     @gen.coroutine
-    def _player_handler(self, player):
+    def _play_handler(self, player):
         try:
             while True:
                 yield self.delay_action()
@@ -55,7 +55,7 @@ class TurnGameServer(GameServer):
             if self.normal_game_playing:
                 self._exit_handler(player)
             else:
-                self.player_list[player.get_pid()] = player
+                self.players[player.get_pid()] = player
             # + remove player from room (and close that player's socket)
 
             # remove items from queue

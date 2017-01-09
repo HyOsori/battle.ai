@@ -5,9 +5,9 @@ import tornado.web
 import tornado.websocket
 from server.gameobject.room import Room
 
-from server.handler.turngamehandler import TurnGameServer
+from server.handler.turngamehandler import TurnGameHandler
 from server.string import *
-from server.gameobject.user import Attendee
+from server.gameobject.user import Observer
 
 
 class WebServer(tornado.web.RequestHandler):
@@ -58,7 +58,7 @@ class WebSocketServer(tornado.websocket.WebSocketHandler):
         '''
         open websocket
         '''
-        new_attendee = Attendee(self)
+        new_attendee = Observer(self)
         self.attendee_list[self] = new_attendee
 
     def on_message(self, message):
@@ -105,7 +105,7 @@ class WebSocketServer(tornado.websocket.WebSocketHandler):
                 attendee.notice_user_removed(pid)
         try:
             room = Room(players, self.attendee_list[self])
-            game_server = TurnGameServer(room, self.player_list, self.attendee_list, int(data[SPEED]))
+            game_server = TurnGameHandler(room, self.player_list, self.attendee_list, int(data[SPEED]))
         except Exception as e:
             logging.error(e)
             logging.error("During making room, error is occured")

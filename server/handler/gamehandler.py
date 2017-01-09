@@ -8,18 +8,16 @@ import server.debugger as logging
 """
 GameServer (for all games, abstract class)
 
-TurnGameServer (for turn games)
-RealTimeGameServer (for real time games, not yet)
 """
 
 
-class GameServer:
-    def __init__(self, room, player_list, attendee_list, game_logic,  time_index=4, database=None):
+class GameHandler:
+    def __init__(self, room, players, observers, game_logic, time_index=4, database=None):
         self.game_logic = game_logic
         self.room = room
         self.pid_list = [p.get_pid() for p in self.room.player_list]
-        self.player_list = player_list  # WHY NEEDED? - when game room destroy - player added in list
-        self.attendee_list = attendee_list  # WHY NEEDED? - when game room destroy - attendee.notify_user_added
+        self.players = players  # WHY NEEDED? - when game room destroy - player added in list
+        self.observers = observers  # WHY NEEDED? - when game room destroy - attendee.notify_user_added
         self.q = None
 
         self.time_delay_list = [1, 0.7, 0.5, 0.3, 0.2]
@@ -53,6 +51,7 @@ class GameServer:
         '''
 
         self.turns = self._select_turns(self.room.player_list)
+        # TODO: round num is set by server ? y / n
 
         self.q = queues.Queue(len(self.room.player_list))
         for turn in self.turns:
@@ -71,7 +70,7 @@ class GameServer:
 
             for player in self.room.player_list:
                 self.q.put(player)
-                self._player_handler(player)
+                self._play_handler(player)
             yield self.q.join()
             logging.info("=====Game End=====" + str(turn))
         yield self.destroy_room()
@@ -120,13 +119,13 @@ class GameServer:
                 raise gen.Return(True)
             for p in self.room.player_list:
                 if not p.get_pid() == cur_player.get_pid():
-                    self.player_list[p.get_pid()] = p
+                    self.players[p.get_pid()] = p
             raise gen.Return(False)
 
     def _error_handler(self):
         pass
 
-    def _player_handler(self, player):
+    def _play_handler(self, player):
         '''
         handle player's game playing
         :param player: player object
@@ -134,6 +133,7 @@ class GameServer:
         raise NotImplementedError
 
     def request(self, pid, msg_type, data):
+        # TODO: in this function, read data from client is needed
         '''
         callback function
         game logic call this function to request player's response
@@ -153,6 +153,9 @@ class GameServer:
         json_data = json.dumps(message)
 
         player.send(json_data)
+
+        # TODO: implementation of read data in here
+        # return data or save data in self var ?
 
     def notify(self, msg_type, data):
         '''
@@ -259,8 +262,8 @@ class GameServer:
             # temporary implementation
             if player.get_pid() == 'Dummy3':
                 continue
-            self.player_list[player.get_pid()] = player
-            for attendee in self.attendee_list.values():
+            self.players[player.get_pid()] = player
+            for attendee in self.observers.values():
                 attendee.notice_user_added(player.get_pid())
 
     def set_delay_time(self, delay_time=0.1):
