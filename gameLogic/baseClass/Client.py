@@ -7,7 +7,8 @@ import zlib
 #있도록 주요 함수들을 제공하자.
 
 # 클라이언트 생성시 소켓 연결
-import AIParser
+#import AIParser
+from gameLogic.baseClass import AIParser
 
 # 사용자는 자신의 게임에 맞는 client 와 parser 를 구현하는게 아니라
 # 자신의 게임의 맞는 parser 만 구현하면 되게 만들자!
@@ -33,11 +34,12 @@ class Client(object):
         self._sock = socket(AF_INET, SOCK_STREAM)
         try:
             self._sock.connect((host, port))
-        except socket.error:
-            print '연결에 실패 하였습니다.'
+        except IOError:
+            # except socket.error
+            print('연결에 실패 하였습니다.')
             return False
 
-        print '서버에 연결 되었습니다.'
+        print('서버에 연결 되었습니다.')
 
         self.set_send_username()
 
@@ -66,27 +68,29 @@ class Client(object):
         """
         :return: None
         """
-        print '사용할 닉네임을 결정 하세요.'
-        self._username = raw_input()
+        print('사용할 닉네임을 결정 하세요.')
+        self._username = input()
 
         if self._username == 'None':
-            print 'None이라는 닉네임은 사용하면 안됌'
+            print('None이라는 닉네임은 사용하면 안됌')
             self.set_send_username()
             return
 
         send_msg = dict()
         send_msg['msg'] = 'user_info'
-        send_msg['msg_tpye'] = 'init'
+        send_msg['msg_type'] = 'init'
         send_msg['data'] = {'username' : self._username}
+
         json_msg = json.dumps(send_msg)
-        self._sock.send(json_msg)
+        bytes = str.encode(json_msg)
+        self._sock.send(bytes)
 
     # 데이터가 따로 오는 경우 처리를 해야함
     def recv_game_data(self):
         """
         :return: None
         """
-        print 'waiting...'
+        print('waiting...')
         if self.__remain_packet == "":
             game_data = self._sock.recv(18000)
 
@@ -105,14 +109,14 @@ class Client(object):
             if i < len(game_data) - 1:
                 self.__remain_packet = game_data[i + 1:]
                 game_data = game_data[:i + 1]
-                print 'cut game_data', game_data
+                print('cut game_data', game_data)
                 decoding_data = json.loads(game_data)
                 return decoding_data
             # 딱 떨어지는 JSON 을 받음
             elif i == len(game_data) - 1:
                 self.__remain_packet = ""
                 decoding_data = json.loads(game_data)
-                print 'recv :\n', decoding_data
+                print('recv :\n', decoding_data)
                 return decoding_data
             # 미완성된 JSON 을 받아놓은 상태
             else:
@@ -141,12 +145,12 @@ class Client(object):
                 game_data = self.__remain_packet
                 self.__remain_packet = ""
                 decoding_data = json.loads(game_data)
-                print 'recv :\n', decoding_data
+                print('recv :\n', decoding_data)
                 return decoding_data
             # 미완성된 JSON 을 받아놓은 상태
             else:
                 game_data = self._sock.recv(18000)
-                print "seungmin", self.__remain_packet
+                print("seungmin", self.__remain_packet)
                 self.__remain_packet += game_data
 
                 continue
@@ -172,8 +176,8 @@ class Client(object):
         """
         if send_msg is None:
             return
-        print "sending :"
-        print send_msg
+        print("sending :")
+        print(send_msg)
         self._sock.send(json.dumps(send_msg))
 
     # 클라이언트의 실행
@@ -182,17 +186,17 @@ class Client(object):
         :return: None
         """
         if self._sock is None:
-            print '소켓연결이 안되었습니다. connectServer(host, port)를 호출해주십시오'
+            print('소켓연결이 안되었습니다. connectServer(host, port)를 호출해주십시오')
             return
         if self._parser is None:
-            print '파서가 등록이 안되있습니다.'
+            print('파서가 등록이 안되있습니다.')
             return
 
         while True:
             decoding_data = self.recv_game_data()
-            print decoding_data
+            print(decoding_data)
             if decoding_data['msg'] == 'game_result':
-                print decoding_data['data']
+                print(decoding_data['data'])
                 continue
             send_msg = self._parser.parsing_data(decoding_data)
             self.send_game_data(send_msg)

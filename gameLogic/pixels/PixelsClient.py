@@ -10,7 +10,7 @@ PORT = 9001
 
 client = Client()
 if client.connect_server(HOST, PORT) == False:
-    print '서버 연결오류'
+    print('서버 연결오류')
     sys.exit()
 #test1 = MyPixelsParser()
 test1 = MyPixelsParser2()

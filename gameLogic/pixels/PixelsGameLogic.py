@@ -173,7 +173,7 @@ class PixelsLoopPhase(Phase):
         self.notify(notify_dict)
 
     def notify_to_front_change_round(self):
-        print 'notify to front end round'
+        print('notify to front end round')
         notify_dict = {
             'round': self.round,
             'first': self.player_list[self.round],
@@ -302,7 +302,7 @@ class PixelsFinishPhase(Phase):
                          'score': score,
                          'draw': draw
                         }
-            print 'winner', winner, 'score', score
+            print('winner', winner, 'score', score)
             self.notify_winner(send_dict)
             self.end(True, send_dict)
             return

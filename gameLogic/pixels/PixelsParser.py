@@ -35,7 +35,7 @@ class PixelsParser(AIParser):
         pass
 
     def notify_loop_init(self):
-        print 'notify_loop_init get!'
+        print('notify_loop_init get!')
         self.width = self.game_data['width']
         self.height = self.game_data['height']
         self.color_array = json.loads(zlib.decompress(base64.b64decode(self.game_data['color_array'])))
@@ -51,7 +51,7 @@ class PixelsParser(AIParser):
         return None
 
     def notify_change_round(self):
-        print 'notify_change_round get!'
+        print('notify_change_round get!')
         self.color_array = self.copy_array(self.color_array_old)
         self.ruler_array = self.copy_array(self.ruler_array_old)
 
@@ -109,11 +109,11 @@ class PixelsParser(AIParser):
         :param array:
         :return:
         '''
-        print 'array print: '
+        print('array print: ')
         for y in range(self.height):
             for x in range(self.width):
                 sys.stdout.write(str(array[y][x])+' ')
-            print ''
+            print('')
 
     def ruler_setting(self, start_point_y, start_point_x):
         pass

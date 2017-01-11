@@ -50,10 +50,10 @@ class AIParser(object):
         elif self.msg_type == 'round_result':
             ret = {'response': 'OK'}
         elif self.msg_type == 'ready':
-            ret = {'response' : 'OK'}
+            ret = {'response': 'OK'}
         # temporary implemenation ;; must be del
         elif self.msg_type == 'game_result':
-            ret = {'response' : 'OK'}
+            ret = {'response': 'OK'}
         if ret != None:
             ret = self.make_send_msg(self.msg_type, ret)
         return ret

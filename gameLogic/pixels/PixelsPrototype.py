@@ -314,9 +314,9 @@ while (GameRepeat):
     pygame.draw.rect(screen, ColorArray[StartingPoint2_Y][StartingPoint2_X],
                     (paddingWIDTH + SIZE * WIDTH + ScoreBarWidth * 3, paddingHEIGHT, ScoreBarWidth, Ruler2Score), 0)
 
-    print "********** Turn " + str(GameTurn) + " **********"
-    print "Ruler1 Score :" + str(RuledBy1)
-    print "Ruler2 Score :" + str(RuledBy2)
+    print("********** Turn " + str(GameTurn) + " **********")
+    print("Ruler1 Score :" + str(RuledBy1))
+    print("Ruler2 Score :" + str(RuledBy2))
 
 
 
