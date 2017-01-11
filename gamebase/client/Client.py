@@ -1,14 +1,13 @@
 # -*- coding:utf-8 -*-
-from socket import *
 import json
-import zlib
+from socket import *
+
 
 # 사용자가 tcp 소켓에 신경 쓰지 않고 클라이언트를 제작 할수
 #있도록 주요 함수들을 제공하자.
 
 # 클라이언트 생성시 소켓 연결
 #import AIParser
-from gameLogic.baseClass import AIParser
 
 # 사용자는 자신의 게임에 맞는 client 와 parser 를 구현하는게 아니라
 # 자신의 게임의 맞는 parser 만 구현하면 되게 만들자!

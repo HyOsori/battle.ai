@@ -1,6 +1,8 @@
 #-*-coding:utf-8-*-
-from gameLogic.othello.OthelloAIParser import OthelloAIParser
 import random
+
+from game.othello import OthelloAIParser
+
 
 class MyOthelloParser(OthelloAIParser):
     def parsing_data(self, decoding_data):

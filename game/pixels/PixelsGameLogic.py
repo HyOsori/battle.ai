@@ -1,11 +1,13 @@
-import sys
-from gameLogic.baseClass.TurnGameLogic import TurnGameLogic
-from gameLogic.baseClass.Phase import Phase
 import base64
+import json
 import logging
 import random
-import json
+import sys
 import zlib
+
+from gamebase.baseClass.Phase import Phase
+
+from gamebase.game.TurnGameLogic import TurnGameLogic
 
 sys.path.insert(0, '../')
 logging.basicConfig(level=logging.DEBUG)
@@ -341,8 +343,8 @@ class PixelsGameLogic(TurnGameLogic):
         self.color_array_init = [[0 for x in range(self.width)] for y in range(self.height)]
 
         # Initialize start_point.
-        self.start_point_y = [self.height / 8 * 3 - 1, self.height / 8 * 5]
-        self.start_point_x = [self.width / 8 * 3 - 1, self.width / 8 * 5]
+        self.start_point_y = [int(self.height / 8 * 3 - 1), int(self.height / 8 * 5)]
+        self.start_point_x = [int(self.width / 8 * 3 - 1), int(self.width / 8 * 5)]
         # logging.debug('start_point_y : ' + self.start_point_y)
         # logging.debug('start_point_x : ' + self.start_point_x)
         # If width or height = 8, [2, 5] (0 ~ 7)

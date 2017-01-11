@@ -1,6 +1,8 @@
 #-*-coding:utf-8-*-
-from gameLogic.othello.OthelloAIParser2 import OthelloAIParser2
 import random
+
+from game.othello import OthelloAIParser2
+
 
 class MyOthelloParser2(OthelloAIParser2):
     def on_turn_phase(self):

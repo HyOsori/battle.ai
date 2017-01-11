@@ -1,8 +1,8 @@
 #-*-coding:utf-8-*-
 import sys
-from gameLogic.baseClass.Client import Client
-from gameLogic.pixels.MyPixelsParser import MyPixelsParser
-from gameLogic.pixels.MyPixelsParser2 import MyPixelsParser2
+
+from game.pixels import MyPixelsParser2
+from gamebase.client.Client import Client
 
 #HOST = '104.199.218.103'
 HOST = '127.0.0.1'

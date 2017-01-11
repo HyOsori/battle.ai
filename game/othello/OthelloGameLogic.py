@@ -1,8 +1,8 @@
 #-*-coding:utf-8-*-
 import sys
 sys.path.insert(0,'../')
-from gameLogic.baseClass.TurnGameLogic import TurnGameLogic
-from gameLogic.baseClass.Phase import Phase
+from gamebase.game.TurnGameLogic import TurnGameLogic
+from gamebase.game.Phase import Phase
 #import json
 import logging
 logging.basicConfig(level=logging.DEBUG)

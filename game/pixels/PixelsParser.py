@@ -1,10 +1,11 @@
 #-*-coding:utf-8-*-
 import base64
 import json
-import zlib
 import sys
+import zlib
+
 sys.path.insert(0,'../')
-from gameLogic.baseClass.AIParser import AIParser
+from gamebase.client.AIParser import AIParser
 
 class PixelsParser(AIParser):
     def __init__(self):

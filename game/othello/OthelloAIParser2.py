@@ -1,14 +1,12 @@
 #-*-coding:utf-8-*-
 import sys
 sys.path.insert(0,'../')
-from gameLogic.baseClass.AIParser import AIParser
+from gamebase.client.AIParser import AIParser
 
-import random
 
 #msg_type -> on_turn 과 finish를 처리해야함
 #on_turn 은 보드의 정보와 black, white에 대한 정보가 dict로 날라옴, 이를 적절히 처리
 #하여 자신이 둘 x,y좌표를 보내면 됨
-3
 #finish메시지에선 별다른 처리가 필요없을 것 같음 아직
 
 #on_turn 의 key = board, black, white, none -> board는 8*8짜리 2차원 배열이며
@@ -16,14 +14,31 @@ import random
 #board에서 자신이 선공이라면 자신의 pid가 black, 아니라면 white
 
 #주어진 보드에서 black, white가 둘 수 있는 리스트를 받아올수 있다.(getValidMoves를 사용하면)
-class OthelloAIParser(AIParser):
+class OthelloAIParser2(AIParser):
     def __init__(self):
-        self.none = 'None'
+        self.none = 'NONE'
 
     def parsing_data(self, decoding_data):
+        base = super(OthelloAIParser2, self).parsing_data(decoding_data)
+        if self.msg_type == 'on_turn':
+            return self.on_turn_phase()
+        return base
+
+    def on_turn_phase(self):
+        '''
+        이것을 구현하기만 하면된다!
+        on_turn Phase에 해당하는 logic을 작성한다.
+        :return: make_send_msg를 사용해서 json으로 묶은 것을 return 해주어야 한다.
+        '''
         pass
 
     def is_on_board(self, x, y):
+        '''
+
+        :param x:
+        :param y:
+        :return: boolean
+        '''
         return x >= 0 and x <= 7 and y >= 0 and y <= 7
 
     def is_valid_move(self, board, black, white, tile, xstart, ystart):

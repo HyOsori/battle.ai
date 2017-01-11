@@ -1,12 +1,12 @@
 #-*- coding:utf-8 -*-
 import json
 
-from server.string import *
 from tornado import gen
-from server.handler.gamehandler import GameHandler
-from gameLogic.pixels.PixelsGameLogic import PixelsGameLogic
 
 import server.debugger as logging
+from game.pixels import PixelsGameLogic
+from server.handler.gamehandler import GameHandler
+from server.string import *
 
 
 class TurnGameHandler(GameHandler):

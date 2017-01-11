@@ -1,8 +1,8 @@
 #-*-coding:utf-8-*-
 import sys
-from gameLogic.baseClass.Client import Client
-from gameLogic.othello.MyOthelloParser import MyOthelloParser
-from gameLogic.othello.MyOthelloParser2 import MyOthelloParser2
+
+from game.othello import MyOthelloParser2
+from gamebase.client.Client import Client
 
 HOST = '127.0.0.1'
 PORT = 9001
