@@ -32,10 +32,11 @@ class Player(User):
         timeout_handle = self.io_loop.add_timeout(self.io_loop.time() + timeout, partial(self.__error_callback, future=future))
         future.add_done_callback(lambda r: self.io_loop.remove_timeout(timeout_handle))
         message = yield future
-        raise gen.Return(message)
+        return message.decode()
 
     def read(self):
-        return self.conn.read_bytes(buffer_size, partial=True)
+        message = self.conn.read_bytes(buffer_size, partial=True)
+        return message.decode
 
     def get_pid(self):
         return self.pid
@@ -43,7 +44,7 @@ class Player(User):
     def send(self, data):
         try:
             # temporary implementation
-            self.conn.write(data)
+            self.conn.write(data.encode())
         except Exception as e:
             logging.error(e.message)
 
@@ -61,7 +62,7 @@ class Observer(User):
         json_msg = json.dumps(msg)
         logging.info(json)
 
-        self.send(self._trim(json_msg))
+        self.send(json_msg)
 
     def notice_user_removed(self, removed_player):
         if self.observer_flag:
@@ -70,11 +71,11 @@ class Observer(User):
         msg = {MSG: NOTICE_USER_REMOVED, USER: removed_player}
         json_msg = json.dumps(msg)
 
-        self.send(self._trim(json_msg))
+        self.send(json_msg)
 
     def send(self, data):
         try:
-            self.conn.write_message(self._trim(data))
+            self.conn.write_message(data)
         except Exception as e:
             logging.error(e.message)
 

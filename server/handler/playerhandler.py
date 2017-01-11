@@ -45,7 +45,7 @@ class PlayerServer(tornado.tcpserver.TCPServer):
         try:
             while True:
                 recv = yield stream.read_bytes(128, partial=True)
-                logging.debug(recv)
+                recv = recv.decode()
                 msg = json.loads(recv)
 
                 username = msg[DATA]["username"]
@@ -55,7 +55,7 @@ class PlayerServer(tornado.tcpserver.TCPServer):
                     if username in self.player_list.keys():
                         msg = {MSG: USER_INFO, MSG_TYPE:INIT, DATA: {RESPONSE: NO}}
                         json_data = json.dumps(msg)
-                        stream.write(json_data)
+                        stream.write(json_data.encode())
                         continue
                     break
                 else:
@@ -74,7 +74,7 @@ class PlayerServer(tornado.tcpserver.TCPServer):
             logging.error(e)
             msg = {MSG: USER_INFO, MSG_TYPE: INIT, DATA: {RESPONSE: NO}}
             json_data = json.dumps(msg)
-            stream.write(json_data)
+            stream.write(json_data.encode())
 
     def _on_close(self, username):
         '''
