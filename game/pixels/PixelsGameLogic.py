@@ -5,7 +5,7 @@ import random
 import sys
 import zlib
 
-from gamebase.baseClass.Phase import Phase
+from gamebase.game.Phase import Phase
 
 from gamebase.game.TurnGameLogic import TurnGameLogic
 
