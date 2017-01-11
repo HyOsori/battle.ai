@@ -1,7 +1,7 @@
 # -*-coding:utf-8-*-
 import random
 
-from game.pixels import PixelsParser
+from game.pixels.PixelsParser import PixelsParser
 
 
 class MyPixelsParser2(PixelsParser):

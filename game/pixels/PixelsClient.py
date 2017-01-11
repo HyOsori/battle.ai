@@ -1,7 +1,7 @@
 #-*-coding:utf-8-*-
 import sys
 
-from game.pixels import MyPixelsParser2
+from game.pixels.MyPixelsParser2 import MyPixelsParser2
 from gamebase.client.Client import Client
 
 #HOST = '104.199.218.103'
