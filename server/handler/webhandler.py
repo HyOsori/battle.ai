@@ -105,6 +105,7 @@ class WebSocketServer(tornado.websocket.WebSocketHandler):
                 attendee.notice_user_removed(pid)
         try:
             room = Room(players, self.attendee_list[self])
+            logging.error("check point0")
             game_server = TurnGameHandler(room, self.player_list, self.attendee_list, int(data[SPEED]))
         except Exception as e:
             logging.error(e)

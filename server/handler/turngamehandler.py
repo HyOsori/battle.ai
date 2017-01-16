@@ -4,15 +4,17 @@ import json
 from tornado import gen
 
 import server.debugger as logging
-from game.pixels import PixelsGameLogic
+from game.pixels.PixelsGameLogic import PixelsGameLogic
 from server.handler.gamehandler import GameHandler
 from server.string import *
 
 
 class TurnGameHandler(GameHandler):
     def __init__(self, room, players, observers, game_speed, game_logic = None, database = None):
+        logging.error("check point2")
         game_logic = PixelsGameLogic(self)
-        GameHandler.__init__(self, room, players, observers, game_logic, game_speed, database)
+        logging.error("check point1")
+        super(TurnGameHandler, self).__init__(room, players, observers, game_logic)
 
     @gen.coroutine
     def _play_handler(self, player):
