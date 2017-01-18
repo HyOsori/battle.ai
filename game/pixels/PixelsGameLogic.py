@@ -3,7 +3,6 @@ import json
 import logging
 import random
 import sys
-import zlib
 
 from gamebase.game.Phase import Phase
 
@@ -160,7 +159,7 @@ class PixelsLoopPhase(Phase):
         notify_dict = {
             'width': self.width,
             'height': self.height,
-            'color_array': base64.b64encode(zlib.compress(json.dumps(self.color_array))),
+            'color_array': base64.b64encode(json.dumps(self.color_array)),
             'start_point_y': self.start_point_y,
             'start_point_x': self.start_point_x
         }

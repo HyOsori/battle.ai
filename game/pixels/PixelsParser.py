@@ -2,7 +2,6 @@
 import base64
 import json
 import sys
-import zlib
 
 sys.path.insert(0,'../')
 from gamebase.client.AIParser import AIParser
@@ -39,7 +38,7 @@ class PixelsParser(AIParser):
         print('notify_loop_init get!')
         self.width = self.game_data['width']
         self.height = self.game_data['height']
-        self.color_array = json.loads(zlib.decompress(base64.b64decode(self.game_data['color_array'])))
+        self.color_array = json.loads((base64.b64decode(self.game_data['color_array'])))
         self.ruler_array = [[0 for x in range(self.width)] for y in range(self.height)]
 
         ys = self.game_data['start_point_y']

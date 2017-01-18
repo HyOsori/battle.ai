@@ -1,5 +1,5 @@
 #-*- coding:utf-8 -*-
-from tornado import queues, gen
+from tornado import gen
 import json
 from server.string import *
 
@@ -40,41 +40,38 @@ class GameHandler:
 
         self.database = database
 
+        self.received_data = {}
+
         # self.game_log_manager = GameLogManager()
 
     @gen.coroutine
-    def game_handler(self, round_num = 0):
+    def run(self):
         '''
         Handle game playing
 
         :param round_num: number of round to play game
         '''
 
-        self.turns = self._select_turns(self.room.player_list)
         # TODO: round num is set by server ? y / n
 
-        self.q = queues.Queue(len(self.room.player_list))
-        for turn in self.turns:
-            # check game normal flag
-            if not self.normal_game_playing:
-                break
+        # check game normal flag
+        # if not self.normal_game_playing:
+        #     break
 
-            logging.info("=====Are You Ready=====" + str(turn))
-            ready = yield self.__ready_check(self.room.player_list)
-            logging.debug("ready status : " + str(ready))
-            if not ready:
-                return
+        logging.info("=====Are You Ready=====")
+        ready = yield self.__ready_check(self.room.player_list)
+        logging.debug("ready status : " + str(ready))
+        if not ready:
+            return
 
-            logging.info("=====Game Start=====" + str(turn))
-            self.game_logic.on_start(turn)
+        logging.info("=====Game Start=====")
+        # self.game_logic.on_start(turn)
 
-            for player in self.room.player_list:
-                self.q.put(player)
-                self._play_handler(player)
-            yield self.q.join()
-            logging.info("=====Game End=====" + str(turn))
-        yield self.destroy_room()
-        logging.info("=====Destroy Room=====" + str(self.turns[0]))
+        self._play_handler(None)
+
+        logging.info("=====Game End=====")
+        self.destroy_room()
+        logging.info("=====Destroy Room=====")
 
     def _select_turns(self, players):
         turn = [player.get_pid() for player in players]
@@ -86,7 +83,12 @@ class GameHandler:
 
     @gen.coroutine
     def __ready_check(self, players):
-
+        '''
+        socket connection valid check
+        and communication with front_end
+        :param players:
+        :return:
+        '''
         # init setting
         self.round_result = None
         self.game_end = False
@@ -100,6 +102,8 @@ class GameHandler:
             for player in players:
                 cur_player = player
                 player.send(data)
+                logging.debug("send data: " + data)
+                logging.debug(player.pid)
                 recv_data = yield player.read()
                 recv_msg = json.loads(recv_data)
                 if not recv_msg[DATA][RESPONSE] == 'OK':
@@ -132,6 +136,7 @@ class GameHandler:
         '''
         raise NotImplementedError
 
+    @gen.coroutine
     def request(self, pid, msg_type, data):
         # TODO: in this function, read data from client is needed
         '''
@@ -152,9 +157,12 @@ class GameHandler:
         message = {MSG: GAME_DATA, MSG_TYPE: msg_type, DATA: data}
         json_data = json.dumps(message)
 
+        logging.debug("before read")
         player.send(json_data)
+        self.received_data = player.timeout_read()
+        logging.debug("after read")
+        # TODO: parsing received data is needed in here
 
-        # TODO: implementation of read data in here
         # return data or save data in self var ?
 
     def notify(self, msg_type, data):

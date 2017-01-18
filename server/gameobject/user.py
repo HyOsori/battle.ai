@@ -34,9 +34,10 @@ class Player(User):
         message = yield future
         return message.decode()
 
+    @gen.coroutine
     def read(self):
-        message = self.conn.read_bytes(buffer_size, partial=True)
-        return message.decode
+        message = yield self.conn.read_bytes(buffer_size, partial=True)
+        return message.decode()
 
     def get_pid(self):
         return self.pid
@@ -77,6 +78,7 @@ class Observer(User):
         try:
             self.conn.write_message(data)
         except Exception as e:
+            logging.debug("send error")
             logging.error(e.message)
 
     def room_enter(self):

@@ -1,63 +1,48 @@
 #-*- coding:utf-8 -*-
 import json
 
+from server.string import *
 from tornado import gen
+from server.handler.gamehandler import GameHandler
+from game.pixels.PixelsGameLogic import PixelsGameLogic
 
 import server.debugger as logging
-from game.pixels.PixelsGameLogic import PixelsGameLogic
-from server.handler.gamehandler import GameHandler
-from server.string import *
 
 
 class TurnGameHandler(GameHandler):
     def __init__(self, room, players, observers, game_speed, game_logic = None, database = None):
-        logging.error("check point2")
         game_logic = PixelsGameLogic(self)
-        logging.error("check point1")
         super(TurnGameHandler, self).__init__(room, players, observers, game_logic)
 
     @gen.coroutine
     def _play_handler(self, player):
         try:
+            self.game_logic.on_start(self.pid_list)
+            logging.debug("on_start is done")
             while True:
                 yield self.delay_action()
-                message = yield player.timeout_read()
-                res = json.loads(message)
-                if res[MSG_TYPE] == self.current_msg_type:
+                # TODO: message type check is in dude's code (callback function)
+                if self.received_data[MSG_TYPE] == self.current_msg_type:
                     # temporary implementation ;; must be del
-                    if res[MSG_TYPE] == GAME_RESULT:
+                    # TODO: game_result + round_result = result ...
+                    if self.received_data[MSG_TYPE] == GAME_RESULT:
                         logging.error("game result receive!!!!!!")
                         break
 
-                    if res[MSG_TYPE] == ROUND_RESULT:
+                    if self.received_data[MSG_TYPE] == ROUND_RESULT:
                         logging.error("roudn result reciv")
                         self.q.get()
                         self.q.task_done()
                         break
 
                     # correct message is come
-                    self.game_logic.on_action(player.get_pid(), res[DATA])
-                    if res[MSG_TYPE] == FINISH:
-                        if self.game_end:
-                            self.send_round_result(self.round_result)
+                    yield self.game_logic.on_action(player.get_pid(), self.received_data[DATA])
+                    # if res[MSG_TYPE] == FINISH:
+                    #     if self.game_end:
+                    #         self.send_round_result(self.round_result)
                 else:
-                    # wrong message is come : kill player - finish all game
-                    self._exit_handler(player)
-                    gen.Return(None)
-                    logging.debug("in error case at player_handler")
-
+                    # TODO: error case classification
+                    pass
         except Exception as e:
-            # TODO : error correcting is needed in error case
-            # wrong message is come : kill play - finish all game
-            logging.error(e.message)
-            logging.debug("in error case at player_handler (Exception)")
-            yield gen.sleep(5)
-            logging.error("normal game playing")
-            logging.error(self.normal_game_playing)
-            if self.normal_game_playing:
-                self._exit_handler(player)
-            else:
-                self.players[player.get_pid()] = player
-            # + remove player from room (and close that player's socket)
-
-            # remove items from queue
+            # TODO: error case classification
+            pass
