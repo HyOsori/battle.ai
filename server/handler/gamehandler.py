@@ -40,41 +40,40 @@ class GameHandler:
 
         self.database = database
 
+        self.received_data = {}
+
+        self.played = None
+
         # self.game_log_manager = GameLogManager()
 
     @gen.coroutine
-    def game_handler(self, round_num = 0):
+    def run(self):
         '''
         Handle game playing
 
         :param round_num: number of round to play game
         '''
 
-        self.turns = self._select_turns(self.room.player_list)
         # TODO: round num is set by server ? y / n
 
-        self.q = queues.Queue(len(self.room.player_list))
-        for turn in self.turns:
-            # check game normal flag
-            if not self.normal_game_playing:
-                break
+        # check game normal flag
+        # if not self.normal_game_playing:
+        #     break
 
-            logging.info("=====Are You Ready=====" + str(turn))
-            ready = yield self.__ready_check(self.room.player_list)
-            logging.debug("ready status : " + str(ready))
-            if not ready:
-                return
+        # logging.info("=====Are You Ready=====")
+        # ready = yield self.__ready_check(self.room.player_list)
+        # logging.debug("ready status : " + str(ready))
+        # if not ready:
+        #     return
 
-            logging.info("=====Game Start=====" + str(turn))
-            self.game_logic.on_start(turn)
+        logging.info("=====Game Start=====")
+        # self.game_logic.on_start(turn)
 
-            for player in self.room.player_list:
-                self.q.put(player)
-                self._play_handler(player)
-            yield self.q.join()
-            logging.info("=====Game End=====" + str(turn))
-        yield self.destroy_room()
-        logging.info("=====Destroy Room=====" + str(self.turns[0]))
+        yield self._play_handler(None)
+
+        logging.info("=====Game End=====")
+        self.destroy_room()
+        logging.info("=====Destroy Room=====")
 
     def _select_turns(self, players):
         turn = [player.get_pid() for player in players]
@@ -86,7 +85,12 @@ class GameHandler:
 
     @gen.coroutine
     def __ready_check(self, players):
-
+        '''
+        socket connection valid check
+        and communication with front_end
+        :param players:
+        :return:
+        '''
         # init setting
         self.round_result = None
         self.game_end = False
@@ -142,6 +146,8 @@ class GameHandler:
         :param data: message data
         '''
 
+        logging.debug("request is called")
+
         for p in self.room.player_list:
             if p.get_pid() == pid:
                 player = p
@@ -153,8 +159,15 @@ class GameHandler:
         json_data = json.dumps(message)
 
         player.send(json_data)
+        logging.debug("before read")
+        self.received_data = player.read()
+        logging.debug(self.received_data)
+        logging.debug("after read")
 
-        # TODO: implementation of read data in here
+        self.played = player
+
+        # TODO: parsing received data is needed in here
+
         # return data or save data in self var ?
 
     def notify(self, msg_type, data):
@@ -217,7 +230,6 @@ class GameHandler:
         for player in self.room.player_list:
             player.send(json_data)
 
-    @gen.coroutine
     def destroy_room(self):
         '''
         When all round is ended, room is destroyed. Clients get back to robby.
@@ -251,9 +263,6 @@ class GameHandler:
         if self.normal_game_playing:
             for player in self.room.player_list:
                 player.send(json_data)
-
-            for player in self.room.player_list:
-                yield player.read()
 
         for attendee in self.room.attendee_list:
             attendee.send(json_data)
@@ -298,7 +307,7 @@ class GameHandler:
             else:
                 result[ERROR_CODE] = 0
         except Exception as e:
-            logging.error(e.message)
+            logging.error(e.with_traceback())
 
         data = {MSG: GAME_HANDLER, MSG_TYPE: GAME_RESULT, DATA: result}
         self.current_msg_type = GAME_RESULT

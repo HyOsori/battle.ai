@@ -91,7 +91,7 @@ class Client(object):
         """
         print('waiting...')
         if self.__remain_packet == "":
-            game_data = self._sock.recv(18000)
+            game_data = self._sock.recv(18000).decode()
 
             cnt_open_brace = 0
             i = 0
@@ -150,6 +150,9 @@ class Client(object):
             else:
                 game_data = self._sock.recv(18000)
                 print("seungmin", self.__remain_packet)
+                print("type check")
+                print(self.__remain_packet)
+                print(game_data)
                 self.__remain_packet += game_data
 
                 continue
@@ -175,9 +178,8 @@ class Client(object):
         """
         if send_msg is None:
             return
-        print("sending :")
         print(send_msg)
-        self._sock.send(json.dumps(send_msg))
+        self._sock.send(json.dumps(send_msg).encode())
 
     # 클라이언트의 실행
     def client_run(self):
@@ -193,11 +195,11 @@ class Client(object):
 
         while True:
             decoding_data = self.recv_game_data()
-            print(decoding_data)
             if decoding_data['msg'] == 'game_result':
                 print(decoding_data['data'])
                 continue
             send_msg = self._parser.parsing_data(decoding_data)
+            print(send_msg)
             self.send_game_data(send_msg)
 
     # 언제 while 루프를 벗어날까? 그런 신호가 하나 필요하겠다.??

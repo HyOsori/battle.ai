@@ -105,14 +105,13 @@ class WebSocketServer(tornado.websocket.WebSocketHandler):
                 attendee.notice_user_removed(pid)
         try:
             room = Room(players, self.attendee_list[self])
-            logging.error("check point0")
             game_server = TurnGameHandler(room, self.player_list, self.attendee_list, int(data[SPEED]))
         except Exception as e:
             logging.error(e)
             logging.error("During making room, error is occured")
             return
 
-        tornado.ioloop.IOLoop.current().spawn_callback(game_server.game_handler)
+        tornado.ioloop.IOLoop.current().spawn_callback(game_server.run)
         speed_list = [0.5, 0.3, 0.1, 0.05, 0]
         msg = {MSG: RESPONSE_ + MATCH, DATA: {USERS: data[USERS], ERROR: 0, SPEED: speed_list[int(data[SPEED])]}}
         json_msg = json.dumps(msg)

@@ -160,7 +160,7 @@ class PixelsLoopPhase(Phase):
         notify_dict = {
             'width': self.width,
             'height': self.height,
-            'color_array': base64.b64encode(zlib.compress(json.dumps(self.color_array))),
+            'color_array': json.dumps(self.color_array),
             'start_point_y': self.start_point_y,
             'start_point_x': self.start_point_x
         }
@@ -332,8 +332,8 @@ class PixelsGameLogic(TurnGameLogic):
 
         # Initialize constants.
 
-        self.width = 64
-        self.height = 64
+        self.width = 8
+        self.height = 8
 
         # Width and height must be multiples of 8.
         # Because start_point of rulers are 3/8 and 5/8 points of board.

@@ -12,13 +12,19 @@ class PixelsParser(AIParser):
         pass
 
     def parsing_data(self, decoding_data):
+        print("parsing_data is called")
         base = super(PixelsParser, self).parsing_data(decoding_data)
+        print("super.parsing_data is called")
+        print("self.msg_type: " + self.msg_type)
         ret = None
         if self.msg_type == 'loop':
             if self.game_data['enemy_chosen_color'] != None:
                 self.absorb(self.game_data['ruler_enemy'], self.game_data['enemy_chosen_color'])
             ret = self.loop_phase()
+            print(ret)
+            print("before absorb")
             self.absorb(self.game_data['ruler_self'], ret['chosen_color'])
+            print("after absorb")
         if self.msg_type == 'notify_init_loop':
             ret = self.notify_loop_init()
         if self.msg_type == 'notify_change_round':
@@ -39,7 +45,7 @@ class PixelsParser(AIParser):
         print('notify_loop_init get!')
         self.width = self.game_data['width']
         self.height = self.game_data['height']
-        self.color_array = json.loads(zlib.decompress(base64.b64decode(self.game_data['color_array'])))
+        self.color_array = json.loads(self.game_data['color_array'])
         self.ruler_array = [[0 for x in range(self.width)] for y in range(self.height)]
 
         ys = self.game_data['start_point_y']

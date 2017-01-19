@@ -18,10 +18,14 @@ class MyPixelsParser2(PixelsParser):
 
         mycolor = self.color_array[start_point_y[ruler_self - 1]][start_point_x[ruler_self - 1]]
 
+        print("before select color")
+        print("mycolor" + str(mycolor) + "  eneny_chonsen_color" + str(enemy_chosen_color))
         color = random.randint(1, 6)
-
-        while (color != mycolor and color != enemy_chosen_color):
-            color = random.randint(1, 6)
+        if enemy_chosen_color:
+            while color == mycolor or color == enemy_chosen_color:
+                color = random.randint(1, 6)
+                print("color loop: " + str(color) + "   mycolor" + str(mycolor) + "  eneny_chonsen_color" + str(enemy_chosen_color))
+        print("after select color")
 
         return_color = color
 

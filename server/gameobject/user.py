@@ -32,11 +32,11 @@ class Player(User):
         timeout_handle = self.io_loop.add_timeout(self.io_loop.time() + timeout, partial(self.__error_callback, future=future))
         future.add_done_callback(lambda r: self.io_loop.remove_timeout(timeout_handle))
         message = yield future
-        return message.decode()
+        gen.Return(message)
 
     def read(self):
         message = self.conn.read_bytes(buffer_size, partial=True)
-        return message.decode
+        return message
 
     def get_pid(self):
         return self.pid
@@ -44,7 +44,8 @@ class Player(User):
     def send(self, data):
         try:
             # temporary implementation
-            self.conn.write(data.encode())
+            logging.debug("send type" + str(type(data)))
+            self.conn.write((data).encode())
         except Exception as e:
             logging.error(e.message)
 
