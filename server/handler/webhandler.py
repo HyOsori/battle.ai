@@ -38,18 +38,17 @@ class LogHandler(tornado.web.RequestHandler):
         self.write('OK')
 
 
-class WebSocketServer(tornado.websocket.WebSocketHandler):
+class ObserverHandler(tornado.websocket.WebSocketHandler):
 
-    def initialize(self, attendee_list=dict(), player_list=dict(), player_server=None, database=None):
+    def initialize(self, attendee_list=dict(), player_list=dict(), database=None):
         '''
 
         :param attendee_list:
         :param player_list:
-        :param player_server:
+        :param gamehandler:
         '''
         self.attendee_list = attendee_list  # dict() - key : conn
-        self.player_list = player_list  # dict() - key : user_id
-        self.player_server = player_server  # PlayerServer
+        self.player_list = player_list  # dict() - key : user_id\
         self.database = database
 
         logging.debug("Web soscket initialization is done")
@@ -105,12 +104,14 @@ class WebSocketServer(tornado.websocket.WebSocketHandler):
                 attendee.notice_user_removed(pid)
         try:
             room = Room(players, self.attendee_list[self])
+            # TODO: factory design is needed in here
             game_server = TurnGameHandler(room, self.player_list, self.attendee_list, int(data[SPEED]))
         except Exception as e:
             logging.error(e)
             logging.error("During making room, error is occured")
             return
 
+        # run game
         tornado.ioloop.IOLoop.current().spawn_callback(game_server.run)
         speed_list = [0.5, 0.3, 0.1, 0.05, 0]
         msg = {MSG: RESPONSE_ + MATCH, DATA: {USERS: data[USERS], ERROR: 0, SPEED: speed_list[int(data[SPEED])]}}

@@ -43,9 +43,7 @@ class Player(User):
 
     def send(self, data):
         try:
-            # temporary implementation
-            logging.debug("send type" + str(type(data)))
-            self.conn.write((data).encode())
+            self.conn.write(data.encode())
         except Exception as e:
             logging.error(e.message)
 

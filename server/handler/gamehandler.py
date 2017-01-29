@@ -1,4 +1,4 @@
-#-*- coding:utf-8 -*-
+# -*- coding:utf-8 -*-
 from tornado import queues, gen
 import json
 from server.string import *
@@ -13,12 +13,11 @@ GameServer (for all games, abstract class)
 
 class GameHandler:
     def __init__(self, room, players, observers, game_logic, time_index=4, database=None):
-        self.game_logic = game_logic
-        self.room = room
+        self.game_logic = game_logic  # TODO: rename ...
+        self.room = room  # player objects and observer objects are in here
         self.pid_list = [p.get_pid() for p in self.room.player_list]
         self.players = players  # WHY NEEDED? - when game room destroy - player added in list
         self.observers = observers  # WHY NEEDED? - when game room destroy - attendee.notify_user_added
-        self.q = None
 
         self.time_delay_list = [1, 0.7, 0.5, 0.3, 0.2]
 
@@ -28,21 +27,19 @@ class GameHandler:
         self.game_result = {}
         self.error_msg = "none"
 
-        self.current_msg_type = "start"
-        self.error_code = 1
+        self.current_msg_type = "start"  # TODO: remove
+        self.error_code = 1  # TODO: specify error code
         self.normal_game_playing = True
-        self.turns = []
+        self.turns = []  # TODO: remove
 
-        self.round_result = None
+        self.round_result = None  # TODO: remove
         self.game_end = False
 
-        self.score = [0, 0, 0]
+        self.score = [0, 0, 0]  # TODO: remove
 
-        self.database = database
+        self.database = database  # TODO: db setting is needed
 
-        self.received_data = {}
-
-        self.played = None
+        self.played = None  # player currently finished turn
 
         # self.game_log_manager = GameLogManager()
 
@@ -77,12 +74,13 @@ class GameHandler:
 
     def _select_turns(self, players):
         turn = [player.get_pid() for player in players]
-        #print len(turn)
-        #new_turn = self.perm(turn, 0, len(turn))
-        #print new_turn
+        # print len(turn)
+        # new_turn = self.perm(turn, 0, len(turn))
+        # print new_turn
 
         return [turn, [turn[1], turn[0]]]
 
+    # TODO: current code ,,, this function is skipped. insert it into current code flow and fixup it.
     @gen.coroutine
     def __ready_check(self, players):
         '''
@@ -159,16 +157,7 @@ class GameHandler:
         json_data = json.dumps(message)
 
         player.send(json_data)
-        logging.debug("before read")
-        self.received_data = player.read()
-        logging.debug(self.received_data)
-        logging.debug("after read")
-
-        self.played = player
-
-        # TODO: parsing received data is needed in here
-
-        # return data or save data in self var ?
+        self.played = player  # set current played player
 
     def notify(self, msg_type, data):
         '''
@@ -186,6 +175,7 @@ class GameHandler:
         for attendee in self.room.attendee_list:
             attendee.send(json_data)
 
+    # TODO: ask dude what's use for this function
     def on_end(self, is_valid_end, message):
         """
         callback function
@@ -214,6 +204,7 @@ class GameHandler:
         for attendee in self.room.attendee_list:
             attendee.send(json_data)
 
+    # TODO: remove... don't needed to have it
     def send_round_result(self, round_result):
         # save round result, temporary implementation ..;;
         try:
@@ -234,43 +225,22 @@ class GameHandler:
         '''
         When all round is ended, room is destroyed. Clients get back to robby.
         '''
-        # TODO: game_result must chagned to real game_result, not round result
-
-        # make game result, temporary implementation.. ;;
-        # TODO: result = { "pid1" : score, "pid2" : score, "error_code": (num) }
-        # error_code : 0 - success, 1 - logic_error, 2 - timeout_error, 3 - unexpected error
-        result = {}
-        try:
-            result[self.pid_list[0]] = self.score[0]
-            result[self.pid_list[1]] = self.score[1]
-            if not self.normal_game_playing:
-                result[ERROR_CODE] = 1
-            else:
-                result[ERROR_CODE] = 0
-        except Exception as e:
-            logging.error(e.message)
-
+        # TODO: in current implementation, game result is sended in finish state, so don't have to send result in this function
+        # TODO: how to handle error in this function, think about it.
+        # TODO: handling about dummy client is needed at later
         # game_log_manager.add_game_log(info1[0], info1[1], info2[0], info2[1], info1[1] == info2[1])
         # game_log_manager.print_all()
 
-        data = {MSG: GAME_HANDLER, MSG_TYPE: GAME_RESULT, DATA: result}
+        data = {MSG: GAME_HANDLER, MSG_TYPE: GAME_RESULT, DATA: {ERROR_CODE: 0}}
 
         logging.debug(data)
 
         json_data = json.dumps(data)
 
-        # temporary implemenation ;; must be del
-        if self.normal_game_playing:
-            for player in self.room.player_list:
-                player.send(json_data)
-
         for attendee in self.room.attendee_list:
             attendee.send(json_data)
 
         for player in self.room.player_list:
-            # temporary implementation
-            if player.get_pid() == 'Dummy3':
-                continue
             self.players[player.get_pid()] = player
             for attendee in self.observers.values():
                 attendee.notice_user_added(player.get_pid())
@@ -282,41 +252,12 @@ class GameHandler:
     def delay_action(self):
         yield gen.sleep(self.delay_time)
 
+    # TODO: game result save si realized in here
     def save_game_data(self):
         pass
 
+    # TODO: modification of this function is needed
+    # description of this function: when error is caught,
+    # this function is called.
     def _exit_handler(self, player):
-        logging.error("** exit error handler **")
-        self.game_logic.on_error(player.get_pid())
-        self.normal_game_playing = False
-
-        for pid in self.pid_list:
-            if pid == player.get_pid():
-                self.room.player_list.remove(player)
-            logging.error("task_done call!")
-            self.q.get()
-            self.q.task_done()
-
-        # temporary implementation ;; must be del
-        result = {}
-        try:
-            result[self.pid_list[0]] = self.score[0]
-            result[self.pid_list[1]] = self.score[1]
-            if not self.normal_game_playing:
-                result[ERROR_CODE] = 1
-            else:
-                result[ERROR_CODE] = 0
-        except Exception as e:
-            logging.error(e.with_traceback())
-
-        data = {MSG: GAME_HANDLER, MSG_TYPE: GAME_RESULT, DATA: result}
-        self.current_msg_type = GAME_RESULT
-
-        for p in self.room.player_list:
-            logging.error("[!!]" + str(data))
-            p.send(json.dumps(data))
-
-        gen.Return(None)
-
-
-
+        pass

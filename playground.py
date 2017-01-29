@@ -1,3 +1,10 @@
+'''
+battle.ai
+
+playground is ai battle framework for
+1:1:1:1: ... turn game.
+'''
+
 import os.path
 import sys
 import tornado.ioloop
@@ -7,7 +14,7 @@ sys.path.insert(0,'../')
 
 from server.handler.playerhandler import PlayerServer
 from server.handler.webhandler import WebServer
-from server.handler.webhandler import WebSocketServer, LogHandler
+from server.handler.webhandler import ObserverHandler, LogHandler
 from server.conf.conf_reader import ConfigReader
 
 TCP_PORT = 9001
@@ -32,7 +39,7 @@ class MainServer:
 
         self.app = tornado.web.Application(
             [
-                (r"/websocket", WebSocketServer, dict(player_list=self.player_list, attendee_list=self.attendee_list, player_server=self.tcp_server, database=db)),
+                (r"/websocket", ObserverHandler, dict(player_list=self.player_list, attendee_list=self.attendee_list, database=db)),
                 (r'/log', LogHandler, dict(database_driver=db)),
                 (r"/", WebServer),
             ],
