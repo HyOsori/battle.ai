@@ -14,7 +14,7 @@ from server.string import *
 from server.gameobject.user import Player
 
 
-class PlayerServer(tornado.tcpserver.TCPServer):
+class PlayerHandler(tornado.tcpserver.TCPServer):
     def __init__(self, attendee_list, player_list):
         tornado.tcpserver.TCPServer.__init__(self)
         self.player_list = player_list

@@ -9,10 +9,10 @@ import os.path
 import sys
 import tornado.ioloop
 
-sys.path.insert(0,'../')
+sys.path.insert(0, '../')
 # TODO : find out how to control path and error
 
-from server.handler.playerhandler import PlayerServer
+from server.handler.playerhandler import PlayerHandler
 from server.handler.webhandler import WebServer
 from server.handler.webhandler import ObserverHandler, LogHandler
 from server.conf.conf_reader import ConfigReader
@@ -29,7 +29,7 @@ class MainServer:
         self.player_list = dict()
         self.attendee_list = dict()
 
-        self.tcp_server = PlayerServer(self.attendee_list, self.player_list)
+        self.tcp_server = PlayerHandler(self.attendee_list, self.player_list)
 
         db = None
         # db = LogDB()
