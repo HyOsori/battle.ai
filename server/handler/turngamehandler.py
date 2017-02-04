@@ -26,7 +26,7 @@ class TurnGameHandler(GameHandler):
             while True:
                 message = yield self.played.read()
                 logging.debug("received data: " + str(message))
-                message = json.loads(message.decode())
+                message = json.loads(message)
                 # TODO: message type check is in dude's code (callback function)
                 if message[MSG_TYPE] == self.current_msg_type:
 

@@ -34,9 +34,10 @@ class Player(User):
         message = yield future
         gen.Return(message)
 
+    @gen.coroutine
     def read(self):
-        message = self.conn.read_bytes(buffer_size, partial=True)
-        return message
+        message = yield self.conn.read_bytes(buffer_size, partial=True)
+        return message.decode()
 
     def get_pid(self):
         return self.pid
