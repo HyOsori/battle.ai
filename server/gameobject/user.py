@@ -23,6 +23,9 @@ class Player(User):
         self.pid = pid
         self.playing = False
 
+    def set_pid(self, pid):
+        self.pid = pid
+
     def __error_callback(self, future):
         future.set_exception(gen.TimeoutError("Timeout"))
 

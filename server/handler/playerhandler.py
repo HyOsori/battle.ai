@@ -21,13 +21,12 @@ class PlayerHandler(tornado.tcpserver.TCPServer):
         self.attendee_list = attendee_list
 
     def handle_stream(self, stream, address):
-        '''
+        """
         when ai client connect to server this function is run
         and spawn_callback (__accept handler)
         :param stream: ai client's stream
         :param address:  ai client's ip address
-        '''
-        logging.debug("accept client is done")
+        """
         tornado.ioloop.IOLoop.current().spawn_callback(self.__accept_handler, stream)
 
     @gen.coroutine
@@ -39,16 +38,17 @@ class PlayerHandler(tornado.tcpserver.TCPServer):
         if user_id is valid - return y
         else - return n
 
-        :param stream:  ai_client's stream
+        :param stream:  player's stream
         '''
         # TODO : set protocol of user_info, and handle exception of every case
+        # TODO: overall correction is needed in nearby this.
+        player = Player(None, stream)
         try:
             while True:
-                recv = yield stream.read_bytes(128, partial=True)
-                recv = recv.decode()
-                msg = json.loads(recv)
+                message = yield player.read()
+                message = json.loads(message)
 
-                username = msg[DATA]["username"]
+                username = message[DATA]["username"]
 
                 # temporary implementation ;;
                 if not username == 'Dummy3':

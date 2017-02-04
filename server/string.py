@@ -30,6 +30,7 @@ ERROR = "error"
 ERROR_MSG = "error_msg"
 ROUND_RESULT = "round_result"
 GAME_RESULT = "game_result"
+END = "end"
 
 PLAYERS = "players"
 
@@ -38,4 +39,11 @@ INIT = "init"
 FINISH = "finish"
 OK = "OK"
 NO = "NO"
+
+NORMAL_END = 0
+CONNECTION_LOST = 200
+TIME_OUT = 201
+NOT_JSON_DATA = 300
+MESSAGE_TYPE_ERROR = 301
+UNEXPECTED_ERROR = 400
 
