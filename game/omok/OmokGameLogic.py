@@ -119,7 +119,7 @@ class OmokLoopPhase(Phase):
         y_pos = dict_data["y"]
 
         if self.check_game_end(ruler, x_pos, y_pos):
-            self.end({"winner": self.player_list[0]})
+            self.end(0, {"winner": self.player_list[0]})
 
         logging.debug(dict_data)
         if self.initialize:  # Initialize the arrays if new(2nd) round starts.

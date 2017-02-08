@@ -53,6 +53,10 @@ class GameHandler:
 
     @gen.coroutine
     def request_ready(self):
+        for attendee in self.room.attendee_list:
+            message = {MSG: GAME_HANDLER, MSG_TYPE: READY, DATA: self.init_data_dict}
+            attendee.send(json.dumps(message))
+
         try:
             for pid, init_data in self.init_data_dict.items():
                 player = self.find_player_by_pid(pid)
