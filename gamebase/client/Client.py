@@ -195,6 +195,7 @@ class Client(object):
 
         while True:
             decoding_data = self.recv_game_data()
+            print("decoding data: " + str(decoding_data))
             if decoding_data['msg'] == 'game_result':
                 print(decoding_data['data'])
                 continue

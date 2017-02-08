@@ -54,27 +54,31 @@ class GameHandler:
     @gen.coroutine
     def request_ready(self):
         try:
-            for pid, init_data in self.init_data_dict:
+            for pid, init_data in self.init_data_dict.items():
                 player = self.find_player_by_pid(pid)
-                player.send(json.dumps(init_data))
+                message = {MSG: GAME_HANDLER, MSG_TYPE: READY, DATA: init_data}
+                player.send(json.dumps(message))
 
                 message = yield player.read()
                 message = json.loads(message)
 
-                if message[MSG_TYPE] == READY and message[MSG_TYPE][RESPONSE] == OK:
+                logging.debug("message: " + str(message))
+                if message[MSG_TYPE] == READY and message[DATA][RESPONSE] == OK:
                     pass
                 else:
                     # set error code for game end
                     return False
         except Exception as e:
-            e.with_traceback(None)
+            e.with_traceback()
             return False
 
     def on_init_game(self, init_data_dict):
+        logging.debug("init_data_dict: " + str(init_data_dict))
         self.init_data_dict = init_data_dict
 
     def find_player_by_pid(self, pid):
         for player in self.room.player_list:
+            logging.debug("player id:" + player.pid + "    pid: " + pid)
             if pid == player.pid:
                 return player
         return None
