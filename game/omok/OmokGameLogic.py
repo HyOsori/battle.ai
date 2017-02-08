@@ -72,8 +72,9 @@ class OmokLoopPhase(Phase):
         super(OmokLoopPhase, self).__init__(logic_server, message_type)
         logging.debug('PHASE_LOOP : INIT')
 
-        self.width = 20
-        self.height = 20
+        #game data
+        self.width = 5
+        self.height = 5
 
         # Declare color_array_init.
         self.board = [[0 for x in range(self.width)] for y in range(self.height)]
@@ -180,8 +181,8 @@ class OmokLoopPhase(Phase):
     def check_game_end(self, color, x_pos, y_pos):
         # 정상종료나 에러아무거나 나오면 Finish Phase
         self.board[x_pos][y_pos] = color
-        for i in range(20):
-            for j in range(20):
+        for i in range(self.width):
+            for j in range(self.height):
                 if self.board[i][j] == 0:
                     return False
 
