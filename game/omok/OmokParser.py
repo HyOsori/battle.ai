@@ -5,6 +5,8 @@ import sys
 import zlib
 from gamebase.client.AIParser import AIParser
 
+import game.debugger as logging
+
 sys.path.insert(0,'../')
 
 
@@ -52,7 +54,9 @@ class OmokParser(AIParser):
         print("self.msg_type: " + self.msg_type)
         ret = None
         if self.msg_type == 'loop':
-            ret = self.loop_phase()
+            ret = self.loop_phase(self.board)
+            self.game_progress(ret)
+            logging.debug(ret)
         if self.msg_type == 'notify_init_loop':
             ret = self.notify_loop_init()
         if self.msg_type == 'notify_change_round':
@@ -62,21 +66,13 @@ class OmokParser(AIParser):
         else:
             return self.make_send_msg(self.msg_type, ret)
 
-    @staticmethod
-    def make_send_msg(msg_type, game_data):
-        """
-        :param msg_type: Type of message to send (string)
-        :param game_data: Game data to send(dict)
-        :return: response of AI client (dict)
-        """
-        # 서버와 통신이 가능한 프로토콜로 포장하는 역할을 하는 메소드
-        send_msg = {"msg": "game_data"}
-        if msg_type == 'ready':
-            send_msg["msg"] = "game_handler"
-        send_msg["msg_type"] = msg_type
-        send_msg["data"] = game_data
-        print(send_msg)
-        return send_msg
+
+    def loop_phase(self):
+        '''
+        must override
+        :return:
+        '''
+        pass
 
     def notify_loop_init(self):
         print('notify_loop_init get!')
@@ -103,3 +99,11 @@ class OmokParser(AIParser):
         parsing_data['response'] = 'OK'
         send_msg = self.make_send_msg(self.msg_type, parsing_data)
         return send_msg
+
+    def game_progress(self, game_data):
+        x_pos = game_data["x"]
+        y_pos = game_data["y"]
+        logging.debug(self.board)
+        self.game_data['board'][x_pos][y_pos] = 1
+        self.board[x_pos][y_pos] = 1
+        logging.debug(self.board)
