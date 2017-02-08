@@ -48,8 +48,8 @@ class Phase(object):
     def get_player_result(self, pid):
         return self._logic_server.get_player_result(pid)
 
-    def notify(self, dict_data):
-        self._logic_server.notify(self.notify_message_type, dict_data)
+    def notify(self, message_type, dict_data):
+        self._logic_server.notify(message_type, dict_data)
 
     def notify_init(self, dict_data):
         self._logic_server.notify(self.notify_init_message_type, dict_data)

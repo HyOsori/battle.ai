@@ -111,15 +111,15 @@ class OmokLoopPhase(Phase):
         if pid == self.player_list[1]:
             ruler = 2
 
-        # when game end
-        # self._game_server.on_end(0, {"winnner" : p1})
-        # self.notify_to_front(ruler)
+
 
         x_pos = dict_data["x"]
         y_pos = dict_data["y"]
 
         if self.check_game_end(ruler, x_pos, y_pos):
             self.end(0, {"winner": self.player_list[0]})
+
+        self.notify_to_front()  # send web
 
         logging.debug(dict_data)
         if self.initialize:  # Initialize the arrays if new(2nd) round starts.
@@ -145,13 +145,11 @@ class OmokLoopPhase(Phase):
         super(OmokLoopPhase, self).on_end(0, result)
         # logging.debug('PHASE LOOP : ON_END')
 
-
-
-    def notify_to_front(self, ruler):
+    def notify_to_front(self):
         notify_dict = {
-            'ruler_who': ruler,  # Who just finished absorbing
+            'board': self.board
         }
-        self.notify(notify_dict)
+        self.notify("string", notify_dict)
 
     def notify_to_front_change_round(self):
         print('notify to front end round')
