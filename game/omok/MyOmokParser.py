@@ -26,7 +26,6 @@ class MyOmokParser(OmokParser):
         self.width = init_data["width"]
         self.height = init_data["height"]
         self.my_color = init_data["color"]
-
         pass
 
     def loop_phase(self, board):

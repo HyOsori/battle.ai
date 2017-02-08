@@ -44,14 +44,12 @@ class AIParser(object):
         """
         self.decoding(decoding_data)
         ret = None
-        if self.msg_type == 'init':
-            ret = self.init_phase()
+        if self.msg_type == 'ready':
+            ret = {'response': 'OK'}
+            self.init_phase(self.game_data)
         elif self.msg_type == 'finish':
-            ret = self.finish_phase()
-        elif self.msg_type == 'round_result':
-            ret = {'response': 'OK'}
-        elif self.msg_type == 'ready':
-            ret = {'response': 'OK'}
+            # ret = self.finish_phase()
+            pass
         if ret != None:
             ret = self.make_send_msg(self.msg_type, ret)
         return ret
@@ -72,14 +70,9 @@ class AIParser(object):
         print(send_msg)
         return send_msg
 
-    def init_phase(self):
-        """
-        :return: response of AI client (dict)
-        """
-        parsing_data = dict()
-        parsing_data['response'] = 'OK'
-        send_msg = self.make_send_msg(self.msg_type, parsing_data)
-        return send_msg
+    def init_phase(self, init_data):
+        raise NotImplementedError
+
 
     def finish_phase(self):
         """

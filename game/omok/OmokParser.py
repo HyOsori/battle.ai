@@ -83,13 +83,7 @@ class OmokParser(AIParser):
 
 
     def init_phase(self):
-        """
-        :return: response of AI client (dict)
-        """
-        parsing_data = dict()
-        parsing_data['response'] = 'OK'
-        send_msg = self.make_send_msg(self.msg_type, parsing_data)
-        return send_msg
+        raise NotImplementedError
 
     def finish_phase(self):
         """
