@@ -12,18 +12,25 @@ class TurnGameLogic(object):
         self._turn_num = None
         self._message_type = None
 
-    def on_start(self, player_list):
+    def on_ready(self, player_list):
+        raise NotImplementedError
+
+    def on_start(self):
+        raise NotImplementedError
+
+
         '''
         서버에서 하나의 게임이 시작될때 호출 하는 callback 함수
         :param player_list: 서버에서 지정하는 사용자 리스트이다.
         :return: 없다.
         '''
+        """
         self._player_list = player_list
         self._result_dict = dict(
             zip(player_list, ['draw'] * len(player_list))
         )
         self._turn_num = -1
-        self.change_turn()
+        self.change_turn()"""
 
     def on_action(self, pid, dict_data):
         '''

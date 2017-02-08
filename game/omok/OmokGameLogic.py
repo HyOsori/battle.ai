@@ -23,17 +23,34 @@ class OmokGameLogic(TurnGameLogic):
         # Declare color_array_init.
         self.board = [[0 for x in range(self.width)] for y in range(self.height)]
 
-    def on_start(self, player_list):
-        super(OmokGameLogic, self).on_start(player_list)
+    def on_ready(self, pid_list):
+        init_dict = {}
+        color_count = 0;
+        self._player_list = pid_list
+
+        self._result_dict = dict(
+            zip(self._player_list, ['draw'] * len(self._player_list))
+        )
+        self._turn_num = -1
+        self.change_turn()
+
+        for i in pid_list:
+            color_count += 1
+            init_dict[i] = {}
+            init_dict[i]["width"] = self.width
+            init_dict[i]["height"] = self.width
+            init_dict[i]["color"] = color_count
+
+        logging.debug(init_dict)
+        self._game_server.on_init_game(init_dict)
+
+    def on_start(self):
         logging.debug('GameLogic : ON_START')
 
         self.board = [[0 for x in range(self.width)] for y in range(self.height)]
 
         # shared_dict for initialized board
         shared_dict = self.get_shared_dict()
-        #shared_dict['width'] = self.width
-        #shared_dict['height'] = self.height
-        #shared_dict['board'] = self.board
 
         loop_phase = OmokLoopPhase(self, 'loop')
         finish_phase = OmokFinishPhase(self, 'finish')
