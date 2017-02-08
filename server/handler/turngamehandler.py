@@ -40,8 +40,8 @@ class TurnGameHandler(GameHandler):
         except json.JSONDecodeError:
             self.handle_game_end(NOT_JSON_DATA, {})
         except Exception as e:
+            e.with_traceback()
             self.handle_game_end(UNEXPECTED_ERROR, {})
-            logging.debug(e.with_traceback(None))
 
     def request(self, pid, msg_type, data):
         """

@@ -39,7 +39,7 @@ class GameHandler:
         Handle game playing
         """
         logging.info("=====Game Start=====")
-        yield self._play_handler(None)
+        yield self._play_handler()
         logging.info("=====Game End=====")
         self.destroy_room()
         logging.info("=====Destroy Room=====")
