@@ -1,3 +1,5 @@
+import game.debugger as logging
+
 # coding=utf-8
 class TurnGameLogic(object):
     def __init__(self, game_server):
@@ -71,13 +73,14 @@ class TurnGameLogic(object):
         return self._player_list[self._turn_num % length]
 
     def request(self, pid, message_type, dict_data):
-        '''
+        """
         해당 유저에게 message_type와 부가정보 dict_data에 맞는 반환을 요청한다.
         :param pid: 요청당할 사용자
         :param message_type: 요청하는 메시지
         :param dict_data: 요청할 때의 부가정보
         :return:
-        '''
+        """
+
         self._game_server.request(pid, message_type, dict_data)
 
     def request_all(self, message_type, dict_data):
