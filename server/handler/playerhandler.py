@@ -66,6 +66,7 @@ class PlayerHandler(tornado.tcpserver.TCPServer):
 
             self.player_list[username] = player
             for attendee in self.attendee_list.values():
+                logging.debug("user notify added");
                 attendee.notice_user_added(username)
 
             on_close_func = functools.partial(self._on_close, username)

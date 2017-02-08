@@ -55,7 +55,7 @@ class Player(User):
 class Observer(User):
     def __init__(self, conn):
         User.__init__(self, conn)
-        self.observer_flag = True
+        self.observer_flag = False
 
     def notice_user_added(self, added_player):
         if self.observer_flag:
