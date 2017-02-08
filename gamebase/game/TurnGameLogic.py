@@ -100,7 +100,7 @@ class TurnGameLogic(object):
         for pid in self._player_list:
             self.request(pid, message_type, dict_data)
 
-    def end(self, is_valid_end, result_list=None):
+    def end(self, error_code , result_list=None):
         '''
         서버의 on_end를 호출하여 logic server가 종료하였음을 알려준다.
         :param is_valid_end: 정상적인 종료였는지 아닌지 boolean 형태로 전해준다.
@@ -110,7 +110,7 @@ class TurnGameLogic(object):
         if not (result_list is None):
             result_list = self._result_dict
 
-        self._game_server.on_end(is_valid_end, result_list)
+        self._game_server.on_end(error_code, result_list)
 
     def append_phase(self, phase):
         '''

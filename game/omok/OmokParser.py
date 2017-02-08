@@ -51,12 +51,10 @@ class OmokParser(AIParser):
         print("parsing_data is called")
         base = super(OmokParser, self).parsing_data(decoding_data)
         print("super.parsing_data is called")
-        print("self.msg_type: " + self.msg_type)
+        print("self.msg_type: " + str(decoding_data))
         ret = None
         if self.msg_type == 'loop':
-            ret = self.loop_phase(self.board)
-            self.game_progress(ret)
-            logging.debug(ret)
+            ret = self.loop_phase(decoding_data['data']['board'])
         if self.msg_type == 'notify_init_loop':
             ret = self.notify_loop_init()
         if self.msg_type == 'notify_change_round':
@@ -94,10 +92,3 @@ class OmokParser(AIParser):
         send_msg = self.make_send_msg(self.msg_type, parsing_data)
         return send_msg
 
-    def game_progress(self, game_data):
-        x_pos = game_data["x"]
-        y_pos = game_data["y"]
-        logging.debug(self.board)
-        self.game_data['board'][x_pos][y_pos] = 1
-        self.board[x_pos][y_pos] = 1
-        logging.debug(self.board)

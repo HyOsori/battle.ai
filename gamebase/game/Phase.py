@@ -12,9 +12,6 @@ class Phase(object):
     def do_action(self, pid, dict_data):
         return True
 
-    def on_end(self):
-        pass
-
     def change_phase(self, index):
         self._logic_server.change_phase(index)
 
@@ -29,6 +26,9 @@ class Phase(object):
 
     def request_all(self, dict_data):
         self._logic_server.request_all(self.message_type, dict_data)
+
+    def on_end(self, error_code, result):
+        self._logic_server.on_end(error_code, result)
 
     def end(self, is_valid_end, result_list=None):
         self._logic_server.end(is_valid_end, result_list)

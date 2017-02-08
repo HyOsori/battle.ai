@@ -63,6 +63,9 @@ class OmokGameLogic(TurnGameLogic):
         logging.debug('OmokGameLogic -> LoopPhase')
         self.change_phase(0)
 
+    def end(self, error_code ,result):
+        self._game_server.on_end(error_code, result)
+
 
 class OmokLoopPhase(Phase):
     def __init__(self, logic_server, message_type):
@@ -93,7 +96,7 @@ class OmokLoopPhase(Phase):
         self.round = 0  # Check Rounds.
         self.initialize = False  # Initialize arrays if new round starts.
 
-        self.notify_to_front_init()
+        #self.notify_to_front_init()
 
         self.change_turn(0)
         self.request_to_client(1, 2)
@@ -108,10 +111,17 @@ class OmokLoopPhase(Phase):
         if pid == self.player_list[1]:
             ruler = 2
 
+        # when game end
+        # self._game_server.on_end(0, {"winnner" : p1})
+        # self.notify_to_front(ruler)
 
-        #self.notify_to_front(ruler)
+        x_pos = dict_data["x"]
+        y_pos = dict_data["y"]
 
+        if self.check_game_end(ruler, x_pos, y_pos):
+            self.end({"winner": self.player_list[0]})
 
+        logging.debug(dict_data)
         if self.initialize:  # Initialize the arrays if new(2nd) round starts.
             self.board = [[0 for x in range(self.width)] for y in range(self.height)]
             self.initialize = False
@@ -131,16 +141,11 @@ class OmokLoopPhase(Phase):
         self.change_turn()
         self.request_to_client(ruler_self, ruler_enemy)
 
-    def on_end(self):
-        super(OmokLoopPhase, self).on_end()
+    def on_end(self, result):
+        super(OmokLoopPhase, self).on_end(0, result)
         # logging.debug('PHASE LOOP : ON_END')
 
-    def notify_to_front_init(self):
-        notify_dict = {
-            'width': self.width,
-            'height': self.height
-        }
-        self.notify_init(notify_dict)
+
 
     def notify_to_front(self, ruler):
         notify_dict = {
@@ -173,6 +178,41 @@ class OmokLoopPhase(Phase):
             'board': self.board
         }
         self.request(self.now_turn(), info_dict)
+
+    def check_game_end(self, color, x_pos, y_pos):
+        # 정상종료나 에러아무거나 나오면 Finish Phase
+        self.board[x_pos][y_pos] = color
+        for i in range(20):
+            for j in range(20):
+                if self.board[i][j] == 0:
+                    return False
+
+        return True
+
+        if self.board[x_pos][y_pos] != 0:
+            # error
+            pass
+        else:
+            self.board[x_pos][y_pos] = color
+
+    # def check_omok(turn, xPos, yPos){
+    # if (addOmok(turn, xPos, yPos, -1, -1) + addOmok(turn, xPos, yPos, 1, 1) == 4) print("end");
+    # if (addOmok(turn, xPos, yPos, 0, -1) + addOmok(turn, xPos, yPos, 0, 1) == 4) alert("end");
+    # if (addOmok(turn, xPos, yPos, 1, -1) + addOmok(turn, xPos, yPos, -1, 1) == 4) alert("end");
+    # if (addOmok(turn, xPos, yPos, -1, 0) + addOmok(turn, xPos, yPos, 1, 0) == 4) alert("end");
+    #
+    # def addOmok(turn, xPos, yPos, xDir, yDir):
+    #     if (xPos + xDir < 0): return 0
+    #     if (xPos + xDir > 18): return 0
+    #     if (yPos + yDir < 0): return 0
+    #     if (yPos + yDir > 18): return 0
+    #
+    #     if (self.board[xPos + xDir][yPos + yDir] == turn):
+    #         return 1 + addOmok(turn, xPos + xDir, yPos + yDir, xDir, yDir);
+    #     else:
+    #         return 0;
+
+
 
 
 class OmokFinishPhase(Phase):
