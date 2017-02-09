@@ -180,36 +180,44 @@ class OmokLoopPhase(Phase):
 
     def check_game_end(self, color, x_pos, y_pos):
         # 정상종료나 에러아무거나 나오면 Finish Phase
-        self.board[x_pos][y_pos] = color
+        if self.board[x_pos][y_pos] != 0:
+            return {"error_code": 100} #logic error 100
+        else:
+            self.board[x_pos][y_pos] = color
+            if self.check_omok(color, x_pos, y_pos):
+                return True #game end(win)
+
         for i in range(self.width):
             for j in range(self.height):
                 if self.board[i][j] == 0:
                     return False
 
-        return True
+        return True #game end(draw)
 
-        if self.board[x_pos][y_pos] != 0:
-            # error
-            pass
+    def check_omok(self, color, xPos, yPos):
+        if self.add_omok(color, xPos, yPos, -1, -1) + self.add_omok(color, xPos, yPos, 1, 1) == 4:
+            return True
+        if self.add_omok(color, xPos, yPos, 0, -1) + self.add_omok(color, xPos, yPos, 0, 1) == 4:
+            return True
+        if self.add_omok(color, xPos, yPos, 1, -1) + self.add_omok(color, xPos, yPos, -1, 1) == 4:
+            return True
+        if self.add_omok(color, xPos, yPos, -1, 0) + self.add_omok(color, xPos, yPos, 1, 0) == 4:
+            return True
+
+    def add_omok(self, color, x_pos, y_pos, x_dir, y_dir):
+        if x_pos + x_dir < 0:
+            return 0
+        if x_pos + x_dir > 18:
+            return 0
+        if y_pos + y_dir < 0:
+            return 0
+        if y_pos + y_dir > 18:
+            return 0
+
+        if self.board[x_pos + x_dir][y_pos + y_dir] == color:
+            return 1 + self.add_omok(color, x_pos + x_dir, y_pos + y_dir, x_dir, y_dir)
         else:
-            self.board[x_pos][y_pos] = color
-
-    # def check_omok(turn, xPos, yPos){
-    # if (addOmok(turn, xPos, yPos, -1, -1) + addOmok(turn, xPos, yPos, 1, 1) == 4) print("end");
-    # if (addOmok(turn, xPos, yPos, 0, -1) + addOmok(turn, xPos, yPos, 0, 1) == 4) alert("end");
-    # if (addOmok(turn, xPos, yPos, 1, -1) + addOmok(turn, xPos, yPos, -1, 1) == 4) alert("end");
-    # if (addOmok(turn, xPos, yPos, -1, 0) + addOmok(turn, xPos, yPos, 1, 0) == 4) alert("end");
-    #
-    # def addOmok(turn, xPos, yPos, xDir, yDir):
-    #     if (xPos + xDir < 0): return 0
-    #     if (xPos + xDir > 18): return 0
-    #     if (yPos + yDir < 0): return 0
-    #     if (yPos + yDir > 18): return 0
-    #
-    #     if (self.board[xPos + xDir][yPos + yDir] == turn):
-    #         return 1 + addOmok(turn, xPos + xDir, yPos + yDir, xDir, yDir);
-    #     else:
-    #         return 0;
+            return 0
 
 
 
