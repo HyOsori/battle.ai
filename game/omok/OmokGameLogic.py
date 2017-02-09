@@ -17,8 +17,8 @@ class OmokGameLogic(TurnGameLogic):
     def __init__(self, game_server):
         super(OmokGameLogic, self).__init__(game_server)
         logging.debug('GameLogic : INIT')
-        self.width = 20
-        self.height = 20
+        self.width = 5
+        self.height = 5
 
         # Declare color_array_init.
         self.board = [[0 for x in range(self.width)] for y in range(self.height)]
