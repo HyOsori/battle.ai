@@ -207,11 +207,11 @@ class OmokLoopPhase(Phase):
     def add_omok(self, color, x_pos, y_pos, x_dir, y_dir):
         if x_pos + x_dir < 0:
             return 0
-        if x_pos + x_dir > 18:
+        if x_pos + x_dir > self.width - 1:
             return 0
         if y_pos + y_dir < 0:
             return 0
-        if y_pos + y_dir > 18:
+        if y_pos + y_dir > self.height - 1:
             return 0
 
         if self.board[x_pos + x_dir][y_pos + y_dir] == color:
