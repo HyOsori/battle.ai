@@ -1,17 +1,18 @@
-from game.omok.OmokParser import OmokParser
+from game.omok.OmokParser import OMOKParser
 
 import game.debugger as logging
 
-class MyOmokParser(OmokParser):
+
+class MyOMOKParser(OMOKParser):
     def __init__(self):
-        '''
+        """
         Develop own your omok AI
         width and height are board's width and height
         empty place is represented integer 0
         and your color is represented by number 0 1 2 ...
 
         your color is set automatically.
-        '''
+        """
         self.width = 0
         self.height = 0
         self.my_color = 0
@@ -19,7 +20,6 @@ class MyOmokParser(OmokParser):
 
     def init_phase(self, init_data):
         """
-
         :param init_data: {"width": (Integer), "height": (Integer), "color": (Integer)}
         :return: None
         """
@@ -41,4 +41,3 @@ class MyOmokParser(OmokParser):
             for y in range(self.height):
                 if board[x][y] == 0:
                     return {"x": x, "y": y}
-
