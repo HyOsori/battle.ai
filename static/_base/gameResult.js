@@ -1,3 +1,11 @@
-/**
- * Created by First on 2017-02-15.
- */
+
+//load elements-----------------------------------------------------
+var resultBoard = document.getElementById("id_resultBoard_canvas");
+
+var homeBtn = document.getElementById("id_goToLobby_btn");
+
+//basic functions for gameBoard------------------------------------------
+
+function recvGameResult(JSON_data) {
+    loadPage("gameResult");
+}
