@@ -1,6 +1,6 @@
 
 //load elements-----------------------------------------------------
-var message_box = document.getElementsByClassName("class_messages");
+var message_box = document.getElementById("id_messages");
 
 var player_list = document.getElementById("id_playerList_ul");
 var match_btn = document.getElementById("id_match_btn");

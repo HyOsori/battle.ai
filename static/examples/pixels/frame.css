@@ -126,7 +126,7 @@ ul {
 canvas {
 	position:relative;
 }
-.class_messages {
+#id_messages {
 	flex-grow:4;
 	margin:5px;
 	max-height:250px;

@@ -42,7 +42,7 @@ button {
 #id_playerList_ul .class_selected {
     background-color:whitesmoke;
 }
-.class_messages {
+#id_messages {
     background:black;
     color:white;
     overflow-y:auto;
