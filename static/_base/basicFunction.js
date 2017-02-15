@@ -26,7 +26,7 @@ function drawText(canvas, text, x, y) {
         y = 50;
     }
     var ctx = canvas.getContext('2d');
-    ctx.font = '20px serif';
+    ctx.font = '10px serif';
     ctx.fillText(text, x, y);
 }
 
@@ -35,4 +35,26 @@ function clearCanvas(canvas) {
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.beginPath();
+}
+
+function resizeCanvas(canvas) {
+    var canvas_size = $("#id_gameBoard").find(".class_right").innerHeight();
+    canvas_size = canvas_size - 20;
+    
+    var msg_container_size = $("#id_log").width();
+    msg_container_size = msg_container_size + 10;
+    
+    $("#" + canvas.id).attr({"width": canvas_size, "height": canvas_size});
+    $("#id_messages").css("width", msg_container_size);
+}
+
+function JSONtoString(object) {
+    var results = [];
+    for (var property in object) {
+        var value = object[property];
+        if (value)
+            results.push(property.toString() + ': ' + value);
+        }
+                
+        return '{' + results.join(', ') + '}';
 }

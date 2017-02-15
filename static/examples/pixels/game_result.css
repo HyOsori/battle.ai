@@ -7,3 +7,6 @@
 #id_gameResults_ul li .class_selected {
     border-color:red;
 }
+#id_resultBoard_canvas {
+    border-style:solid;
+}

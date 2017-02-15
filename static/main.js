@@ -44,6 +44,10 @@ window.onload = function() {
             
             ws.send(returnJSON("request_match", data));
         });
+
+        homeBtn.addEventListener("click", function() {
+            ws.send(loadPage("lobby"));
+        });
     } else {
         message_box.innerHTML = "WebSocket NOT supported by your Browser!";
     }
