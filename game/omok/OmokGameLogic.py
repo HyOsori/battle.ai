@@ -117,24 +117,42 @@ class OmokLoopPhase(Phase):
         x_pos = dict_data["x"]
         y_pos = dict_data["y"]
 
-        if self.check_game_end(ruler, x_pos, y_pos):
-            self.end(0, {"winner": self.player_list[0]})
+        result = self.check_game_end(ruler, x_pos, y_pos)
+        if result["type"] == 1:
+            # Normal flow
+            pass
+        elif result["type"] == 0:
+            # [WIN] complete omok
+            self.end(0, {"winner": result["winner"]})
+        elif result["type"] == 100:
+            # [WIN] put again same board
+            self.end(100, {"winner": result["winner"]})
+        elif result["type"] == 101:
+            # [DRAW] all board filled
+            self.end(101, {"winner": 0})
+
+        if result["type"] != 1:
+            return
+
+            #self.end(0, {"winner": self.player_list[0]})
 
         self.notify_to_front()  # send web
 
         logging.debug(dict_data)
+
         if self.initialize:  # Initialize the arrays if new(2nd) round starts.
-            self.board = [[0 for x in range(self.width)] for y in range(self.height)]
-            self.initialize = False
+             self.board = [[0 for x in range(self.width)] for y in range(self.height)]
+             self.initialize = False
 
-            if pid == self.player_list[1]:
-                self.change_turn()
-
-        if self.round == 2:  # Change phase if two rounds are finished.
-            self.shared_dict['score'] = self.score
-            # logging.debug('LoopPhase -> FinishPhase')
-            self.change_phase(self.next_phase)
-            return
+             if pid == self.player_list[1]:
+                 self.change_turn()
+        #
+        # if self.round == 2:  # Change phase if two rounds are finished.
+        #     self.shared_dict['score'] = self.score
+        #     # logging.debug('LoopPhase -> FinishPhase')
+        #     self.change_phase(self.next_phase)
+        #     return
+        #
 
         ruler_enemy = ruler  # Ruler who finished absorbing
         ruler_self = ruler % 2 + 1  # Ruler who will take the request
@@ -181,18 +199,22 @@ class OmokLoopPhase(Phase):
     def check_game_end(self, color, x_pos, y_pos):
         # 정상종료나 에러아무거나 나오면 Finish Phase
         if self.board[x_pos][y_pos] != 0:
-            return {"error_code": 100} #logic error 100
+            # TYPE 100 이미 있는 곳에 돌을 놨다!
+            return {"type": 100, "winner": (color - 3)}
         else:
             self.board[x_pos][y_pos] = color
             if self.check_omok(color, x_pos, y_pos):
-                return True #game end(win)
+                # TYPE 0 5목 완성!
+                return {"type": 0, "winner": color}
 
         for i in range(self.width):
             for j in range(self.height):
+                # TYPE 1 자리가 남아있어서 노말진행!
                 if self.board[i][j] == 0:
-                    return False
+                    return {"type": 1}
 
-        return True #game end(draw)
+        # TYPE 101 모든돌이 꽉 찼다!
+        return {"type": 101}
 
     def check_omok(self, color, xPos, yPos):
         if self.add_omok(color, xPos, yPos, -1, -1) + self.add_omok(color, xPos, yPos, 1, 1) == 4:
