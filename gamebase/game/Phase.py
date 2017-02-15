@@ -27,11 +27,8 @@ class Phase(object):
     def request_all(self, dict_data):
         self._logic_server.request_all(self.message_type, dict_data)
 
-    def on_end(self, error_code, result):
-        self._logic_server.on_end(error_code, result)
-
-    def end(self, is_valid_end, result_list=None):
-        self._logic_server.end(is_valid_end, result_list)
+    def end(self, error_code, result_list=None):
+        self._logic_server.end(error_code, result_list)
 
     def get_shared_dict(self):
         return self._logic_server.get_shared_dict()

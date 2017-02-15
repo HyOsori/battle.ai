@@ -118,18 +118,22 @@ class OmokLoopPhase(Phase):
         y_pos = dict_data["y"]
 
         result = self.check_game_end(ruler, x_pos, y_pos)
+
         if result["type"] == 1:
             # Normal flow
             pass
         elif result["type"] == 0:
             # [WIN] complete omok
             self.end(0, {"winner": result["winner"]})
+            #self.end(0, {"winner": result["winner"]})
         elif result["type"] == 100:
             # [WIN] put again same board
             self.end(100, {"winner": result["winner"]})
+            #self.end(100, {"winner": result["winner"]})
         elif result["type"] == 101:
             # [DRAW] all board filled
             self.end(101, {"winner": 0})
+            #self.end(101, {"winner": 0})
 
         if result["type"] != 1:
             return
@@ -141,11 +145,11 @@ class OmokLoopPhase(Phase):
         logging.debug(dict_data)
 
         if self.initialize:  # Initialize the arrays if new(2nd) round starts.
-             self.board = [[0 for x in range(self.width)] for y in range(self.height)]
-             self.initialize = False
+            self.board = [[0 for x in range(self.width)] for y in range(self.height)]
+            self.initialize = False
 
-             if pid == self.player_list[1]:
-                 self.change_turn()
+            if pid == self.player_list[1]:
+                self.change_turn()
         #
         # if self.round == 2:  # Change phase if two rounds are finished.
         #     self.shared_dict['score'] = self.score
@@ -160,8 +164,8 @@ class OmokLoopPhase(Phase):
         self.change_turn()
         self.request_to_client(ruler_self, ruler_enemy)
 
-    def on_end(self, result):
-        super(OmokLoopPhase, self).on_end(0, result)
+    def on_end(self, error_code, result):
+        super(OmokLoopPhase, self).on_end(error_code, result)
         # logging.debug('PHASE LOOP : ON_END')
 
     def notify_to_front(self):
