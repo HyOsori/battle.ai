@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <link rel="stylesheet" type="text/css" href="{{ static_url('frame.css')}}" >
-        <link rel="stylesheet" type="text/css" href="{{ static_url('lobby.css')}}" >
-        <link rel="stylesheet" type="text/css" href="{{ static_url('ingame.css')}}" >
-        <link rel="stylesheet" type="text/css" href="{{ static_url('game_result.css')}}" >
-        <link rel="stylesheet" type="text/css" href="{{ static_url('alertify.core.css')}}" />
-        <link rel="stylesheet" type="text/css" href="{{ static_url('alertify.default.css')}}" />
+        <link rel="stylesheet" type="text/css" href="{{ static_url('examples/pixels/frame.css')}}" >
+        <link rel="stylesheet" type="text/css" href="{{ static_url('examples/pixels/lobby.css')}}" >
+        <link rel="stylesheet" type="text/css" href="{{ static_url('examples/pixels/ingame.css')}}" >
+        <link rel="stylesheet" type="text/css" href="{{ static_url('examples/pixels/game_result.css')}}" >
+        <link rel="stylesheet" type="text/css" href="{{ static_url('_plugin/alertify.core.css')}}" />
+        <link rel="stylesheet" type="text/css" href="{{ static_url('_plugin/alertify.default.css')}}" />
     </head>
     <body>
         <div id="id_container">
@@ -50,12 +50,15 @@
 		</div>
         <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
         <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-        <script type="text/javascript" src="{{ static_url('pako.js') }}"></script>
-        <script type="text/javascript" src="{{ static_url('Queue.js') }}"></script>
-        <script type="text/javascript" src="{{ static_url('alertify.js') }}"></script>
-        <script type="text/javascript" src="{{ static_url('lobby.js') }}"></script>
-        <script type="text/javascript" src="{{ static_url('ingame_pixels.js') }}"></script>
-        <script type="text/javascript" src="{{ static_url('game_result_pixels.js') }}"></script>
+        <script type="text/javascript" src="{{ static_url('_plugin/pako.js') }}"></script>
+        <script type="text/javascript" src="{{ static_url('_plugin/Queue.js') }}"></script>
+        <script type="text/javascript" src="{{ static_url('_plugin/alertify.js') }}"></script>
+        <script type="text/javascript" src="{{ static_url('_base/basicFunction.js') }}"></script>
+        <script type="text/javascript" src="{{ static_url('_base/lobby.js') }}"></script>
+        <script type="text/javascript" src="{{ static_url('_base/gameBoard.js') }}"></script>
+        <script type="text/javascript" src="{{ static_url('_base/gameResult.js') }}"></script>
+        <script type="text/javascript" src="{{ static_url('_base/setting.js') }}"></script>
+        <script type="text/javascript" src="{{ static_url('main.js') }}"></script>
         <br><br>
     </body>
 </html>
