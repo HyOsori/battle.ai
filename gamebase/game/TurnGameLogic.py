@@ -100,13 +100,13 @@ class TurnGameLogic(object):
         for pid in self._player_list:
             self.request(pid, message_type, dict_data)
 
-    def end(self, error_code , result_list=None):
-        '''
+    def end(self, error_code, result_list=None):
+        """
         서버의 on_end를 호출하여 logic server가 종료하였음을 알려준다.
-        :param is_valid_end: 정상적인 종료였는지 아닌지 boolean 형태로 전해준다.
+        :param error_code: 정상적인 종료였는지 아닌지 boolean 형태로 전해준다.
         :param result_list: 누가 이기고, 지고, 무승부 했는지 정보를 list 형태로 전해준다.
         :return:
-        '''
+        """
         if not (result_list is None):
             result_list = self._result_dict
 
