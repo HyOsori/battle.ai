@@ -1,13 +1,3 @@
-#id_board_canvas {
+#id_gameBoard_canvas {
     border-style:solid;
-}
-#id_chart1 {
-}
-#id_chart1 {
-}
-#id_gameMessage_second {
-    text-align:center;
-    margin:0px;
-    padding:0px;
-    font-size:150%;
 }

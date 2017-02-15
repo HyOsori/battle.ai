@@ -20,7 +20,7 @@ button {
     color:black;
     border-radius:5px;
 }
-#id_title {
+.class_title {
     text-align:center;
     padding:10px;
 }
@@ -33,29 +33,20 @@ button {
 #id_log li {
     text-align:left;
 }
-#id_list_ul {
+#id_playerList_ul {
     overflow-y:scroll;
 }
-#id_list_ul li {
+#id_playerList_ul li {
     text-align:center;
 }
-#id_list_ul .class_selected {
+#id_playerList_ul .class_selected {
     background-color:whitesmoke;
 }
-#id_dummyclient_ul li {
-    text-align:center;
-}
-#id_dummyclient_ul .class_selected {
-    background-color:whitesmoke;
-}
-#id_messages {
+.class_messages {
     background:black;
     color:white;
     overflow-y:auto;
     overflow-x:hidden;
-}
-#id_btnContainer {
-
 }
 #id_search {
     border:2px solid white;
