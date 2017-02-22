@@ -10,7 +10,6 @@ class TurnGameLogic(object):
         self._current_phase = None
         self._shared_dict = {}
         self._player_list = None
-        self._result_dict = None
         self._turn_num = None
         self._message_type = None
 
@@ -38,7 +37,7 @@ class TurnGameLogic(object):
 
     def change_phase(self, index):
         """
-        change_phase -> current phase's on_start#use
+        change_phase -> current phase's on_start
         :param index: phase index
         :return: void
         """
@@ -50,16 +49,13 @@ class TurnGameLogic(object):
 
     def change_turn(self, index=None):
         """
-        :param index: user number#use
+        :param index: user number
         :return: void
         """
         if index is None:
             self._turn_num += 1
         else:
             self._turn_num = index
-
-        #while self._result_dict[self.now_turn()] == 'error':
-         #   self._turn_num += 1
 
     def now_turn(self):
         """
@@ -85,40 +81,27 @@ class TurnGameLogic(object):
         :param result_list:
         :return:
         """
-        if not (result_list is None):
-            result_list = self._result_dict
-
+        logging.debug(result_list)
         self._game_server.on_end(error_code, result_list)
 
     def append_phase(self, phase):
         """
-        add phase to phase_list#use
+        add phase to phase_list
         :param phase: phase to add
         :return:
         """
         self._phase_list.append(phase)
         return len(self._phase_list) - 1
 
-    def get_shared_dict(self):#use
+    def get_shared_dict(self):
         return self._shared_dict
 
     def get_player_list(self):
         return self._player_list
 
-    def set_player_result(self, pid, result):
-        self._result_dict[pid] = result
-
-    def set_all_player_result(self, result):
-        for name, res in self._result_dict.iteritems():
-            if res != 'error':
-                self._result_dict[name] = result
-
-    def get_player_result(self, pid):
-        return self._result_dict[pid]
-
     def notify(self, message_type, dict_data):
         """
-        send data to front
+        Send Data to Observer
         :param message_type:
         :param dict_data:
         :return:

@@ -120,6 +120,7 @@ class GameHandler:
         self.handle_game_end(error_code, message)
 
     def handle_game_end(self, error_code, message={}):
+
         message = {MSG: GAME_HANDLER, MSG_TYPE: END, ERROR_CODE: error_code, DATA: message}
         message = json.dumps(message)
 
