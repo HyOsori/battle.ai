@@ -38,7 +38,7 @@ class TurnGameLogic(object):
 
     def change_phase(self, index):
         """
-        change_phase -> current phase's on_start
+        change_phase -> current phase's on_start#use
         :param index: phase index
         :return: void
         """
@@ -50,16 +50,16 @@ class TurnGameLogic(object):
 
     def change_turn(self, index=None):
         """
-        :param index: user number
+        :param index: user number#use
         :return: void
         """
-        if not (index is None):
-            self._turn_num = index
+        if index is None:
+            self._turn_num += 1
         else:
-            self._turn_num += 1
+            self._turn_num = index
 
-        while self._result_dict[self.now_turn()] == 'error':
-            self._turn_num += 1
+        #while self._result_dict[self.now_turn()] == 'error':
+         #   self._turn_num += 1
 
     def now_turn(self):
         """
@@ -92,14 +92,14 @@ class TurnGameLogic(object):
 
     def append_phase(self, phase):
         """
-        add phase to phase_list
+        add phase to phase_list#use
         :param phase: phase to add
         :return:
         """
         self._phase_list.append(phase)
         return len(self._phase_list) - 1
 
-    def get_shared_dict(self):
+    def get_shared_dict(self):#use
         return self._shared_dict
 
     def get_player_list(self):
