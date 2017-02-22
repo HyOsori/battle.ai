@@ -24,9 +24,6 @@ class Phase(object):
     def request(self, pid, dict_data):
         self._logic_server.request(pid, self.message_type, dict_data)
 
-    def request_all(self, dict_data):
-        self._logic_server.request_all(self.message_type, dict_data)
-
     def end(self, error_code, result_list=None):
         self._logic_server.end(error_code, result_list)
 
@@ -36,23 +33,5 @@ class Phase(object):
     def get_player_list(self):
         return self._logic_server.get_player_list()
 
-    def set_player_result(self, pid, result):
-        self._logic_server.set_player_result(pid, result)
-
-    def set_all_player_result(self, result):
-        self._logic_server.set_all_player_result(result)
-
-    def get_player_result(self, pid):
-        return self._logic_server.get_player_result(pid)
-
     def notify(self, message_type, dict_data):
         self._logic_server.notify(message_type, dict_data)
-
-    def notify_init(self, dict_data):
-        self._logic_server.notify(self.notify_init_message_type, dict_data)
-
-    def notify_finish(self, dict_data):
-        self._logic_server.notify(self.notify_finish_message_type, dict_data)
-
-    def notify_free(self, notify_message_type, dict_data):
-        self._logic_server.notify(notify_message_type, dict_data)
