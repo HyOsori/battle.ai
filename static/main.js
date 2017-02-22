@@ -12,7 +12,7 @@ window.onload = function() {
 
             console.log(received_msg);
             message += ">> " + received_msg + "<br>";
-            message_box.innerHTML = message;
+            Lobby.message_box.innerHTML = message;
 
             if (typeof setting.protocol[data.msg] == "function") {
                 request = setting.protocol[data.msg](data);
@@ -26,15 +26,15 @@ window.onload = function() {
         };
         ws.onclose = function() {
             message = "";
-            message_box.innerHTML = "Connection is closed...";
+            Lobby.message_box.innerHTML = "Connection is closed...";
         };
         
         $('#id_match_btn').bind('click',function() {
             var selectedPlayers = [];
-            var speed = speed_input.value;
+            var speed = Lobby.speed_input.value;
             var data = new Object();
-            for (var i = 0; i < player_list.childNodes.length; ++i){
-                var child = player_list.childNodes[i];
+            for (var i = 0; i < Lobby.player_list.childNodes.length; ++i){
+                var child = Lobby.player_list.childNodes[i];
                 if (child.className == 'class_selected'){
                     selectedPlayers.push(child.innerText);
                 }
@@ -45,10 +45,10 @@ window.onload = function() {
             ws.send(returnJSON("request_match", data));
         });
 
-        homeBtn.addEventListener("click", function() {
+        GameResult.homeBtn.addEventListener("click", function() {
             ws.send(loadPage("lobby"));
         });
     } else {
-        message_box.innerHTML = "WebSocket NOT supported by your Browser!";
+        Lobby.message_box.innerHTML = "WebSocket NOT supported by your Browser!";
     }
 };

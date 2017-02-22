@@ -1,31 +1,32 @@
+var Lobby = new Object();
 
 //load elements-----------------------------------------------------
-var message_box = document.getElementById("id_messages");
+Lobby.message_box = document.getElementById("id_messages");
 
-var player_list = document.getElementById("id_playerList_ul");
-var match_btn = document.getElementById("id_match_btn");
+Lobby.player_list = document.getElementById("id_playerList_ul");
+Lobby.match_btn = document.getElementById("id_match_btn");
 
-var speed_input = document.getElementById("id_setSpeed");
+Lobby.speed_input = document.getElementById("id_setSpeed");
 
 //basic functions for lobby------------------------------------------
-function playerClickHandler() {
-    match_btn.disabled='true';
+Lobby.playerClickHandler = function(event) {
+    Lobby.match_btn.disabled='true';
 
     if (event.target.className == 'class_selected'){
         event.target.className = '';
-    } else if (countSelectedPlayer() < setting.max_match_cnt){
+    } else if (Lobby.countSelectedPlayer() < setting.max_match_cnt){
         event.target.className = 'class_selected';
     }
 
-    if (countSelectedPlayer() >= setting.min_match_cnt && countSelectedPlayer() <= setting.max_match_cnt) {
-        match_btn.removeAttribute('disabled');
+    if (Lobby.countSelectedPlayer() >= setting.min_match_cnt && Lobby.countSelectedPlayer() <= setting.max_match_cnt) {
+        Lobby.match_btn.removeAttribute('disabled');
     }
 }
 
-function countSelectedPlayer() {
+Lobby.countSelectedPlayer = function() {
     var count = 0;
-    for(var i = 0; i < player_list.childNodes.length; ++i){
-        var child = player_list.childNodes[i];
+    for(var i = 0; i < Lobby.player_list.childNodes.length; ++i){
+        var child = Lobby.player_list.childNodes[i];
         if (child.className == 'class_selected') {
             ++count;
         }
@@ -33,68 +34,68 @@ function countSelectedPlayer() {
     return count;
 }
 
-function renewPlayerList(JSON_data) {
+Lobby.renewPlayerList = function(JSON_data) {
     var users = JSON_data.users;
     $.each(users, function (key) {
         var text = users[key];
         if (text.length) {
-            for (var i = 0; i < player_list.childNodes.length; i++) {
-                var child = player_list.childNodes[i];
+            for (var i = 0; i < Lobby.player_list.childNodes.length; i++) {
+                var child = Lobby.player_list.childNodes[i];
                 if (text == child.innerText) {
                     return;
                 }
             }
             var li = document.createElement("li");
             li.appendChild(document.createTextNode(text));
-            li.addEventListener("click", playerClickHandler);
+            li.addEventListener("click", Lobby.playerClickHandler);
 
             if (text == "DUMMY") {
                 li.style.color = "blue";
-                player_list.insertBefore(li, player_list.firstChild);
+                Lobby.player_list.insertBefore(li, Lobby.player_list.firstChild);
             } else {
-                player_list.appendChild(li);
+                Lobby.player_list.appendChild(li);
             }
         }
     })
 }
 
-function addPlayer(JSON_data) {
+Lobby.addPlayer = function(JSON_data) {
     var user = JSON_data.user;
     if (user.length) {
-        for (var i = 0; i < player_list.childNodes.length; i++) {
-            var child = player_list.childNodes[i];
+        for (var i = 0; i < Lobby.player_list.childNodes.length; i++) {
+            var child = Lobby.player_list.childNodes[i];
             if (user == child.innerText) {
                 return;
             }
         }
         var li = document.createElement("li");
-        li.appendChild(document.createTextNode(text));
-        li.addEventListener("click", playerClickHandler);
+        li.appendChild(document.createTextNode(user));
+        li.addEventListener("click", Lobby.playerClickHandler);
 
         if (user == "DUMMY") {
             li.style.color = "blue";
-            player_list.insertBefore(li, player_list.firstChild);
+            Lobby.player_list.insertBefore(li, Lobby.player_list.firstChild);
         } else {
-            player_list.appendChild(li);
+            Lobby.player_list.appendChild(li);
         }
     }
 }
 
-function removePlayer(JSON_data) {
+Lobby.removePlayer = function(JSON_data) {
     var user = JSON_data.user;
     if (user.length) {
-        for (var i = 0; i < player_list.childNodes.length; i++) {
-            var child = player_list.childNodes[i];
+        for (var i = 0; i < Lobby.player_list.childNodes.length; i++) {
+            var child = Lobby.player_list.childNodes[i];
             if (user == child.innerText) {
                 child.remove();
             }
         }
     }
-    if (countSelectedPlayer() < setting.min_match_cnt) {
-        match_btn.disabled = 'true';
+    if (Lobby.countSelectedPlayer() < setting.min_match_cnt) {
+        Lobby.match_btn.disabled = 'true';
     }
 }
 
-function getMatchResponse(JSON_data) {
+Lobby.getMatchResponse = function(JSON_data) {
     loadPage("gameBoard");
 }

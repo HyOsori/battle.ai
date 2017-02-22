@@ -1,13 +1,12 @@
+var GameResult = new Object();
 
 //load elements-----------------------------------------------------
-var resultBoard = document.getElementById("id_resultBoard_canvas");
+GameResult.resultBoard = document.getElementById("id_resultBoard_canvas");
 
-var homeBtn = document.getElementById("id_goToLobby_btn");
+GameResult.homeBtn = document.getElementById("id_goToLobby_btn");
 
-//basic functions for gameBoard------------------------------------------
-
-function recvGameResult(JSON_data) {
-    resizeCanvas(resultBoard);
-    clearCanvas(resultBoard);
+//basic functions for gameResult------------------------------------------
+GameResult.recvGameResult = function(JSON_data) {
+    resizeCanvas(GameResult.resultBoard);
     loadPage("gameResult");
 }

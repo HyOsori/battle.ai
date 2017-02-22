@@ -1,17 +1,23 @@
+var GameBoard = new Object();
 
 //load elements-----------------------------------------------------
-var gameBoard = document.getElementById("id_gameBoard_canvas");
+GameBoard.canvas = document.getElementById("id_gameBoard_canvas");
 
-var turn = 0;
+GameBoard.canvas_text_size = 15;
+GameBoard.canvas_text_interval = 1.3;
+
+GameBoard.turn = 0;
 
 //basic functions for gameBoard------------------------------------------
-function gameStart() {
-    resizeCanvas(gameBoard);
-    clearCanvas(gameBoard);
+GameBoard.gameStart = function() {
+    GameBoard.turn = 0;
+    resizeCanvas(GameBoard.canvas);
+    clearCanvas(GameBoard.canvas);
 }
 
-function recvTurnResult(JSON_data) {
-    ++turn;
+GameBoard.recvTurnResult = function(JSON_data) {
+    ++GameBoard.turn;
 
-    drawText(gameBoard, JSONtoString(JSON_data.data), -1, turn * 10);
+    drawText(GameBoard.canvas, JSONtoString(JSON_data.data), GameBoard.canvas_text_size, 
+             -1, GameBoard.turn * GameBoard.canvas_text_size * GameBoard.canvas_text_interval);
 }
