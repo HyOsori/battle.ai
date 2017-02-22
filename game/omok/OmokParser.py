@@ -53,7 +53,7 @@ class OMOKParser(AIParser):
         ret = None
 
         if self.msg_type == 'loop':
-            ret = self.loop_phase(decoding_data['data']['board'])
+            ret = self.loop_phase(self.game_data["board"])
         elif self.msg_type == 'notify_init_loop':
             self.notify_loop_init()
         elif self.msg_type == 'notify_change_round':
