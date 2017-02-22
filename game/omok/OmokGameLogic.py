@@ -120,9 +120,8 @@ class OMOKLoopPhase(Phase):
             self.end(101, {"winner": 0})
 
         if result["type"] != 1:
+            self.notify_to_front()
             return
-
-
         # send web
         self.notify_to_front()
 
