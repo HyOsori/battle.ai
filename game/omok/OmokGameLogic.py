@@ -106,6 +106,8 @@ class OMOKLoopPhase(Phase):
 
         result = self.check_game_end(ruler, x_pos, y_pos)
 
+        self.notify_to_front()
+
         if result['type'] == 1:
             # Normal flow
             pass
@@ -120,10 +122,10 @@ class OMOKLoopPhase(Phase):
             self.end(101, {"winner": 0})
 
         if result["type"] != 1:
-            self.notify_to_front()
+            #self.notify_to_front()
             return
         # send web
-        self.notify_to_front()
+
 
         logging.debug(dict_data)
 
