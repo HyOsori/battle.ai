@@ -99,7 +99,7 @@ class OMOKLoopPhase(Phase):
         #self.notify_to_front_init()
 
         self.change_turn(0)
-        self.request_to_client(1, 2)
+        self.request_to_client()
 
     def do_action(self, pid, dict_data):
         super(OMOKLoopPhase, self).do_action(pid, dict_data)
@@ -150,7 +150,7 @@ class OMOKLoopPhase(Phase):
         ruler_self = ruler % 2 + 1  # Ruler who will take the request
 
         self.change_turn()
-        self.request_to_client(ruler_self, ruler_enemy)
+        self.request_to_client()
 
     def on_end(self, error_code, result):
         super(OMOKLoopPhase, self).on_end(error_code, result)
@@ -172,7 +172,7 @@ class OMOKLoopPhase(Phase):
         }
         self.notify_free('notify_change_round', notify_dict)
 
-    def request_to_client(self, ruler_self, ruler_enemy):
+    def request_to_client(self):
         logging.debug('Request ' + self.now_turn() + '\'s decision')
         info_dict = {
             'board': self.board
