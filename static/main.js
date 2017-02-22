@@ -3,6 +3,7 @@ window.onload = function() {
         var ws = new WebSocket("ws://" + window.location.host + "/websocket");
         var message = "";
         ws.onopen = function(evt) {
+            $(".class_title").html(setting.title);
             ws.send(loadPage("lobby"));
         };
         ws.onmessage = function(evt) {

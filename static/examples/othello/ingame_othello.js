@@ -29,11 +29,11 @@ function drawCircle(x, y, color) {
         ctx.fill();
     }
     else if (color == 2){
-            ctx.arc(margin + (interval / 2) + (interval * x), margin + (interval / 2) + (interval * y), (interval / 2) - 5, 0, Math.PI * 2);
-            ctx.fillStyle = "white"
-            ctx.fill();
-            ctx.strokeStyle = "black"
-            ctx.stroke();
+        ctx.arc(margin + (interval / 2) + (interval * x), margin + (interval / 2) + (interval * y), (interval / 2) - 5, 0, Math.PI * 2);
+        ctx.fillStyle = "white"
+        ctx.fill();
+        ctx.strokeStyle = "black"
+        ctx.stroke();
     }
     else if (color == 0)
         ctx.clearRect(margin + 1 + (interval * x), margin + 1 + (interval * y), interval - 2, interval - 2);
