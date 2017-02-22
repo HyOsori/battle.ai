@@ -64,7 +64,7 @@ class OMOKGameLogic(TurnGameLogic):
         logging.debug('OmokGameLogic -> LoopPhase')
         self.change_phase(0)
 
-    def end(self, error_code ,result):
+    def end(self, error_code, result):
         self._game_server.on_end(error_code, result)
 
 
@@ -132,6 +132,7 @@ class OMOKLoopPhase(Phase):
         if result["type"] != 1:
             return
 
+
         # send web
         self.notify_to_front()
 
@@ -144,6 +145,7 @@ class OMOKLoopPhase(Phase):
             if pid == self.player_list[1]:
                 self.change_turn()
 
+
         ruler_enemy = ruler  # Ruler who finished absorbing
         ruler_self = ruler % 2 + 1  # Ruler who will take the request
 
@@ -152,6 +154,7 @@ class OMOKLoopPhase(Phase):
 
     def on_end(self, error_code, result):
         super(OMOKLoopPhase, self).on_end(error_code, result)
+
         # logging.debug('PHASE LOOP : ON_END')
 
     def notify_to_front(self):
@@ -183,7 +186,9 @@ class OMOKLoopPhase(Phase):
             return {"type": 100, "winner": (color - 3)}
         else:
             self.board[x_pos][y_pos] = color
+
             if self.check_five(color, x_pos, y_pos):
+
                 # TYPE 0 5목 완성!
                 return {"type": 0, "winner": color}
 

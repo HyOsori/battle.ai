@@ -26,7 +26,7 @@ ul {
 	flex-grow:20;
 	margin:5px;
 }
-#id_container {
+.class_page {
     display:flex;
 	margin:auto;
 	flex-direction:column;
@@ -43,38 +43,35 @@ ul {
 
     border:1px solid black;
 }
-#id_title {
+.class_title {
 	flex-grow:1;
 	margin:0px;
 }
-#id_gameMessage_second {
-	flex-grow:1;
-}
-#id_context {
+.class_context {
 	display:flex;
 	flex-grow:20;
 	flex-basis:80%;
 	padding:5px;
 }
-#id_main {
+.class_center {
 	display:flex;
 	flex-direction:column;
 	flex-grow:5;
 	flex-basis:70%;
 }
-#id_side {
+.class_right {
 	display:flex;
 	flex-direction:column;
 	flex-grow:2;
 	flex-basis:30%;
 }
-#id_upperContainer {
+.class_top {
 	display:flex;
 	flex-grow:1;
 	flex-basis:6%;
 	margin:0px 5px;
 }
-#id_upperContainer button {
+.class_top button {
 	flex-grow:1;
 	flex-basis:20%;
 	margin:0px;
@@ -122,11 +119,11 @@ ul {
 	flex-basis:90%;
 	margin:0px;
 }
-#id_canvasContainer {
+.class_canvasContainer {
 	flex-grow:1;
 	margin:5px;
 }
-#id_board_canvas {
+canvas {
 	position:relative;
 }
 #id_messages {
@@ -143,18 +140,11 @@ ul {
 	flex-grow:1;
 	flex-basis:50%;
 }
-#id_dummyclient_ul {
-	flex-grow:2;
-	flex-basis:7%;
-}
-#id_list_ul {
+#id_playerList_ul {
 	padding:5px;
 	flex-basis:84%;
 }
-#id_gameResults_ul {
-
-}
-#id_btnContainer {
+.class_buttons {
 	display:flex;
 	flex-grow:1;
 	flex-basis:9%;
