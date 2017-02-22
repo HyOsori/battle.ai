@@ -294,4 +294,4 @@ class OMOKFinishPhase(Phase):
 
     def send_game_over(self):
         logging.debug('Send game over message to ' + self.now_turn())
-        self.request(self.now_turn(), {'empty':0})
+        self.request(self.now_turn(), {'empty': 0})
