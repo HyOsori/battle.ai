@@ -5,6 +5,7 @@ GameBoard.margin = 10;
 GameBoard.interval = -1;
 
 GameBoard.players = [];
+GameBoard.board = [];
 //================================================================================
 GameBoard.gameStart = function(JSON_data) {
     resizeCanvas(GameBoard.canvas);
@@ -28,7 +29,8 @@ GameBoard.recvTurnResult = function(JSON_data) {
     var game_data = JSON_data.data;
     
     ++GameBoard.turn;
-    GameBoard.drawBoard(game_data["board"]);
+    GameBoard.board = game_data["board"];
+    GameBoard.drawBoard(GameBoard.board);
 };
 
 GameBoard.drawCircle = function(x, y, color) {
