@@ -78,17 +78,6 @@ class TurnGameLogic(object):
         """
         self._game_server.request(pid, message_type, dict_data)
 
-    '''
-        def request_all(self, message_type, dict_data):
-            """
-            모든 플레이어에게 request한다.
-            :param message_type:
-            :param dict_data:
-            :return:
-            """
-            for pid in self._player_list:
-                self.request(pid, message_type, dict_data)
-    '''
     def end(self, error_code, result_list=None):
         """
         send server "logic_server end"
