@@ -1,8 +1,4 @@
-import base64
-import json
-import random
 import sys
-import zlib
 
 from gamebase.game.Phase import Phase
 
@@ -11,7 +7,6 @@ from gamebase.game.TurnGameLogic import TurnGameLogic
 import game.debugger as logging
 
 sys.path.insert(0, '../')
-# logging.basicConfig(level=logging.DEBUG)
 
 
 class OMOKGameLogic(TurnGameLogic):
@@ -20,52 +15,49 @@ class OMOKGameLogic(TurnGameLogic):
         logging.debug('GameLogic : INIT')
         self.width = 5
         self.height = 5
-
-        # Declare color_array_init.
         self.board = [[0 for x in range(self.width)] for y in range(self.height)]
 
     def on_ready(self, pid_list):
-        init_dict = {}
-        color_count = 0
         self._player_list = pid_list
 
-        self._result_dict = dict(
-            zip(self._player_list, ['draw'] * len(self._player_list))
-        )
+        # -1 : yet Init state
         self._turn_num = -1
-        self.change_turn()
 
+        # Send Game Data To Server
+        init_dict = {}
+        color_count = 0
         for i in pid_list:
             color_count += 1
             init_dict[i] = {}
-            init_dict[i]["width"] = self.width
-            init_dict[i]["height"] = self.width
-            init_dict[i]["color"] = color_count
+            init_dict[i]['width'] = self.width
+            init_dict[i]['height'] = self.width
+            init_dict[i]['color'] = color_count
 
-        logging.debug(init_dict)
+        # logging.debug(init_dict)
         self._game_server.on_init_game(init_dict)
 
     def on_start(self):
         logging.debug('GameLogic : ON_START')
 
-        self.board = [[0 for x in range(self.width)] for y in range(self.height)]
-
-        # shared_dict for initialized board
+        # shared_dict for Initialize in Phase(Loop, Finish)
         shared_dict = self.get_shared_dict()
+        shared_dict['width'] = self.width
+        shared_dict['height'] = self.height
+        shared_dict['board'] = self.board
 
+        # Register Phase
         loop_phase = OMOKLoopPhase(self, 'loop')
         finish_phase = OMOKFinishPhase(self, 'finish')
 
         shared_dict['PHASE_LOOP'] = self.append_phase(loop_phase)
         shared_dict['PHASE_FINISH'] = self.append_phase(finish_phase)
 
+        # Init Turn
         self.change_turn(0)
 
-        logging.debug('OmokGameLogic -> LoopPhase')
+        # Move Loop Phase
+        logging.debug('OMOKGameLogic -> LoopPhase')
         self.change_phase(0)
-
-    def end(self, error_code, result):
-        self._game_server.on_end(error_code, result)
 
 
 class OMOKLoopPhase(Phase):
@@ -74,11 +66,12 @@ class OMOKLoopPhase(Phase):
         logging.debug('PHASE_LOOP : INIT')
 
         # game data
-        self.width = 5
-        self.height = 5
-
-        # Declare color_array_init.
-        self.board = [[0 for x in range(self.width)] for y in range(self.height)]
+        self.player_list = None
+        self.shared_dict = None
+        self.next_phase = None
+        self.width = None
+        self.height = None
+        self.board = None
 
     def on_start(self):
         super(OMOKLoopPhase, self).on_start()
@@ -88,18 +81,15 @@ class OMOKLoopPhase(Phase):
         self.player_list = self.get_player_list()
         self.shared_dict = self.get_shared_dict()
         self.next_phase = self.shared_dict['PHASE_FINISH']
-        #self.width = self.shared_dict['width']
-        #self.height = self.shared_dict['height']
-        #self.board = self.shared_dict['board']
+        self.width = self.shared_dict['width']
+        self.height = self.shared_dict['height']
+        self.board = self.shared_dict['board']
 
         # Initialize variables.
-        self.round = 0  # Check Rounds.
         self.initialize = False  # Initialize arrays if new round starts.
 
-        #self.notify_to_front_init()
-
         self.change_turn(0)
-        self.request_to_client(1, 2)
+        self.request_to_client()
 
     def do_action(self, pid, dict_data):
         super(OMOKLoopPhase, self).do_action(pid, dict_data)
@@ -111,20 +101,20 @@ class OMOKLoopPhase(Phase):
         if pid == self.player_list[1]:
             ruler = 2
 
-        x_pos = dict_data["x"]
-        y_pos = dict_data["y"]
+        x_pos = dict_data['x']
+        y_pos = dict_data['y']
 
         result = self.check_game_end(ruler, x_pos, y_pos)
 
-        if result["type"] == 1:
+        if result['type'] == 1:
             # Normal flow
             pass
-        elif result["type"] == 0:
-            # [WIN] complete omok
-            self.end(0, {"winner": result["winner"]})
-        elif result["type"] == 100:
+        elif result['type'] == 0:
+            # [WIN] complete game
+            self.end(0, {'winner': result['winner']})
+        elif result['type'] == 100:
             # [WIN] put again same board
-            self.end(100, {"winner": result["winner"]})
+            self.end(100, {"winner": result['winner']})
         elif result["type"] == 101:
             # [DRAW] all board filled
             self.end(101, {"winner": 0})
@@ -150,7 +140,7 @@ class OMOKLoopPhase(Phase):
         ruler_self = ruler % 2 + 1  # Ruler who will take the request
 
         self.change_turn()
-        self.request_to_client(ruler_self, ruler_enemy)
+        self.request_to_client()
 
     def on_end(self, error_code, result):
         super(OMOKLoopPhase, self).on_end(error_code, result)
@@ -172,7 +162,7 @@ class OMOKLoopPhase(Phase):
         }
         self.notify_free('notify_change_round', notify_dict)
 
-    def request_to_client(self, ruler_self, ruler_enemy):
+    def request_to_client(self):
         logging.debug('Request ' + self.now_turn() + '\'s decision')
         info_dict = {
             'board': self.board
@@ -294,4 +284,4 @@ class OMOKFinishPhase(Phase):
 
     def send_game_over(self):
         logging.debug('Send game over message to ' + self.now_turn())
-        self.request(self.now_turn(), {'empty':0})
+        self.request(self.now_turn(), {'empty': 0})

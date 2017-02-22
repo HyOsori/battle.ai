@@ -4,14 +4,14 @@ import json
 from server.string import *
 from tornado import gen
 from server.handler.gamehandler import GameHandler
-from game.omok.OmokGameLogic import OmokGameLogic
+from game.omok.OmokGameLogic import OMOKGameLogic
 
 import server.debugger as logging
 
 
 class TurnGameHandler(GameHandler):
     def __init__(self, room, players, observers, game_speed, game_logic = None, database = None):
-        game_logic = OmokGameLogic(self)
+        game_logic = OMOKGameLogic(self)
         super(TurnGameHandler, self).__init__(room, players, observers, game_logic)
 
     @gen.coroutine

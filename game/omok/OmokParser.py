@@ -53,7 +53,7 @@ class OMOKParser(AIParser):
         ret = None
 
         if self.msg_type == 'loop':
-            ret = self.loop_phase(decoding_data['data']['board'])
+            ret = self.loop_phase(self.game_data["board"])
         elif self.msg_type == 'notify_init_loop':
             self.notify_loop_init()
         elif self.msg_type == 'notify_change_round':
@@ -67,13 +67,6 @@ class OMOKParser(AIParser):
     def loop_phase(self):
         # ![OVERRIDE] return loop result user's parser
         raise NotImplementedError
-
-    # def notify_loop_init(self):
-    #     print('notify_loop_init get!')
-    #     self.width = self.game_data['width']
-    #     self.height = self.game_data['height']
-    #     self.board = [[0 for x in range(self.width)] for y in range(self.height)]
-    #     return None
 
     def init_phase(self):
         raise NotImplementedError
