@@ -49,8 +49,13 @@ class Player(User):
         try:
             self.conn.write(data.encode())
         except Exception as e:
-            logging.error(e.message)
+            logging.error(str(e))
 
+    def room_enter(self):
+        self.playing = True
+
+    def room_out(self):
+        self.playing = False
 
 class Observer(User):
     def __init__(self, conn):
@@ -80,7 +85,7 @@ class Observer(User):
         try:
             self.conn.write_message(data)
         except Exception as e:
-            logging.error(e.message)
+            logging.error(str(e))
 
     def room_enter(self):
         self.observer_flag = True

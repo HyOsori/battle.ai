@@ -47,13 +47,17 @@ class ObserverHandler(tornado.websocket.WebSocketHandler):
                 self._response_user_list()
             else:
                 pass
-        except Exception:
+        except Exception as e:
+            logging.error(e)
             pass
 
     def _response_user_list(self):
         self.attendee_list[self].attendee_flag = False
 
-        players = list(self.player_list.keys())
+        players = list()
+        for player in self.player_list.values():
+            if not player.playing:
+                players.append(player.get_pid())
 
         msg = {MSG: RESPONSE_ + USER_LIST, USERS: players}
         json_msg = json.dumps(msg)
@@ -66,8 +70,12 @@ class ObserverHandler(tornado.websocket.WebSocketHandler):
 
     def _response_match(self, data):
         try:
-            players = [self.player_list.pop(pid) for pid in data[USERS]]
-            logging.error(type(data[USERS][0]))
+            players = []
+            for pid in data[USERS]:
+                logging.info("DEBUG POINT")
+                player = self.player_list.get(pid)
+                player.room_enter()
+                players.append(player)
         except Exception as e:
             logging.error(e)
             return

@@ -21,8 +21,8 @@ class GameHandler:
 
         self.time_delay_list = [1, 0.7, 0.5, 0.3, 0.2]
 
-        self.delay_time = 0.3
-        self.delay_time = self.time_delay_list[time_index]
+        self.delay_time = 1
+        # self.delay_time = self.time_delay_list[time_index]
 
         self.init_data_dict = {}
 
@@ -42,7 +42,6 @@ class GameHandler:
         yield self._play_handler()
         logging.info("=====Game End=====")
         self.destroy_room()
-        logging.info("=====Destroy Room=====")
 
     def _play_handler(self):
         '''
@@ -135,13 +134,20 @@ class GameHandler:
         """
         When all round is ended, room is destroyed. Clients get back to robby.
         """
+        logging.info("=====Destroy Room=====")
 
-        # TODO: player add and remove ... how to deal with it? remove from list or set flag on player
-        # TODO: => set flag is better .
+        logging.info(type(self.players))
+        logging.info(str(self.players))
+
         for player in self.room.player_list:
-            self.players[player.get_pid()] = player
-            for attendee in self.observers.values():
-                attendee.notice_user_added(player.get_pid())
+            try:
+                player.room_out()
+                for attendee in self.observers.values():
+                    attendee.notice_user_added(player.get_pid())
+            except Exception as e:
+                logging.error("DEBUG POINT")
+                logging.error(type(e))
+                pass
 
     @gen.coroutine
     def delay_action(self):
