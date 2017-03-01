@@ -40,24 +40,22 @@ class OMOKParser(AIParser):
         """
         :param decoding_data: received data from server (dict)
         """
-        print(decoding_data)
         self.msg = decoding_data['msg']
         self.msg_type = decoding_data['msg_type']
         self.game_data = decoding_data['data']
 
     def parsing_data(self, decoding_data):
-        print("parsing_data is called")
         base = super(OMOKParser, self).parsing_data(decoding_data)
-        print("super.parsing_data is called")
-        print("self.msg_type: " + str(decoding_data))
+        logging.debug(str(decoding_data))
         ret = None
 
         if self.msg_type == 'loop':
             ret = self.loop_phase(self.game_data["board"])
-        elif self.msg_type == 'notify_init_loop':
-            self.notify_loop_init()
-        elif self.msg_type == 'notify_change_round':
-            self.notify_change_round()
+
+        # elif self.msg_type == 'notify_init_loop':
+        #    self.notify_loop_init()
+        # elif self.msg_type == 'notify_change_round':
+        #    self.notify_change_round()
 
         if ret is None:
             return base

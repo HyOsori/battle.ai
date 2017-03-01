@@ -35,6 +35,21 @@ class TurnGameLogic(object):
     def on_error(self, pid):
         pass
 
+    def check_msg_type(self, received_msg_type):
+        '''
+        game base 에서 준 msg type 이랑 현재 player 에게 받은
+        msg type 이랑 비교 ㅇㅇ
+
+        해서
+
+        너가 준 request msg type 에 맞는 response msg type 인지 확인 후
+
+        T/F 로 return gogo
+        :param received_msg_type:
+        :return:
+        '''
+        pass
+
     def change_phase(self, index):
         """
         change_phase -> current phase's on_start

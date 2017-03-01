@@ -96,7 +96,6 @@ class OMOKLoopPhase(Phase):
         # Player Action
         x_pos = dict_data['x']
         y_pos = dict_data['y']
-        logging.debug(dict_data)
 
         # Check Valid Action
         result = self.check_game_end(validate_user, x_pos, y_pos)
