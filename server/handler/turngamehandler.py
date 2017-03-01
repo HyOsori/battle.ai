@@ -1,5 +1,6 @@
 #-*- coding:utf-8 -*-
 import json
+import tornado.iostream
 
 from server.string import *
 from tornado import gen
@@ -27,6 +28,7 @@ class TurnGameHandler(GameHandler):
             logging.debug("on start is done")
             while not self.game_end:
                 message = yield self.played.read()
+                yield self.delay_action()
                 logging.debug("received data: " + str(message))
                 message = json.loads(message)
                 # TODO: message type check is in dude's code (callback function)
@@ -39,8 +41,10 @@ class TurnGameHandler(GameHandler):
             self.handle_game_end(TIME_OUT, {})
         except json.JSONDecodeError:
             self.handle_game_end(NOT_JSON_DATA, {})
+        except tornado.iostream.StreamClosedError:
+            self.handle_game_end(CONNECTION_LOST, {})
         except Exception as e:
-            e.with_traceback()
+            logging.error(type(e))
             self.handle_game_end(UNEXPECTED_ERROR, {})
 
     def request(self, pid, msg_type, data):

@@ -10,34 +10,6 @@ from server.string import *
 from server.gameobject.user import Observer
 
 
-class WebServer(tornado.web.RequestHandler):
-    def get(self):
-        self.render("index.html")
-
-class LogHandler(tornado.web.RequestHandler):
-    def initialize(self, database_driver):
-        self.db = database_driver
-
-    def get(self):
-        name = self.get_argument('name', None)
-        length = self.get_argument('length', default=10)
-        searched = ''
-
-        if name:
-            searched = self.db.search_game_log(cnt=length)
-        else:
-            searched = self.db.search_game_log(name=name, cnt=length)
-        self.write(json.dumps(searched))
-
-    def put(self): #log update
-        winner = self.get_argument('winner')
-        win_score = self.get_argument('win_score')
-        loser = self.get_argument('loser')
-        lose_score = self.get_argument('lose_score')
-        self.db.add_game_log(winner, win_score, loser, lose_score)
-        self.write('OK')
-
-
 class ObserverHandler(tornado.websocket.WebSocketHandler):
 
     def initialize(self, attendee_list=dict(), player_list=dict(), database=None):
@@ -75,13 +47,17 @@ class ObserverHandler(tornado.websocket.WebSocketHandler):
                 self._response_user_list()
             else:
                 pass
-        except Exception:
+        except Exception as e:
+            logging.error(e)
             pass
 
     def _response_user_list(self):
         self.attendee_list[self].attendee_flag = False
 
-        players = list(self.player_list.keys())
+        players = list()
+        for player in self.player_list.values():
+            if not player.playing:
+                players.append(player.get_pid())
 
         msg = {MSG: RESPONSE_ + USER_LIST, USERS: players}
         json_msg = json.dumps(msg)
@@ -94,8 +70,12 @@ class ObserverHandler(tornado.websocket.WebSocketHandler):
 
     def _response_match(self, data):
         try:
-            players = [self.player_list.pop(pid) for pid in data[USERS]]
-            logging.error(type(data[USERS][0]))
+            players = []
+            for pid in data[USERS]:
+                logging.info("DEBUG POINT")
+                player = self.player_list.get(pid)
+                player.room_enter()
+                players.append(player)
         except Exception as e:
             logging.error(e)
             return
