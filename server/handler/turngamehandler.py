@@ -27,7 +27,7 @@ class TurnGameHandler(GameHandler):
             self.game_logic.on_start()
             logging.debug("on start is done")
             while not self.game_end:
-                message = yield self.played.read()
+                message = yield self.played.timeout_read()
                 yield self.delay_action()
                 logging.debug("received data: " + str(message))
                 message = json.loads(message)

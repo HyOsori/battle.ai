@@ -35,7 +35,7 @@ class Player(User):
         timeout_handle = self.io_loop.add_timeout(self.io_loop.time() + timeout, partial(self.__error_callback, future=future))
         future.add_done_callback(lambda r: self.io_loop.remove_timeout(timeout_handle))
         message = yield future
-        gen.Return(message)
+        return message.decode()
 
     @gen.coroutine
     def read(self):
