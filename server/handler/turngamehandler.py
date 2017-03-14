@@ -6,13 +6,14 @@ from server.string import *
 from tornado import gen
 from server.handler.gamehandler import GameHandler
 from game.omok.OmokGameLogic import OMOKGameLogic
+from game.alkaki.AlkakiGameLogic import ALKAKIGameLogic
 
 import server.debugger as logging
 
 
 class TurnGameHandler(GameHandler):
     def __init__(self, room, players, observers, game_speed, game_logic = None, database = None):
-        game_logic = OMOKGameLogic(self)
+        game_logic = ALKAKIGameLogic(self)
         super(TurnGameHandler, self).__init__(room, players, observers, game_logic)
 
     @gen.coroutine
