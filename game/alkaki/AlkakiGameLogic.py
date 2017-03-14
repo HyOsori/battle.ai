@@ -24,4 +24,17 @@ class ALKAKIGameLogic(TurnGameLogic):
         self._game_server.on_init_game(init_dict)
 
     def on_start(self):
+        # shared_dict-init out of this class(Phase)
+        shared_dict = self.get_shared_dict()
+
+        # Register Phase (phase name free)
+        game_phase = ALKAKIGamePhase(self, 'game')
+        shared_dict['PHASE_GAME'] = self.append_phase(game_phase)
+
+        # Transfer Phase GameLogic -> GamePhase
+        self.change_phase(0)
+
+
+class ALKAKIGamePhase(Phase):
+    def __init__(self, logic_server, message_type):
         pass
