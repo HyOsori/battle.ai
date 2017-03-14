@@ -37,4 +37,22 @@ class ALKAKIGameLogic(TurnGameLogic):
 
 class ALKAKIGamePhase(Phase):
     def __init__(self, logic_server, message_type):
-        pass
+        super(ALKAKIGamePhase, self).__init__(logic_server, message_type)
+
+        # declare variable
+        self.player_list = None
+        self.shared_dict = None
+
+    def on_start(self):
+        super(ALKAKIGamePhase, self).on_start()
+
+        # Init data
+        self.player_list = self.get_player_list()
+        self.shared_dict = self.get_shared_dict()
+
+        # Init game independent data
+
+        # Send server msg
+        self.change_turn(0)
+        self.request_to_client()
+
