@@ -32,7 +32,6 @@ class AIParser(object):
         # 그리고 반환형에 맞춰서 정보를 조작한후 리턴한다.
         # 고로 이 부분이 사용자가 코딩할 부분!
 
-        print(decoding_data)
         self.msg = decoding_data['msg']
         self.msg_type = decoding_data['msg_type']
         self.game_data = decoding_data['data']
@@ -67,7 +66,7 @@ class AIParser(object):
             send_msg["msg"] = "game_handler"
         send_msg["msg_type"] = msg_type
         send_msg["data"] = game_data
-        print(send_msg)
+
         return send_msg
 
     def init_phase(self, init_data):
