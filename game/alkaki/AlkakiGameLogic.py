@@ -54,5 +54,32 @@ class ALKAKIGamePhase(Phase):
 
         # Send server msg
         self.change_turn(0)
-        self.request_to_client()
+        self.request_to_server()
 
+    def do_action(self, pid, dict_data):
+        # check user decision
+        super(ALKAKIGamePhase, self).do_action(pid, dict_data)
+
+        # validate_user
+        validate_user = 0
+        if pid == self.player_list[0]:
+            validate_user = 1
+        elif pid == self.player_list[1]:
+            validate_user = 2
+
+        # Notify to Observer(Web) game data
+        self.notify_to_observer()
+        # Requests to Server(Handler) game data
+        self.request_to_server()
+
+    def notify_to_observer(self):
+        notify_dict = {
+            'data': 'test'
+        }
+        self.notify("game", notify_dict)
+
+    def request_to_server(self):
+        request_dict = {
+            'data': 'test'
+        }
+        self.request(self.now_turn(), request_dict)
