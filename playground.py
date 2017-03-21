@@ -82,6 +82,7 @@ def main():
 
     print("******************* Battle.AI operate *******************")
     print("                     ...... Created By GreedyOsori ......\n")
+    print("Version 0.0")
     io_loop.start()
 
 if __name__ == "__main__":

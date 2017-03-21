@@ -50,18 +50,18 @@ class PlayerHandler(tornado.tcpserver.TCPServer):
 
                 username = message[DATA]["username"]
 
-                # temporary implementation ;;
-                if not username == 'Dummy3':
-                    if username in self.player_list.keys():
-                        msg = {MSG: USER_INFO, MSG_TYPE:INIT, DATA: {RESPONSE: NO}}
-                        json_data = json.dumps(msg)
-                        stream.write(json_data.encode())
-                        continue
-                    break
+                if username in self.player_list.keys():
+                    msg = {MSG: USER_INFO, MSG_TYPE: INIT, DATA: {RESPONSE: NO}}
+                    json_data = json.dumps(msg)
+                    stream.write(json_data.encode())
+                    continue
                 else:
                     break
 
             player = Player(username, stream)
+            message = {MSG: USER_INFO, MSG_TYPE: INIT, DATA: {RESPONSE: OK}}
+            message = json.dumps(message)
+            player.send(message)
             logging.info(username + " enter BATTLE.AI")
 
             self.player_list[username] = player
