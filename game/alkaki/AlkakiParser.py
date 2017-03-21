@@ -14,4 +14,4 @@ class ALKAKIParser(AIParser):
         pass
 
     def game_phase(self):
-        return {'data': 'parser_test'}
+        raise NotImplementedError

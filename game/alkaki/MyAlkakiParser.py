@@ -7,5 +7,8 @@ class MyALKAKIParser(ALKAKIParser):
     def __init__(self):
         pass
 
+    def init_phase(self, init_data):
+        test = 'test'
+
     def game_phase(self):
-        raise NotImplementedError
+        return {'data': 'parser_test'}
