@@ -12,3 +12,6 @@ class ALKAKIParser(AIParser):
 
     def init_phase(self, init_data):
         pass
+
+    def game_phase(self):
+        return {'data': 'parser_test'}
