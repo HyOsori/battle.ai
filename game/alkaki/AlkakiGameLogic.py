@@ -15,7 +15,7 @@ class ALKAKIGameLogic(TurnGameLogic):
         # circle radius
         # blank outside space
         self.board_size = 18
-        self.count = 4
+        self.count = 7
         self.radius = 0.44
         self.blank = 0.375
 
@@ -40,9 +40,9 @@ class ALKAKIGameLogic(TurnGameLogic):
 
             pos = [[0 for col in range(2)] for row in range(self.count)]
             for i_row in range(self.count):
-                pos[i_row][0] = i_row * 4 + 2
+                pos[i_row][0] = i_row * 2 + 3
                 logging.info(color_count)
-                pos[i_row][1] = color_count * 17
+                pos[i_row][1] = color_count * 12 + 3
 
             init_dict[i]['pos'] = pos
 
