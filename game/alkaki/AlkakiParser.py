@@ -17,9 +17,9 @@ class ALKAKIParser(AIParser):
         base = super(ALKAKIParser, self).parsing_data(decoding_data)
         logging.info("PARSING DATA")
 
-        ret = None
-        ret = self.game_phase()
-        return self.make_send_msg('game', ret)
+        return_dict = None
+        return_dict = self.game_phase(decoding_data)
+        return self.make_send_msg('game', return_dict)
 
-    def game_phase(self):
+    def game_phase(self, board_data):
         raise NotImplementedError

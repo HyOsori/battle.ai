@@ -5,10 +5,27 @@ import game.debugger as logging
 
 class MyALKAKIParser(ALKAKIParser):
     def __init__(self):
-        pass
+        self.board_size = None
+        self.count = None
+        self.radius = None
+        self.player_pos = None
 
     def init_phase(self, init_data):
-        test = 'test'
+        self.board_size = init_data['board_size']
+        self.count = init_data['count']
+        self.radius = init_data['radius']
+        self.player_pos = init_data['player_pos']
 
-    def game_phase(self):
-        return {'data': 'parser_test'}
+    def game_phase(self, board_data):
+
+        index = 0
+        direction = [0, 0]
+        force = 0
+
+        return_dict = {
+            'index': index,
+            'direction': direction,
+            'force': force
+        }
+
+        return return_dict

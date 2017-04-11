@@ -42,8 +42,7 @@ class ALKAKIGameLogic(TurnGameLogic):
                 pos[i_row][1] = color_count * 80 + 10
 
             self.player_pos[color_count] = pos
-            logging.info(self.player_pos[color_count])
-            init_dict[i]['pos'] = pos
+            init_dict[i]['player_pos'] = pos
             color_count += 1
 
         # Send Server
@@ -53,7 +52,6 @@ class ALKAKIGameLogic(TurnGameLogic):
         # shared_dict-init out of this class(Phase)
         shared_dict = self.get_shared_dict()
 
-        shared_dict = self.get_shared_dict()
         shared_dict['board_size'] = self.board_size
         shared_dict['count'] = self.count
         shared_dict['radius'] = self.radius
@@ -75,18 +73,21 @@ class ALKAKIGamePhase(Phase):
         self.shared_dict = None
 
         # Init data
-        self.player_list = self.get_player_list()
-        self.shared_dict = self.get_shared_dict()
+        self.player_list = None
+        self.shared_dict = None
+
 
         # Init game independent data
         self.board_size = None
         self.count = None
         self.radius = None
         self.player_pos = None
+        self.color = None
+
 
 
     def do_start(self):
-
+        logging.info("do_start")
         # Init data
         self.player_list = self.get_player_list()
         self.shared_dict = self.get_shared_dict()
@@ -96,13 +97,11 @@ class ALKAKIGamePhase(Phase):
         self.count = self.shared_dict['count']
         self.radius = self.shared_dict['radius']
         self.player_pos = self.shared_dict['player_pos']
-
         # Send server msg
         self.change_turn(0)
-        self.request_to_server()
+        self.request_to_server(0, [0.6, 0.4], 4)
 
     def do_action(self, pid, dict_data):
-        logging.info("do_action called")
         # validate_user
         validate_user = 0
         if pid == self.player_list[0]:
@@ -114,19 +113,23 @@ class ALKAKIGamePhase(Phase):
 
         self.change_turn()
         # Notify to Observer(Web) game data
-        self.notify_to_observer()
+        self.notify_to_observer(0, [0.6, 0.4], 4)
         # Requests to Server(Handler) game data
-        self.request_to_server()
+        self.request_to_server(0, [0.6, 0.4], 4)
 
-    def notify_to_observer(self):
+    def notify_to_observer(self, index, direction, force):
         notify_dict = {
-            'data': 'test'
+            'index': index,
+            'direction': direction,
+            'force' :force
         }
         self.notify("game", notify_dict)
 
-    def request_to_server(self):
+    def request_to_server(self, index, direction, force):
         logging.info('Request ' + self.now_turn() + '\'s decision')
         request_dict = {
-            'data': 'test'
+            'index': index,
+            'direction': direction,
+            'force' :force
         }
         self.request(self.now_turn(), request_dict)
