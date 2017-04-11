@@ -10,15 +10,14 @@ sys.path.insert(0, '../')
 class ALKAKIGameLogic(TurnGameLogic):
     def __init__(self, game_server):
         super(ALKAKIGameLogic, self).__init__(game_server)
-        # board_size 18칸 (index)
-        # count stone for each player
+        # board_size (width height)
+        # count Egg for each player
         # circle radius
-        # blank outside space
-        self.board_size = 18
-        self.count = 7
-        self.radius = 0.44
-        self.blank = 0.375
-
+        # Position Egg
+        self.board_size = 100
+        self.count = 5
+        self.radius = 1
+        self.player_pos = [0 for col in range(2)]
 
         # Here init game dependent variable
 
@@ -35,18 +34,16 @@ class ALKAKIGameLogic(TurnGameLogic):
             init_dict[i]['board_size'] = self.board_size
             init_dict[i]['count'] = self.count
             init_dict[i]['radius'] = self.radius
-            init_dict[i]['blank'] = self.blank
             init_dict[i]['color'] = color_count
 
             pos = [[0 for col in range(2)] for row in range(self.count)]
             for i_row in range(self.count):
-                pos[i_row][0] = i_row * 2 + 3
-                logging.info(color_count)
-                pos[i_row][1] = color_count * 12 + 3
+                pos[i_row][0] = i_row * 20 + 10
+                pos[i_row][1] = color_count * 80 + 10
 
+            self.player_pos[color_count] = pos
+            logging.info(self.player_pos[color_count])
             init_dict[i]['pos'] = pos
-
-
             color_count += 1
 
         # Send Server
@@ -55,6 +52,13 @@ class ALKAKIGameLogic(TurnGameLogic):
     def on_start(self):
         # shared_dict-init out of this class(Phase)
         shared_dict = self.get_shared_dict()
+
+        shared_dict = self.get_shared_dict()
+        shared_dict['board_size'] = self.board_size
+        shared_dict['count'] = self.count
+        shared_dict['radius'] = self.radius
+        shared_dict['player_pos'] = self.player_pos
+
         # Register Phase (phase name free)
         game_phase = ALKAKIGamePhase(self, 'game')
         shared_dict['PHASE_GAME'] = self.append_phase(game_phase)
@@ -75,8 +79,24 @@ class ALKAKIGamePhase(Phase):
         self.shared_dict = self.get_shared_dict()
 
         # Init game independent data
+        self.board_size = None
+        self.count = None
+        self.radius = None
+        self.player_pos = None
+
 
     def do_start(self):
+
+        # Init data
+        self.player_list = self.get_player_list()
+        self.shared_dict = self.get_shared_dict()
+
+        # Init game independent data
+        self.board_size = self.shared_dict['board_size']
+        self.count = self.shared_dict['count']
+        self.radius = self.shared_dict['radius']
+        self.player_pos = self.shared_dict['player_pos']
+
         # Send server msg
         self.change_turn(0)
         self.request_to_server()
@@ -89,6 +109,8 @@ class ALKAKIGamePhase(Phase):
             validate_user = 1
         elif pid == self.player_list[1]:
             validate_user = 2
+
+
 
         self.change_turn()
         # Notify to Observer(Web) game data
