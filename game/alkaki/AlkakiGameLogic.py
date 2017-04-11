@@ -10,9 +10,15 @@ sys.path.insert(0, '../')
 class ALKAKIGameLogic(TurnGameLogic):
     def __init__(self, game_server):
         super(ALKAKIGameLogic, self).__init__(game_server)
+        # board_size 18칸 (index)
+        # count stone for each player
+        # circle radius
+        # blank outside space
         self.board_size = 18
         self.count = 4
-        self.pos = []
+        self.radius = 0.44
+        self.blank = 0.375
+
 
         # Here init game dependent variable
 
@@ -20,15 +26,27 @@ class ALKAKIGameLogic(TurnGameLogic):
         self._player_list = player_list
 
         # Here makes dict for multi player init variable
+
         init_dict = {}
         color_count = 0
+
         for i in player_list:
             init_dict[i] = {}
-            init_dict[i]['board_size'] = 18
-            init_dict[i]['count'] = 4
-            for i in range(self.count):
+            init_dict[i]['board_size'] = self.board_size
+            init_dict[i]['count'] = self.count
+            init_dict[i]['radius'] = self.radius
+            init_dict[i]['blank'] = self.blank
+            init_dict[i]['color'] = color_count
 
-            # init_dict[i]['pos'] = color_count
+            pos = [[0 for col in range(2)] for row in range(self.count)]
+            for i_row in range(self.count):
+                pos[i_row][0] = i_row * 4 + 2
+                logging.info(color_count)
+                pos[i_row][1] = color_count * 17
+
+            init_dict[i]['pos'] = pos
+
+
             color_count += 1
 
         # Send Server
