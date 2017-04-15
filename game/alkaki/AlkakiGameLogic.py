@@ -84,6 +84,7 @@ class ALKAKIGamePhase(Phase):
         self.player_pos = None
         self.color = None
 
+        self.array_egg = [[0 for col in range(5)] for row in range(2)]
 
 
     def do_start(self):
@@ -97,18 +98,27 @@ class ALKAKIGamePhase(Phase):
         self.count = self.shared_dict['count']
         self.radius = self.shared_dict['radius']
         self.player_pos = self.shared_dict['player_pos']
+
+        for i in range(self.count):
+            self.array_egg[0][i] = Egg(self.player_pos[0][i][0], self.player_pos[0][i][0])
+        for i in range(self.count):
+            self.array_egg[1][i] = Egg(self.player_pos[1][i][0], self.player_pos[1][i][1])
+
         # Send server msg
         self.change_turn(0)
-        self.request_to_server(0, [0.6, 0.4], 4)
+        self.request_to_server(0, [0.0, 0.0], 0)
 
     def do_action(self, pid, dict_data):
         # validate_user
         validate_user = 0
         if pid == self.player_list[0]:
-            validate_user = 1
+            validate_user = 0
         elif pid == self.player_list[1]:
-            validate_user = 2
+            validate_user = 1
 
+        index = dict_data['index']
+        direction = dict_data['direction']
+        force = dict_data['force']
 
 
         self.change_turn()
@@ -133,3 +143,16 @@ class ALKAKIGamePhase(Phase):
             'force' :force
         }
         self.request(self.now_turn(), request_dict)
+
+class Egg:
+    def __init__(self, x_pos, y_pos):
+        self.x_pos = x_pos
+        self.y_pos = y_pos
+        self.x_dir = 0
+        self.y_dir = 0
+        self.speed = 0
+
+    def add_force(self, x_dir, y_dir, force):
+        self.x_dir = x_dir
+        self.y_dir = y_dir
+        self.speed = force
