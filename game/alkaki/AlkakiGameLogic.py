@@ -3,6 +3,7 @@ import sys
 from gamebase.game.Phase import Phase
 from gamebase.game.TurnGameLogic import TurnGameLogic
 import game.debugger as logging
+import math
 
 sys.path.insert(0, '../')
 
@@ -122,13 +123,228 @@ class ALKAKIGamePhase(Phase):
 
         # 형 변환후 힘 넣기
         self.array_egg[validate_user][index].add_force(direction[0], direction[1], force)
-
+        self.run_physics();
 
         self.change_turn()
         # Notify to Observer(Web) game data
         self.notify_to_observer(validate_user, 0, [0.6, 0.4], 4)
         # Requests to Server(Handler) game data
         self.request_to_server(validate_user, 0, [0.6, 0.4], 4)
+
+    def run_physics(self):
+        # 충돌 체크
+        for i_egg in range (len(self.array_egg[0])):
+            if (self.array_egg[0][i_egg].get_speed() > 0):
+                self.array_egg[0][i_egg].set_x_pos(self.array_egg[0][i_egg].get_x_dir() * self.array_egg[0][i_egg].get_speed())
+                self.array_egg[0][i_egg].set_y_pos(self.array_egg[0][i_egg].get_y_dir() * self.array_egg[0][i_egg].get_speed())
+                self.array_egg[0][i_egg].set_speed(self.array_egg[0][i_egg].get_speed() - 0.1)
+
+                for i_my_egg in range (len(self.array_egg[0])):
+                    check_meet = False
+                    if i_egg is not i_my_egg:
+                        while (self.is_meet(self.array_egg[0][i_egg].get_x_pos(), self.array_egg[0][i_egg].get_y_pos(),
+                                            self.array_egg[0][i_my_egg].get_x_pos(), self.array_egg[0][i_my_egg].get_y_pos())):
+                            check_meet = True
+                            if (self.array_egg[0][i_egg].get_x_pos() > self.array_egg[0][i_my_egg].get_x_pos()):
+                                self.array_egg[0][i_egg].set_x_pos(self.array_egg[0][i_egg].get_x_pos() +
+                                                               math.fabs(self.array_egg[0][i_egg].get_x_dir()))
+                            else:
+                                self.array_egg[0][i_egg].set_x_pos(self.array_egg[0][i_egg].get_x_pos() -
+                                                               math.fabs(self.array_egg[0][i_egg].get_x_dir()))
+
+                            if (self.array_egg[0][i_egg].get_y_pos() > self.array_egg[0][i_my_egg].get_y_pos()):
+                                self.array_egg[0][i_egg].set_y_pos(self.array_egg[0][i_egg].get_y_pos() +
+                                                               math.fabs(self.array_egg[0][i_egg].get_y_dir()))
+                            else:
+                                self.array_egg[0][i_egg].set_y_pos(self.array_egg[0][i_egg].get_y_pos() -
+                                                               math.fabs(self.array_egg[0][i_egg].get_y_dir()))
+
+                        if check_meet:
+                            kiss_dir_x = self.array_egg[0][i_my_egg].get_x_pos() - self.array_egg[0][i_egg].get_x_pos()
+                            kiss_dir_y = self.array_egg[0][i_my_egg].get_y_pos() - self.array_egg[0][i_egg].get_y_pos()
+                            distance = math.sqrt(kiss_dir_x * kiss_dir_x + kiss_dir_y * kiss_dir_y)
+
+                            self.array_egg[0][i_my_egg].set_x_dir(kiss_dir_x / distance)
+                            self.array_egg[0][i_my_egg].set_y_dir(kiss_dir_y / distance)
+
+                            cosB = self.array_egg[0][i_egg].get_x_dir() * self.array_egg[0][i_my_egg].get_x_dir() + \
+                                   self.array_egg[0][i_egg].get_y_dir() * self.array_egg[0][i_my_egg].get_y_dir()
+                            cosA = math.sqrt(1 - math.fabs(cosB))
+
+                            if (cosA < 0.0001 and cosA > 0): cosA = 0.0001
+                            if (cosA > -0.0001 and cosA < 0): cosA = -0.0001
+                            if (cosB < 0.0001 and cosB > 0): cosB = 0.0001
+                            if (cosB > -0.0001 and cosB < 0): cosB = -0.0001
+
+                            self.array_egg[0][i_egg].set_x_dir(self.array_egg[0][i_egg].get_x_dir() -
+                                                           self.array_egg[0][i_my_egg].get_x_dir() * cosB)
+                            self.array_egg[0][i_egg].set_y_dir(self.array_egg[0][i_egg].get_y_dir() -
+                                                           self.array_egg[0][i_my_egg].get_y_dir() * cosB)
+                            self.array_egg[0][i_my_egg].set_speed(self.array_egg[0][i_egg].get_speed() *
+                                                            (1 / (cosA * cosA / cosB + cosB)))
+                            self.array_egg[0][i_egg].set_speed(self.array_egg[0][i_egg].get_speed() *
+                                                            (1 / (cosB * cosB / cosA + cosA)))
+
+                for i_enemy_egg in range (len(self.array_egg[1])):
+                    check_meet = False
+                    while (self.is_meet(self.array_egg[0][i_egg].get_x_pos(), self.array_egg[0][i_egg].get_y_pos(),
+                                        self.array_egg[1][i_enemy_egg].get_x_pos(), self.array_egg[1][i_enemy_egg].get_y_pos())):
+                        check_meet = True
+                        if (self.array_egg[0][i_egg].get_x_pos() > self.array_egg[1][i_enemy_egg].get_x_pos()):
+                            self.array_egg[0][i_egg].set_x_pos(self.array_egg[0][i_egg].get_x_pos() +
+                                                           math.fabs(self.array_egg[0][i_egg].get_x_dir()))
+                        else:
+                            self.array_egg[0][i_egg].set_x_pos(self.array_egg[0][i_egg].get_x_pos() -
+                                                           math.fabs(self.array_egg[0][i_egg].get_x_dir()))
+
+                        if (self.array_egg[0][i_egg].get_y_pos() > self.array_egg[1][i_enemy_egg].get_y_pos()):
+                            self.array_egg[0][i_egg].set_y_pos(self.array_egg[0][i_egg].get_y_pos() +
+                                                           math.fabs(self.array_egg[0][i_egg].get_y_dir()))
+                        else:
+                            self.array_egg[0][i_egg].set_y_pos(self.array_egg[0][i_egg].get_y_pos() -
+                                                           math.fabs(self.array_egg[0][i_egg].get_y_dir()))
+
+                    if check_meet:
+                        kiss_dir_x = self.array_egg[1][i_enemy_egg].get_x_pos() - self.array_egg[0][i_egg].get_x_pos()
+                        kiss_dir_y = self.array_egg[1][i_enemy_egg].get_y_pos() - self.array_egg[0][i_egg].get_y_pos()
+                        distance = math.sqrt(kiss_dir_x * kiss_dir_x + kiss_dir_y * kiss_dir_y)
+
+                        self.array_egg[1][i_enemy_egg].set_x_dir(kiss_dir_x / distance)
+                        self.array_egg[1][i_enemy_egg].set_y_dir(kiss_dir_y / distance)
+
+                        cosB = self.array_egg[0][i_egg].get_x_dir() * self.array_egg[1][i_enemy_egg].get_x_dir() + \
+                               self.array_egg[0][i_egg].get_y_dir() * self.array_egg[1][i_enemy_egg].get_y_dir()
+                        cosA = math.sqrt(1 - math.fabs(cosB))
+
+                        if (cosA < 0.0001 and cosA > 0): cosA = 0.0001
+                        if (cosA > -0.0001 and cosA < 0): cosA = -0.0001
+                        if (cosB < 0.0001 and cosB > 0): cosB = 0.0001
+                        if (cosB > -0.0001 and cosB < 0): cosB = -0.0001
+
+                        self.array_egg[0][i_egg].set_x_dir(self.array_egg[0][i_egg].get_x_dir() -
+                                                       self.array_egg[1][i_enemy_egg].get_x_dir() * cosB)
+                        self.array_egg[0][i_egg].set_y_dir(self.array_egg[0][i_egg].get_y_dir() -
+                                                       self.array_egg[1][i_enemy_egg].get_y_dir() * cosB)
+                        self.array_egg[1][i_enemy_egg].set_speed(self.array_egg[0][i_egg].get_speed() *
+                                                        (1 / (cosA * cosA / cosB + cosB)))
+                        self.array_egg[0][i_egg].set_speed(self.array_egg[0][i_egg].get_speed() *
+                                                        (1 / (cosB * cosB / cosA + cosA)))
+
+        for i_egg in range (len(self.array_egg[1])):
+            if (self.array_egg[1][i_egg].get_speed() > 0):
+                self.array_egg[1][i_egg].set_x_pos(self.array_egg[1][i_egg].get_x_dir() * self.array_egg[1][i_egg].get_speed())
+                self.array_egg[1][i_egg].set_y_pos(self.array_egg[1][i_egg].get_y_dir() * self.array_egg[1][i_egg].get_speed())
+                self.array_egg[1][i_egg].set_speed(self.array_egg[1][i_egg].get_speed() - 0.1)
+
+                for i_my_egg in range (len(self.array_egg[1])):
+                    check_meet = False
+                    if i_egg is not i_my_egg:
+                        while (self.is_meet(self.array_egg[1][i_egg].get_x_pos(), self.array_egg[1][i_egg].get_y_pos(),
+                                            self.array_egg[1][i_my_egg].get_x_pos(), self.array_egg[1][i_my_egg].get_y_pos())):
+                            check_meet = True
+                            if (self.array_egg[1][i_egg].get_x_pos() > self.array_egg[1][i_my_egg].get_x_pos()):
+                                self.array_egg[1][i_egg].set_x_pos(self.array_egg[1][i_egg].get_x_pos() +
+                                                               math.fabs(self.array_egg[1][i_egg].get_x_dir()))
+                            else:
+                                self.array_egg[1][i_egg].set_x_pos(self.array_egg[1][i_egg].get_x_pos() -
+                                                               math.fabs(self.array_egg[1][i_egg].get_x_dir()))
+
+                            if (self.array_egg[1][i_egg].get_y_pos() > self.array_egg[1][i_my_egg].get_y_pos()):
+                                self.array_egg[1][i_egg].set_y_pos(self.array_egg[1][i_egg].get_y_pos() +
+                                                               math.fabs(self.array_egg[1][i_egg].get_y_dir()))
+                            else:
+                                self.array_egg[1][i_egg].set_y_pos(self.array_egg[1][i_egg].get_y_pos() -
+                                                               math.fabs(self.array_egg[1][i_egg].get_y_dir()))
+
+                        if check_meet:
+                            kiss_dir_x = self.array_egg[1][i_my_egg].get_x_pos() - self.array_egg[1][i_egg].get_x_pos()
+                            kiss_dir_y = self.array_egg[1][i_my_egg].get_y_pos() - self.array_egg[1][i_egg].get_y_pos()
+                            distance = math.sqrt(kiss_dir_x * kiss_dir_x + kiss_dir_y * kiss_dir_y)
+
+                            self.array_egg[1][i_my_egg].set_x_dir(kiss_dir_x / distance)
+                            self.array_egg[1][i_my_egg].set_y_dir(kiss_dir_y / distance)
+
+                            cosB = self.array_egg[1][i_egg].get_x_dir() * self.array_egg[1][i_my_egg].get_x_dir() + \
+                                   self.array_egg[1][i_egg].get_y_dir() * self.array_egg[1][i_my_egg].get_y_dir()
+                            cosA = math.sqrt(1 - math.fabs(cosB))
+
+                            if (cosA < 0.0001 and cosA > 0): cosA = 0.0001
+                            if (cosA > -0.0001 and cosA < 0): cosA = -0.0001
+                            if (cosB < 0.0001 and cosB > 0): cosB = 0.0001
+                            if (cosB > -0.0001 and cosB < 0): cosB = -0.0001
+
+                            self.array_egg[1][i_egg].set_x_dir(self.array_egg[1][i_egg].get_x_dir() -
+                                                           self.array_egg[1][i_my_egg].get_x_dir() * cosB)
+                            self.array_egg[1][i_egg].set_y_dir(self.array_egg[1][i_egg].get_y_dir() -
+                                                           self.array_egg[1][i_my_egg].get_y_dir() * cosB)
+                            self.array_egg[1][i_my_egg].set_speed(self.array_egg[1][i_egg].get_speed() *
+                                                            (1 / (cosA * cosA / cosB + cosB)))
+                            self.array_egg[1][i_egg].set_speed(self.array_egg[1][i_egg].get_speed() *
+                                                            (1 / (cosB * cosB / cosA + cosA)))
+
+                for i_enemy_egg in range (len(self.array_egg[0])):
+                    check_meet = False
+                    while (self.is_meet(self.array_egg[1][i_egg].get_x_pos(), self.array_egg[1][i_egg].get_y_pos(),
+                                        self.array_egg[0][i_enemy_egg].get_x_pos(), self.array_egg[0][i_enemy_egg].get_y_pos())):
+                        check_meet = True
+                        if (self.array_egg[1][i_egg].get_x_pos() > self.array_egg[0][i_enemy_egg].get_x_pos()):
+                            self.array_egg[1][i_egg].set_x_pos(self.array_egg[1][i_egg].get_x_pos() +
+                                                           math.fabs(self.array_egg[1][i_egg].get_x_dir()))
+                        else:
+                            self.array_egg[1][i_egg].set_x_pos(self.array_egg[1][i_egg].get_x_pos() -
+                                                           math.fabs(self.array_egg[1][i_egg].get_x_dir()))
+
+                        if (self.array_egg[1][i_egg].get_y_pos() > self.array_egg[0][i_enemy_egg].get_y_pos()):
+                            self.array_egg[1][i_egg].set_y_pos(self.array_egg[1][i_egg].get_y_pos() +
+                                                           math.fabs(self.array_egg[1][i_egg].get_y_dir()))
+                        else:
+                            self.array_egg[1][i_egg].set_y_pos(self.array_egg[1][i_egg].get_y_pos() -
+                                                           math.fabs(self.array_egg[1][i_egg].get_y_dir()))
+
+                    if check_meet:
+                        kiss_dir_x = self.array_egg[0][i_enemy_egg].get_x_pos() - self.array_egg[1][i_egg].get_x_pos()
+                        kiss_dir_y = self.array_egg[0][i_enemy_egg].get_y_pos() - self.array_egg[1][i_egg].get_y_pos()
+                        distance = math.sqrt(kiss_dir_x * kiss_dir_x + kiss_dir_y * kiss_dir_y)
+
+                        self.array_egg[0][i_enemy_egg].set_x_dir(kiss_dir_x / distance)
+                        self.array_egg[0][i_enemy_egg].set_y_dir(kiss_dir_y / distance)
+
+                        cosB = self.array_egg[1][i_egg].get_x_dir() * self.array_egg[0][i_enemy_egg].get_x_dir() + \
+                               self.array_egg[1][i_egg].get_y_dir() * self.array_egg[0][i_enemy_egg].get_y_dir()
+                        cosA = math.sqrt(1 - math.fabs(cosB))
+
+                        if (cosA < 0.0001 and cosA > 0): cosA = 0.0001
+                        if (cosA > -0.0001 and cosA < 0): cosA = -0.0001
+                        if (cosB < 0.0001 and cosB > 0): cosB = 0.0001
+                        if (cosB > -0.0001 and cosB < 0): cosB = -0.0001
+
+                        self.array_egg[1][i_egg].set_x_dir(self.array_egg[1][i_egg].get_x_dir() -
+                                                       self.array_egg[0][i_enemy_egg].get_x_dir() * cosB)
+                        self.array_egg[1][i_egg].set_y_dir(self.array_egg[1][i_egg].get_y_dir() -
+                                                       self.array_egg[0][i_enemy_egg].get_y_dir() * cosB)
+                        self.array_egg[0][i_enemy_egg].set_speed(self.array_egg[1][i_egg].get_speed() *
+                                                        (1 / (cosA * cosA / cosB + cosB)))
+                        self.array_egg[1][i_egg].set_speed(self.array_egg[1][i_egg].get_speed() *
+                                                        (1 / (cosB * cosB / cosA + cosA)))
+
+        check_remain_energy = 0
+        for i_egg in range(len(self.array_egg[0])):
+            check_remain_energy += self.array_egg[0][i_egg].get_speed()
+        for i_egg in range(len(self.array_egg[1])):
+            check_remain_energy += self.array_egg[0][i_egg].get_speed()
+
+        if (check_remain_energy > 0):
+            self.run_physics()
+
+
+
+    def is_meet(self, x1, y1, x2, y2):
+        distance = math.sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1))
+        if distance <= self.radius * 2:
+            return True
+        return False
+
+
 
     def notify_to_observer(self, turn, index, direction, force):
         notify_dict = {
@@ -161,3 +377,33 @@ class Egg:
         self.x_dir = x_dir
         self.y_dir = y_dir
         self.speed = force
+
+    def get_x_pos(self):
+        return self.x_pos
+
+    def get_y_pos(self):
+        return self.y_pos
+
+    def get_x_dir(self):
+        return self.x_dir
+
+    def get_y_dir(self):
+        return self.y_dir
+
+    def get_speed(self):
+        return self.speed
+
+    def set_x_pos(self, x_pos):
+        self.x_pos = x_pos
+
+    def set_y_pos(self, y_pos):
+        self.y_pos = y_pos
+
+    def set_x_dir(self, x_dir):
+        self.x_dir = x_dir
+
+    def set_y_dir(self, y_dir):
+        self.y_dir = y_dir
+
+    def set_speed(self, speed):
+        self.speed = speed
