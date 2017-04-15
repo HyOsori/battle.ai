@@ -84,7 +84,7 @@ class ALKAKIGamePhase(Phase):
         self.player_pos = None
         self.color = None
 
-        self.array_egg = [[0 for col in range(5)] for row in range(2)]
+        self.array_egg = [[Egg for col in range(5)] for row in range(2)]
 
 
     def do_start(self):
@@ -106,7 +106,7 @@ class ALKAKIGamePhase(Phase):
 
         # Send server msg
         self.change_turn(0)
-        self.request_to_server(0, [0.0, 0.0], 0)
+        self.request_to_server(0, 0, [0.0, 0.0], 0)
 
     def do_action(self, pid, dict_data):
         # validate_user
@@ -120,24 +120,29 @@ class ALKAKIGamePhase(Phase):
         direction = dict_data['direction']
         force = dict_data['force']
 
+        # 형 변환후 힘 넣기
+        self.array_egg[validate_user][index].add_force(direction[0], direction[1], force)
+
 
         self.change_turn()
         # Notify to Observer(Web) game data
-        self.notify_to_observer(0, [0.6, 0.4], 4)
+        self.notify_to_observer(validate_user, 0, [0.6, 0.4], 4)
         # Requests to Server(Handler) game data
-        self.request_to_server(0, [0.6, 0.4], 4)
+        self.request_to_server(validate_user, 0, [0.6, 0.4], 4)
 
-    def notify_to_observer(self, index, direction, force):
+    def notify_to_observer(self, turn, index, direction, force):
         notify_dict = {
+            'turn': turn,
             'index': index,
             'direction': direction,
             'force' :force
         }
         self.notify("game", notify_dict)
 
-    def request_to_server(self, index, direction, force):
+    def request_to_server(self, turn, index, direction, force):
         logging.info('Request ' + self.now_turn() + '\'s decision')
         request_dict = {
+            'turn': turn,
             'index': index,
             'direction': direction,
             'force' :force
