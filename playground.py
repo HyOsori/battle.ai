@@ -19,6 +19,7 @@ from server.handler.observerhandler import ObserverHandler
 from server.conf.conf_reader import ConfigReader
 from server.handler.webpagehandler import *
 
+from pymongo import MongoClient
 
 class Playground(tornado.web.Application):
     def __init__(self):
@@ -32,35 +33,28 @@ class Playground(tornado.web.Application):
 
         self.handler = [
             (r"/websocket", ObserverHandler, dict(player_list=self.player_list, attendee_list=self.attendee_list, database=self.db)),
-            # (r"/", HomeHandler),
+            (r"/", IndexHandler),
+            (r"/login", LoginPageHandler),
+            (r"/lobby", LobbyPageHandler),
             (r"/mypage", MyPageHandler),
-            (r"/", PlaygroundHandler),
-            (r"/auth/create", AuthCreateHandler),
-            (r"/auth/login", AuthLoginHandler),
-            (r"/auth/logout", AuthLogoutHandler),
+            (r"/game", GamePageHandler),
+            (r"/auth/signin", SignInHandler),
+            (r"/auth/signup", SignUpHandler),
+            (r"/auth/logout", LogoutHandler),
         ]
         self.setting = dict(
-            blog_title=u"Battle.ai",
+            title=u"Battle.ai",
             template_path=os.path.join(os.path.dirname(__file__), "templates"),
             static_path=os.path.join(os.path.dirname(__file__), "static"),
-            ui_modules={"Entry": EntryModule},
-            xsrf_cookies=True,
-            cookie_secret="secret_code",
+            # will be xsrf_cookies=True...... soon
+            cookie_secret="123",
             login_url="/auth/login",
             debug=True,
         )
         super(Playground, self).__init__(self.handler, **self.setting)
+        self.db = MongoClient()["battle"]
 
     def may_create_tables(self):
-        # try:
-        #     self.db.get("SELECT COUNT(*) from entries;")
-        # except MySQLdb.ProgrammingError:
-        #     subprocess.check_call(['mysql',
-        #                            '--host=' + options.mysql_host,
-        #                            '--database=' + options.mysql_database,
-        #                            '--user=' + options.mysql_user,
-        #                            '--password=' + options.mysql_password],
-        #                           stdin=open('schema.sql'))
         pass
 
 
