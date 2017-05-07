@@ -46,6 +46,7 @@ class Player(object):
     def run(self):
         while True:
             self.play_game()
+            self.is_end = False
 
     def print_end_status(self, status):
         if status is 0:
