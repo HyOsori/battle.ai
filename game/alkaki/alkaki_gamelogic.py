@@ -23,71 +23,99 @@ class ALKAKIGameLogic(TurnGameLogic):
             self.player_pos = []
         except Exception as e:
             logging.info(e)
+            logging.info("[Error] init_variable_error")
             self.end(101, None)
 
     def on_ready(self, player_list):
-        self._player_list = player_list
+        try:
+            self._player_list = player_list
+        except Exception as e:
+            logging.info(e)
+            logging.info("[Error] get_player_list_error")
+            self.end(130, None)
 
         # Here makes dict for multi player init variable
-
         init_dict = {}
-        color_count = 0
+        try:
+            color_count = 0
 
-        for i in player_list:
-            init_dict[i] = {}
-            init_dict[i]['board_size'] = self.board_size
-            init_dict[i]['count'] = self.count
-            init_dict[i]['radius'] = self.radius
-            init_dict[i]['color'] = color_count
+            for i in player_list:
+                init_dict[i] = {}
+                init_dict[i]['board_size'] = self.board_size
+                init_dict[i]['count'] = self.count
+                init_dict[i]['radius'] = self.radius
+                init_dict[i]['color'] = color_count
 
-            pos = [[0 for _ in range(2)] for _ in range(5)]
-            for i_row in range(self.count):
-                pos[i_row][0] = (i_row + 1) * 47 / 3 + 3
-                pos[i_row][1] = color_count * 47 * 4 / 3 + 3 + (49 / 3)
+                pos = [[0 for _ in range(2)] for _ in range(5)]
+                for i_row in range(self.count):
+                    pos[i_row][0] = (i_row + 1) * 47 / 3 + 3
+                    pos[i_row][1] = color_count * 47 * 4 / 3 + 3 + (49 / 3)
 
-            self.player_pos += pos
-            init_dict[i]['player_pos'] = pos
-            color_count += 1
+                self.player_pos += pos
+                init_dict[i]['player_pos'] = pos
+                color_count += 1
+        except Exception as e:
+            logging.info(e)
+            logging.info("[Error] set_init_dict_using_init_variable_error")
+            self.end(102, None)
 
         # Send Server
-        self._game_server.on_init_game(init_dict)
+        try:
+            self._game_server.on_init_game(init_dict)
+        except Exception as e:
+            logging.info(e)
+            logging.info("[Error] set_init_dict_using_init_variable_error")
+            self.end(160, None)
 
     def on_start(self):
         # shared_dict-init out of this class(Phase)
         shared_dict = self.get_shared_dict()
+        try:
+            shared_dict['board_size'] = self.board_size
+            shared_dict['count'] = self.count
+            shared_dict['radius'] = self.radius
+            shared_dict['player_pos'] = self.player_pos
+        except Exception as e:
+            logging.info(e)
+            logging.info("[Error] set_shared_dict_to_send_other_phase_error")
+            self.end(103, None)
 
-        shared_dict['board_size'] = self.board_size
-        shared_dict['count'] = self.count
-        shared_dict['radius'] = self.radius
-        shared_dict['player_pos'] = self.player_pos
-
-        # Register Phase (phase name free)
-        game_phase = ALKAKIGamePhase(self, 'game')
-        shared_dict['PHASE_GAME'] = self.append_phase(game_phase)
-        # Transfer Phase GameLogic -> GamePhase
-        self.change_phase(0)
+        try:
+            # Register Phase (phase name free)
+            game_phase = ALKAKIGamePhase(self, 'game')
+            shared_dict['PHASE_GAME'] = self.append_phase(game_phase)
+            # Transfer Phase GameLogic -> GamePhase
+            self.change_phase(0)
+        except Exception as e:
+            logging.info(e)
+            logging.info("[Error] change_phase_error")
+            self.end(105, None)
 
 
 class ALKAKIGamePhase(Phase):
     def __init__(self, logic_server, message_type):
         super(ALKAKIGamePhase, self).__init__(logic_server, message_type)
+        try:
+            # declare variable
+            self.player_list = None
+            self.shared_dict = None
 
-        # declare variable
-        self.player_list = None
-        self.shared_dict = None
+            # Init data
+            self.player_list = None
+            self.shared_dict = None
 
-        # Init data
-        self.player_list = None
-        self.shared_dict = None
+            # Init game independent data
+            self.board_size = None
+            self.count = None
+            self.radius = None
+            self.player_pos = None
+            self.color = None
 
-        # Init game independent data
-        self.board_size = None
-        self.count = None
-        self.radius = None
-        self.player_pos = None
-        self.color = None
-
-        self.array_egg = [Egg for _ in range(10)]
+            self.array_egg = [Egg for _ in range(10)]
+        except Exception as e:
+            logging.info(e)
+            logging.info("[Error] init_variable_error")
+            self.end(101, None)
 
     def do_start(self):
         logging.info("do_start")
@@ -95,50 +123,99 @@ class ALKAKIGamePhase(Phase):
         self.player_list = self.get_player_list()
         self.shared_dict = self.get_shared_dict()
 
-        # Init game independent data
-        self.board_size = self.shared_dict['board_size']
-        self.count = self.shared_dict['count']
-        self.radius = self.shared_dict['radius']
-        self.player_pos = self.shared_dict['player_pos']
+        try:
+            # Init game independent data
+            self.board_size = self.shared_dict['board_size']
+            self.count = self.shared_dict['count']
+            self.radius = self.shared_dict['radius']
+            self.player_pos = self.shared_dict['player_pos']
 
-        for i in range(self.count):
-            self.array_egg[i] = Egg(self.player_pos[i][0], self.player_pos[i][1], 0)
-        for i in range(self.count, self.count * 2):
-            self.array_egg[i] = Egg(self.player_pos[i][0], self.player_pos[i][1], 1)
+            for i in range(self.count):
+                self.array_egg[i] = Egg(self.player_pos[i][0], self.player_pos[i][1], 0)
+            for i in range(self.count, self.count * 2):
+                self.array_egg[i] = Egg(self.player_pos[i][0], self.player_pos[i][1], 1)
 
-        # Send server msg
-        self.change_turn(0)
-        self.request_to_server(0, 0, [0.0, 0.0], 0)
+        except Exception as e:
+            logging.info(e)
+            logging.info("[Error] get_shared_dict_error")
+            self.end(104, None)
+
+        try:
+            # Send server msg
+            self.change_turn(0)
+        except Exception as e:
+            logging.info(e)
+            logging.info("[Error] change_turn_error")
+            self.end(106, None)
+
+        try:
+            self.request_to_server(0, 0, [0.0, 0.0], 0)
+        except Exception as e:
+            logging.info(e)
+            logging.info("[Error] request_to_server_error")
+            self.end(162, None)
 
     def do_action(self, pid, dict_data):
+        index = None
+        direction = None
+        force = None
 
-        index = dict_data['index']
-        direction = dict_data['direction']
-        force = dict_data['force']
+        try:
+            index = dict_data['index']
+            direction = dict_data['direction']
+            force = dict_data['force']
+        except Exception as e:
+            logging.info(e)
+            logging.info("[Error] get_game_dict_data_error")
+            self.end(131, None)
 
         # validate_user
         validate_user = 0
-        if pid == self.player_list[0]:
-            validate_user = 0
-        elif pid == self.player_list[1]:
-            validate_user = 1
-            index += self.count
+        try:
+            if pid == self.player_list[0]:
+                validate_user = 0
+            elif pid == self.player_list[1]:
+                validate_user = 1
+                index += self.count
+        except Exception as e:
+            logging.info(e)
+            logging.info("[Error] get_game_dict_data_error")
+            self.end(107, None)
 
         # 형 변환후 힘 넣기
-        self.array_egg[index].add_force(direction[0], direction[1], force)
-        self.run_physics()
+        try:
+            self.array_egg[index].add_force(direction[0], direction[1], force)
+            self.run_physics()
+        except Exception as e:
+            logging.info(e)
+            logging.info("[Error] user_game_error")
+            self.end(180, None)
 
-        self.change_turn()
+        try:
+            self.change_turn()
+        except Exception as e:
+            logging.info(e)
+            logging.info("[Error] change_turn_error")
+            self.end(106, None)
 
-        # Notify to Observer(Web) game data
-        self.notify_to_observer(validate_user, 0, [0.6, 0.4], 4)
-        # Requests to Server(Handler) game data
-        self.request_to_server(validate_user, 0, [0.6, 0.4], 4)
+        try:
+            # Notify to Observer(Web) game data
+            self.notify_to_observer(validate_user, 0, [0.6, 0.4], 4)
+        except Exception as e:
+            logging.info(e)
+            logging.info("[Error] notify_to_observer_error")
+            self.end(161, None)
+
+        try:
+            # Requests to Server(Handler) game data
+            self.request_to_server(validate_user, 0, [0.6, 0.4], 4)
+        except Exception as e:
+            logging.info(e)
+            logging.info("[Error] request_to_server_error")
+            self.end(162, None)
 
     def run_physics(self):
         # 충돌 체크
-
-
         for i in range(len(self.array_egg)):
             if self.array_egg[i].speed > 0:
 
