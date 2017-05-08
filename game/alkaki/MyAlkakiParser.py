@@ -1,7 +1,7 @@
 from game.alkaki.AlkakiParser import ALKAKIParser
 
 import game.debugger as logging
-
+import random
 
 class MyALKAKIParser(ALKAKIParser):
     def __init__(self):
@@ -18,9 +18,10 @@ class MyALKAKIParser(ALKAKIParser):
 
     def game_phase(self, board_data):
 
-        index = 0
-        direction = [0, 0]
-        force = 0
+        index = random.randint(0, 4)
+        logging.info(index)
+        direction = [0.6, 0.4]
+        force = 3
 
         return_dict = {
             'index': index,

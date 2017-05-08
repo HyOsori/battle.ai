@@ -123,10 +123,10 @@ class ALKAKIGamePhase(Phase):
 
         # 형 변환후 힘 넣기
         self.array_egg[index].add_force(direction[0], direction[1], force)
-
         self.run_physics()
 
         self.change_turn()
+
         # Notify to Observer(Web) game data
         self.notify_to_observer(validate_user, 0, [0.6, 0.4], 4)
         # Requests to Server(Handler) game data
@@ -136,9 +136,10 @@ class ALKAKIGamePhase(Phase):
         # 충돌 체크
         for i in range(len(self.array_egg)):
             if self.array_egg[i].speed > 0:
-                my_speed = self.array_egg[i].speed()
-                my_x_dir = self.array_egg[i].x_dir()
-                my_y_dir = self.array_egg[i].y_dir()
+
+                my_speed = self.array_egg[i].speed
+                my_x_dir = self.array_egg[i].x_dir
+                my_y_dir = self.array_egg[i].y_dir
 
                 self.array_egg[i].x_pos += my_x_dir * my_speed
                 self.array_egg[i].y_pos += my_y_dir * my_speed
