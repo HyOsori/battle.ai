@@ -18,9 +18,8 @@ class MyALKAKIParser(ALKAKIParser):
 
     def game_phase(self, board_data):
 
-        index = random.randint(0, 4)
-        logging.info(index)
-        direction = [0.6, 0.4]
+        index = 0
+        direction = [1, 0]
         force = 3
 
         return_dict = {

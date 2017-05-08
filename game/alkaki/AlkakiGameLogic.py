@@ -39,8 +39,8 @@ class ALKAKIGameLogic(TurnGameLogic):
 
             pos = [[0 for _ in range(2)] for _ in range(5)]
             for i_row in range(self.count):
-                pos[i_row][0] = (i_row + 1) * 49 / 3 + 3
-                pos[i_row][1] = color_count * 49 * 4 / 3 + 3 + (49 / 3)
+                pos[i_row][0] = (i_row + 1) * 47 / 3 + 3
+                pos[i_row][1] = color_count * 47 * 4 / 3 + 3 + (49 / 3)
 
             self.player_pos += pos
             init_dict[i]['player_pos'] = pos
@@ -126,6 +126,10 @@ class ALKAKIGamePhase(Phase):
         self.run_physics()
 
         self.change_turn()
+        string = None
+        for i in range(len(self.array_egg)):
+            string = str(self.array_egg[i].x_pos) + "// A //" + str(self.array_egg[i].y_pos)
+            logging.info(string)
 
         # Notify to Observer(Web) game data
         self.notify_to_observer(validate_user, 0, [0.6, 0.4], 4)
@@ -134,6 +138,8 @@ class ALKAKIGamePhase(Phase):
 
     def run_physics(self):
         # 충돌 체크
+
+
         for i in range(len(self.array_egg)):
             if self.array_egg[i].speed > 0:
 
@@ -148,6 +154,7 @@ class ALKAKIGamePhase(Phase):
                 for j in range(len(self.array_egg)):
                     check_meet = False
                     if j is not i:
+
                         while (self.is_meet(self.array_egg[i].x_pos, self.array_egg[i].y_pos,
                                             self.array_egg[j].x_pos, self.array_egg[j].y_pos)):
                             if not check_meet:
@@ -188,10 +195,17 @@ class ALKAKIGamePhase(Phase):
                             self.array_egg[i].x_dir -= self.array_egg[j].x_dir * cos_b
                             self.array_egg[i].y_dir -= self.array_egg[j].y_dir * cos_b
 
-                            self.array_egg[j].speed = self.array_egg[i].speed * \
-                                (1 / (cos_a * cos_a / cos_b + cos_b))
-                            self.array_egg[i].speed = self.array_egg[j].speed * \
-                                (1 / (cos_b * cos_b / cos_a + cos_a))
+                            if cos_b == 0:
+                                self.array_egg[j].speed = 0
+                            else:
+                                self.array_egg[j].speed = self.array_egg[i].speed * \
+                                    (1 / (cos_a * cos_a / cos_b + cos_b))
+
+                            if cos_a == 0:
+                                self.array_egg[i].speed = 0
+                            else:
+                                self.array_egg[i].speed = self.array_egg[j].speed * \
+                                    (1 / (cos_b * cos_b / cos_a + cos_a))
 
         check_remain_energy = False
         for i in range(len(self.array_egg)):
