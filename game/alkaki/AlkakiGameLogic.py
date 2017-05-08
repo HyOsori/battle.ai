@@ -17,7 +17,7 @@ class ALKAKIGameLogic(TurnGameLogic):
         # Position Egg
         self.board_size = 100
         self.count = 5
-        self.radius = 1
+        self.radius = 3
         self.player_pos = []
 
         # Here init game dependent variable
@@ -39,8 +39,8 @@ class ALKAKIGameLogic(TurnGameLogic):
 
             pos = [[0 for _ in range(2)] for _ in range(5)]
             for i_row in range(self.count):
-                pos[i_row][0] = i_row * 20 + 10
-                pos[i_row][1] = color_count * 80 + 10
+                pos[i_row][0] = (i_row + 1) * 49 / 3 + 3
+                pos[i_row][1] = color_count * 49 * 4 / 3 + 3 + (49 / 3)
 
             self.player_pos += pos
             init_dict[i]['player_pos'] = pos
