@@ -1,7 +1,7 @@
 # -*-coding:utf-8-*-
 import sys
 
-from game.alkaki.MyAlkakiParser import MyALKAKIParser
+from game.alkaki.myalkaki_parser import MyALKAKIParser
 from gamebase.client.Client import Client
 
 HOST = '127.0.0.1'

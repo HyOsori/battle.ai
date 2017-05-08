@@ -6,7 +6,7 @@ from server.string import *
 from tornado import gen
 from server.handler.gamehandler import GameHandler
 from game.omok.OmokGameLogic import OMOKGameLogic
-from game.alkaki.AlkakiGameLogic import ALKAKIGameLogic
+from game.alkaki.alkaki_gamelogic import ALKAKIGameLogic
 
 import server.debugger as logging
 

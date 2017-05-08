@@ -1,4 +1,4 @@
-from game.alkaki.AlkakiParser import ALKAKIParser
+from game.alkaki.alkaki_parser import ALKAKIParser
 
 import game.debugger as logging
 import random

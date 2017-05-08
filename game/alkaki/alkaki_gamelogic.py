@@ -15,12 +15,15 @@ class ALKAKIGameLogic(TurnGameLogic):
         # count Egg for each player
         # circle radius
         # Position Egg
-        self.board_size = 100
-        self.count = 5
-        self.radius = 3
-        self.player_pos = []
-
         # Here init game dependent variable
+        try:
+            self.board_size = 100
+            self.count = 5
+            self.radius = 3
+            self.player_pos = []
+        except Exception as e:
+            logging.info(e)
+            self.end(101, None)
 
     def on_ready(self, player_list):
         self._player_list = player_list
@@ -126,10 +129,6 @@ class ALKAKIGamePhase(Phase):
         self.run_physics()
 
         self.change_turn()
-        string = None
-        for i in range(len(self.array_egg)):
-            string = str(self.array_egg[i].x_pos) + "// A //" + str(self.array_egg[i].y_pos)
-            logging.info(string)
 
         # Notify to Observer(Web) game data
         self.notify_to_observer(validate_user, 0, [0.6, 0.4], 4)
