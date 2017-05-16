@@ -11,7 +11,7 @@ GameBoard.egg_count = []; //[black_egg_cnt, white_egg_cnt]
 GameBoard.board = []; //[black_egg_arr, white_egg_arr]
 
 //-----------------------------------------------------------------------------------------------------------
-GameBoard.gameStart = function(JSON_data) {
+GameBoard.getReady = function(JSON_data) {
     var game_data = JSON_data.data;
     var player_color = -1;
     var x, y;
@@ -39,8 +39,8 @@ GameBoard.gameStart = function(JSON_data) {
     
 };
 
-GameBoard.recvTurnResult = function(JSON_data) {
-
+GameBoard.drawTurnResult = function(JSON_data) {
+    
 };
 
 GameBoard.drawLine = function() {
