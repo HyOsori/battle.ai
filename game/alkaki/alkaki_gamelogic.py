@@ -183,13 +183,30 @@ class ALKAKIGamePhase(Phase):
             self.end(107, None)
 
         # 형 변환후 힘 넣기
+        is_game_end = None
         try:
             self.array_egg[index].add_force(direction[0], direction[1], force)
             self.run_physics()
+            is_game_end = self.check_game_end()
         except Exception as e:
             logging.info(e)
             logging.info("[Error] user_game_error")
             self.end(180, None)
+
+        for i in range(10):
+            logging.info(self.array_egg[i].x_pos)
+
+        try:
+            if is_game_end["type"] == "win":
+                self.end(0, {'winner': is_game_end['person']})
+            elif is_game_end["type"] == "draw":
+                self.end(1, {'winner': is_game_end['person']})
+            elif is_game_end["type"] == "play":
+                pass
+
+        except Exception as e:
+            logging.info(e)
+            logging.info("[Error] send server to End Error")
 
         try:
             self.change_turn()
@@ -217,7 +234,7 @@ class ALKAKIGamePhase(Phase):
     def run_physics(self):
         # 충돌 체크
         for i in range(len(self.array_egg)):
-            if self.array_egg[i].speed > 0:
+            if self.array_egg[i].speed > 0 and self.array_egg[i].alive:
 
                 my_speed = self.array_egg[i].speed
                 my_x_dir = self.array_egg[i].x_dir
@@ -229,7 +246,7 @@ class ALKAKIGamePhase(Phase):
 
                 for j in range(len(self.array_egg)):
                     check_meet = False
-                    if j is not i:
+                    if j is not i and self.array_egg[j].alive:
 
                         while (self.is_meet(self.array_egg[i].x_pos, self.array_egg[i].y_pos,
                                             self.array_egg[j].x_pos, self.array_egg[j].y_pos)):
@@ -285,9 +302,13 @@ class ALKAKIGamePhase(Phase):
 
         check_remain_energy = False
         for i in range(len(self.array_egg)):
-            if self.array_egg[i].speed > 0:
+            if self.array_egg[i].speed > 0 and self.array_egg[i].alive:
                 check_remain_energy = True
                 break
+
+        for i in range(len(self.array_egg)):
+            if self.array_egg[i].x_pos < 0 or self.array_egg[i].x_pos > 100 or self.array_egg[i].y_pos < 0 or self.array_egg[i].y_pos > 100:
+                self.array_egg[i].alive = False
 
         if check_remain_energy:
             self.run_physics()
@@ -297,6 +318,39 @@ class ALKAKIGamePhase(Phase):
         if distance <= self.radius * 2:
             return True
         return False
+
+    def check_game_end(self):
+        array_dead_list = []
+        array_alive_list = []
+        game_end = False
+        for index_pid in range(len(self.player_list)):
+            pid = self.player_list[index_pid]
+            count = 0
+            # 죽은 돌 전부 세기
+            for i in range(self.count):
+                if not self.array_egg[(index_pid * self.count) + i].alive:
+                    count = count + 1
+            if count == self.count:
+                array_dead_list.append(pid)
+                game_end = True
+            else:
+                array_alive_list.append(pid)
+
+        if game_end:
+            if len(array_dead_list) == 1:
+                return {
+                    "type": "win",
+                    "person": array_alive_list
+                }
+            elif len(array_dead_list) == len(self.player_list):
+                return {
+                    "type": "draw",
+                    "person": array_dead_list
+                }
+
+        return {
+            "type": "play"
+        }
 
     def notify_to_observer(self, turn, index, direction, force):
         notify_dict = {
@@ -325,6 +379,7 @@ class Egg:
     x_dir = None
     y_dir = None
     speed = None
+    alive = None
 
     def __init__(self, x_pos, y_pos, color):
         self.x_pos = x_pos
@@ -333,6 +388,7 @@ class Egg:
         self.x_dir = 0
         self.y_dir = 0
         self.speed = 0
+        self.alive = True
 
     def add_force(self, x_dir, y_dir, speed):
         self.x_dir = x_dir
