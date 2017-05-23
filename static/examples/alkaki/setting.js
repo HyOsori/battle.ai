@@ -19,5 +19,7 @@ setting.protocol = {
         "ready" : GameBoard.gameStart,
         "end" : GameResult.recvGameResult
     },
-    "game_data" : GameBoard.recvTurnResult //this msg can be changed according to game
+    "game_data" : { //this msg can be changed according to game
+        "game" : GameBoard.recvTurnResult
+    } 
 };
