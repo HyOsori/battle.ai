@@ -17,7 +17,7 @@ More progress is expected in future
 ## Installation
 
 ### needed library
-**python 2.7 ver** and **Tornado 4.4.0**
+**python 3.5.1 ver** and **Tornado 4.4.0**
 
 
 ```
