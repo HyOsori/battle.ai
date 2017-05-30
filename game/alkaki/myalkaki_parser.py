@@ -1,7 +1,5 @@
 from game.alkaki.alkaki_parser import ALKAKIParser
 
-import game.debugger as logging
-import random
 
 class MyALKAKIParser(ALKAKIParser):
     def __init__(self):
@@ -27,5 +25,19 @@ class MyALKAKIParser(ALKAKIParser):
             'direction': direction,
             'force': force
         }
-
         return return_dict
+
+    # Logic Side
+    def get_predict_position(self, x_pos, y_pos, x_dir, y_dir, speed):
+        while speed > 0:
+            x_pos += x_dir * speed
+            y_pos += y_dir * speed
+            speed -= 0.1
+
+        if x_pos < 0 or x_pos > 100 or y_pos < 0 or y_pos > 100:
+            return "out"
+
+        return {
+            "x": x_pos,
+            "y": y_pos,
+        }

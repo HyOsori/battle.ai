@@ -217,7 +217,7 @@ class ALKAKIGamePhase(Phase):
 
         try:
             # Notify to Observer(Web) game data
-            self.notify_to_observer(validate_user, 0, [0.6, 0.4], 4)
+            self.notify_to_observer(validate_user, 0, [direction[0], direction[1]], force)
         except Exception as e:
             logging.info(e)
             logging.info("[Error] notify_to_observer_error")
@@ -225,7 +225,7 @@ class ALKAKIGamePhase(Phase):
 
         try:
             # Requests to Server(Handler) game data
-            self.request_to_server(validate_user, 0, [0.6, 0.4], 4)
+            self.request_to_server(validate_user, 0, [direction[0], direction[1]], force)
         except Exception as e:
             logging.info(e)
             logging.info("[Error] request_to_server_error")
@@ -307,7 +307,8 @@ class ALKAKIGamePhase(Phase):
                 break
 
         for i in range(len(self.array_egg)):
-            if self.array_egg[i].x_pos < 0 or self.array_egg[i].x_pos > 100 or self.array_egg[i].y_pos < 0 or self.array_egg[i].y_pos > 100:
+            if self.array_egg[i].x_pos < 0 or self.array_egg[i].x_pos > 100 or \
+                            self.array_egg[i].y_pos < 0 or self.array_egg[i].y_pos > 100:
                 self.array_egg[i].alive = False
 
         if check_remain_energy:
