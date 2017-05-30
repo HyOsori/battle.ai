@@ -1,16 +1,54 @@
 {% extends "base.html" %}
+<!--css code-->
+ <link href="/login.css" type="text/css">
+{% block head %}
+     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+<link href="bootstrap.min.css">
+    {% end %}
 
 {% block body %}
+<!-- Latest compiled and minified CSS -->
+ <button style="float:right;margin:20px"type="button" class="btn btn-default navbar-btn">Sign in</button>
+<!--<div style="text-align:center;float:right; margin:20px; width:30vw;">-->
+<div id="sign"></div>
+<div>
 <h1>Sign Up</h1>
-<form action="/auth/signup" method="POST">
-  Name: <input name="name" type="text"><br>
-  Password: <input name="password" type="password"><br>
-  Password confirm <input name="password_confirm" type="password"><br>
-  {% module xsrf_form_html() %}
-  <input type="submit">
+<form id="sign_up" action="/auth/signup" method="POST">
+  <div class="form-group">
+    <label for = "exampleInputName" >Name</label>
+    <input type="text" name="name" class="form-control" id="exampleInputName" placeholder="name" >
+  </div>
+  <div class="form-group">
+    <label for="exampleInputPassword1">Password</label>
+    <input type="password" name="password" class="form-control" id="exampleInputPassword1" placeholder="password" >
+  </div>
+   <div class="form-group">
+    <label for="exampleInputPassword2">Password confirm</label>
+    <input type="password" name="password_confirm" class="form-control" id="exampleInputPassword2" placeholder="password confirm" >
+  </div>
+     <button type="submit" class="btn btn-default navbar-btn">Sign up</button>
+ <!-- <button type="submit" class="btn btn-default">Submit</button>-->
 </form>
+</div>
+<!--
+<form action="/auth/signup" method="POST">
+    Name: <input name="name" type="text"><br>
+    Password: <input name="password" type="password"><br>
+    Password confirm <input name="password_confirm" type="password"><br>
+    {% module xsrf_form_html() %}
+
+</form>  -->
 <br>
-<p>LICENSE</p><br>
-<p>OPEN SOURCE</p><br>
-<p>GITHUB LINK</p><br>
+
+{% end %}
+
+{% block bottom %}
+<script src="https://fb.me/react-0.13.3.js"></script>
+<script src="https://fb.me/JSXTransformer-0.13.3.js"></script>
+<script type="test/jsx" src='{{ static_url("login.js") }}'></script>
+
+
+
+
 {% end %}

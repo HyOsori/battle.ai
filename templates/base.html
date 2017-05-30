@@ -3,9 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <title>{{ handler.settings["title"] }}</title>
-    <link rel="alternate" href="/feed" type="application/atom+xml" title="{{ handler.settings['title'] }}">
-    <!--css code-->
-    {% block head %}{% end %}
+    <link  rel="alternate" href="/feed" type="application/atom+xml" title="{{ handler.settings['title'] }}">
+     <!--css code-->
+    {% block head %}
+
+   {% end %}
 </head>
 <body>
 <div id="header">
@@ -14,11 +16,6 @@
     {% if current_user %}
     <p>{{ current_user.name }}</p>
     {% else %}
-    <form action="/auth/signin" method="POST">
-        <input name="name" type="text">
-        <input name="password" type="password">
-        <input type="submit">
-    </form>
     {% end %}
 </div>
 
@@ -26,5 +23,10 @@
 
 <!--script code-->
 {% block bottom %}{% end %}
+<div style="padding-bottom: 70px;">
+<p>LICENSE</p><br>
+<p>OPEN SOURCE</p><br>
+<p>GITHUB LINK</p><br>
+</div>
 </body>
 </html>
