@@ -16,8 +16,8 @@ setting.protocol = {
     "notice_user_removed" : Lobby.removePlayer,
     "response_match" : Lobby.getMatchResponse,
     "game_handler" : {
-        "ready" : GameBoard.gameStart,
-        "end" : GameResult.recvGameResult
+        "ready" : GameBoard.startGame,
+        "end" : GameBoard.endGame
     },
     "game_data" : { //this msg can be changed according to game
         "game" : GameBoard.recvTurnResult

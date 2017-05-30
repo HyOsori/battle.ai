@@ -99,7 +99,7 @@ Lobby.removePlayer = function(JSON_data) {
 Lobby.getMatchResponse = function(JSON_data) {
     if (setting.use_animation) {
         //loading();
-        loadPage("gameBoard");
+        return;
     } else {
         loadPage("gameBoard");
     }

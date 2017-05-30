@@ -33,6 +33,18 @@ GameBoard.drawTurnResult = function(JSON_data) {
     GameBoard.drawBoard(GameBoard.board);
 };
 
+GameBoard.endGame = function(JSON_data) {
+    resizeCanvas(GameBoard.canvas);
+
+    GameBoard.width = GameBoard.width;
+    GameBoard.height = GameBoard.height;
+    GameBoard.interval = (GameBoard.canvas.width - (GameBoard.margin * 2)) / (GameBoard.width + 1);
+    GameBoard.board = GameBoard.board;
+
+    GameBoard.drawLine();
+    GameBoard.drawBoard(GameBoard.board);
+};
+
 GameBoard.drawCircle = function(x, y, color) {
     var ctx = GameBoard.ctx;
     var margin = GameBoard.margin;

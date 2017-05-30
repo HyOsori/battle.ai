@@ -1,5 +1,6 @@
 GameBoard.size_num = 18;
 GameBoard.blank = 3;
+GameBoard.frame = 50;
 
 GameBoard.board_size = -1;
 GameBoard.ratio = -1;
@@ -16,7 +17,6 @@ GameBoard.getReady = function(JSON_data) {
     var player_color = -1;
     var x, y;
     var init_eggs_indices = [];
-
     GameBoard.egg_arr = new Array();
 
     for (key in game_data) {
@@ -31,11 +31,11 @@ GameBoard.getReady = function(JSON_data) {
     GameBoard.interval = (GameBoard.board_size - GameBoard.blank * 2) / GameBoard.size_num;
 
     for (var color = 0; color < 2; ++color) {
-        for (pos in init_eggs_indices[color]) {
-            x = pos[0];
+		init_eggs_indices[color].forEach(function(pos) {
+			x = pos[0];
             y = pos[1];
             GameBoard.egg_arr.push(new Egg(x, y, color));
-        }
+		});
     }
 
     GameBoard.drawLine();
@@ -50,14 +50,17 @@ GameBoard.getReady = function(JSON_data) {
 
 GameBoard.drawTurnResult = function(JSON_data) {
     var game_data = JSON_data.data;
-    var direction = data.direction;
-    var index = data.index;
-    var turn = data.turn;
-    var force = data.force;
+    var direction = game_data.direction;
+    var index = game_data.index;
+    var turn = game_data.turn;
+    var force = game_data.force;
 
-	GameBoard.egg_arr[index + turn * GameBoard.egg_count[0]].addForce(direction[0], direction[1], force);
+	GameBoard.egg_arr[index + turn * this.egg_count[0]].addForce(direction[0], direction[1], force);
 
+	GameBoard.is_turn_end = false;
+	
 	GameBoard.runPhysics();
+	GameBoard.updateBoard();
 };
 
 GameBoard.drawLine = function() {
@@ -67,7 +70,7 @@ GameBoard.drawLine = function() {
     var circle_radius = 3;
 
     ctx.fillStyle="#ffcc66";
-	ctx.fillRect(0, 0, GameBoard.canvas.width, GameBoard.canvas.height);
+	ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
     // board draw line
 	ctx.strokeStyle="#333300";
@@ -125,13 +128,13 @@ function Egg(x_pos, y_pos, color) {
 	this.x_dir = 0;
 	this.y_dir = 0;
 	this.speed = 0;
-	this.initspeed = 0;
+	this.alive = true;
 }
 
 Egg.prototype.addForce = function(x_dir, y_dir, force) {
 	this.x_dir = x_dir;
 	this.y_dir = y_dir;
-	this.speed = Math.sqrt(2 * force);
+	this.speed = force;
 	return true;
 };
 
@@ -139,13 +142,12 @@ Egg.prototype.isMeet = function(x, y) {
     var radius = GameBoard.egg_radius;
     var distance = Math.sqrt((this.x_pos - x) * (this.x_pos - x) + (this.y_pos - y) * (this.y_pos - y));
 
-    return distance <= radius * 2;
+    return (distance <= radius * 2) && this.alive && x >= 0 && x <= 100 && y >= 0 && y <= 100;
 };
 
 GameBoard.runPhysics = function(){
 	// check_meet use for checking kiss Eggs
 	var check_meet;
-
 	for (var i = 0; i < GameBoard.egg_arr.length; ++i) {
 		if (GameBoard.egg_arr[i].speed > 0) {
 			// Egg Move
@@ -216,11 +218,34 @@ GameBoard.runPhysics = function(){
 		}
 	}
 
+	for (i = 0; i < GameBoard.egg_arr.length; ++i) {
+		if (GameBoard.egg_arr[i].x_pos < 0 || GameBoard.egg_arr[i].x_pos > 100 ||
+				GameBoard.egg_arr[i].y_pos < 0 || GameBoard.egg_arr[i].y_pos > 100) {
+			GameBoard.egg_arr[i].alive = false;
+			break;
+		}
+	}
+
 	if (check_remain_energy) {
-		setTimeout(GameBoard.runPhysics, 20);
+		setTimeout(GameBoard.runPhysics, 1000 / GameBoard.frame);
+	} else {
+		GameBoard.is_turn_end = true;
 	}
 };
 
 GameBoard.updateBoard = function() {
+	var x, y, color;
 
+	GameBoard.drawLine();
+
+	GameBoard.egg_arr.forEach(function(egg) {
+		x = egg.x_pos;
+        y = egg.y_pos;
+        color = egg.color;
+        if (egg.alive) { GameBoard.drawEgg(x, y, color); }
+	});
+
+	if (!GameBoard.is_turn_end) {
+		setTimeout(GameBoard.updateBoard, 1000 / GameBoard.frame);
+	}
 };
