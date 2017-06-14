@@ -21,6 +21,7 @@ from server.handler.webpagehandler import *
 from server.handler.lobbyhandler import LobbyHandler
 from pymongo import MongoClient
 
+
 class Playground(tornado.web.Application):
     def __init__(self):
         # TODO: game_logic selection must be added, tcp_port, web_port, playing game will be argument of playground.py
