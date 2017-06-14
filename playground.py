@@ -18,7 +18,7 @@ from server.handler.playerhandler import PlayerHandler
 from server.handler.observerhandler import ObserverHandler
 from server.conf.conf_reader import ConfigReader
 from server.handler.webpagehandler import *
-
+from server.handler.lobbyhandler import LobbyHandler
 from pymongo import MongoClient
 
 class Playground(tornado.web.Application):
@@ -27,17 +27,25 @@ class Playground(tornado.web.Application):
 
         self.player_list = dict()
         self.attendee_list = dict()
+        self.lobby_list = dict()
 
         self.tcp_server = PlayerHandler(self.attendee_list, self.player_list)
         self.db = pymongo.MongoClient()
 
         self.handler = [
+
+            # websocket handler
             (r"/websocket", ObserverHandler, dict(player_list=self.player_list, attendee_list=self.attendee_list, database=self.db)),
+            (r"/lobby/socket", LobbyHandler, dict(player_list=self.player_list, lobby_list=self.lobby_list)),
+
+            # web page handler
             (r"/", IndexHandler),
             (r"/login", LoginPageHandler),
             (r"/lobby", LobbyPageHandler),
             (r"/mypage", MyPageHandler),
             (r"/game", GamePageHandler),
+
+            # signup signin logout request
             (r"/auth/signin", SignInHandler),
             (r"/auth/signup", SignUpHandler),
             (r"/auth/logout", LogoutHandler),

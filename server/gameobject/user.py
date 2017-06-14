@@ -57,6 +57,7 @@ class Player(User):
     def room_out(self):
         self.playing = False
 
+
 class Observer(User):
     def __init__(self, conn):
         User.__init__(self, conn)
@@ -92,4 +93,25 @@ class Observer(User):
 
     def room_out(self):
         self.observer_flag = False
+
+
+class LobbyUser(User):
+    def __init__(self, conn):
+        super().__init__(conn)
+
+
+    def notify_gamelog_added(self):
+        pass
+
+    def notify_chat_sended(self):
+        pass
+
+    def notify_ai_added(self):
+        pass
+
+    def notify_ai_deleted(self):
+        pass
+
+
+
 
