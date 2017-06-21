@@ -18,13 +18,10 @@ class User:
 
 
 class Player(User):
-    def __init__(self, pid, conn):
+    def __init__(self, _id, conn):
         User.__init__(self, conn)
-        self.pid = pid
+        self._id = _id
         self.playing = False
-
-    def set_pid(self, pid):
-        self.pid = pid
 
     def __error_callback(self, future):
         future.set_exception(gen.TimeoutError("Timeout"))
@@ -41,9 +38,6 @@ class Player(User):
     def read(self):
         message = yield self.conn.read_bytes(buffer_size, partial=True)
         return message.decode()
-
-    def get_pid(self):
-        return self.pid
 
     def send(self, data):
         try:

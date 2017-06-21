@@ -1,6 +1,6 @@
-from server.utils.player_pool import PlayerPool
-from server.utils.lobby_pool import LobbyPool
-from server.utils.observer_pool import ObserverPool
+from server.pools.player_pool import PlayerPool
+from server.pools.lobby_pool import LobbyPool
+from server.pools.observer_pool import ObserverPool
 
 '''
 Singleton instance to control all user in this application
@@ -34,14 +34,4 @@ class UserPool(object):
 
     def get_observer_pool(self):
         return self.observer_pool
-
-
-a = UserPool.instance()
-b = UserPool.instance()
-
-print(a)
-print(b)
-
-a.get_player_pool().append("a")
-print(b.get_player_pool())
 
