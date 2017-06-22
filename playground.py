@@ -14,6 +14,7 @@ import pymongo
 sys.path.insert(0, '../')
 # TODO : find out how to control path and error
 
+from server.db.dbhelper import DBHelper
 from server.handler.playerhandler import PlayerHandler
 from server.handler.observerhandler import ObserverHandler
 from server.conf.conf_reader import ConfigReader
@@ -28,6 +29,8 @@ class Playground(tornado.web.Application):
 
         self.game_server = PlayerHandler()
         self.db = pymongo.MongoClient()
+
+        DBHelper.instance().initialize(self.db)
 
         self.handler = [
 
