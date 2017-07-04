@@ -1,6 +1,7 @@
 import json
 import tornado.websocket
 from server.string import *
+from server.gameobject.message import Message
 
 
 class LobbyHandler(tornado.websocket.WebSocketHandler):
@@ -13,12 +14,12 @@ class LobbyHandler(tornado.websocket.WebSocketHandler):
 
     def on_message(self, message):
         try:
-            message = json.loads(message)
+            message = Message.load_message(message)
 
-            msg = message[MSG]
-            msg_type = message[MSG_TYPE]
-            data = message[DATA]
-        except Exception as e:
+            msg = message.msg
+            msg_type = message.msg_type
+            data = message.data
+        except Exception:
             # message paring error
             return
 
@@ -30,14 +31,28 @@ class LobbyHandler(tornado.websocket.WebSocketHandler):
         elif msg == CHAT:
             if msg_type == INIT:
                 pass
+            elif msg_type == SEND:
+                pass
         elif msg == MATCH:
             if msg_type == REQUEST:
+                # TODO: redirect game page
                 pass
+
     def on_close(self):
         pass
 
-    @staticmethod
-    def init_game_log(user):
+    def init_game_log(self):
         pass
+
+    def init_chat(self):
+        pass
+
+    def notify_chat(self):
+        pass
+
+    def request_match(self):
+        pass
+
+
 
 
