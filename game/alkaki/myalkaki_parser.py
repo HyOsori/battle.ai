@@ -18,8 +18,11 @@ class MyALKAKIParser(ALKAKIParser):
     def game_phase(self, board_data):
 
         index = 0
-        direction = [1, 0]
-        force = 3
+        direction = self.get_direction_depending_on_position(0, 0, 1, 0)
+        force = self.get_distance(0, 0, 1, 0)
+
+        if force > 5:
+            force = 5
 
         return_dict = {
             'index': index,
@@ -29,9 +32,10 @@ class MyALKAKIParser(ALKAKIParser):
         return return_dict
 
     # Logic Side
-    @staticmethod
-    def get_direction_depending_on_position(x_prev, y_prev, x_next, y_next):
-        pass
+    def get_direction_depending_on_position(self, x_prev, y_prev, x_next, y_next):
+        x_dir = (x_next - x_prev) / self.get_distance(x_prev, y_prev, x_next, y_next)
+        y_dir = (y_next - y_prev) / self.get_distance(x_prev, y_prev, x_next, y_next)
+        return [x_dir, y_dir]
 
     @staticmethod
     def get_force_depending_on_distance(distance):
