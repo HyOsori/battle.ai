@@ -9,10 +9,10 @@
 
 {% block body %}
 <!-- Latest compiled and minified CSS -->
- <button style="float:right;margin:20px"type="button" class="btn btn-default navbar-btn">Sign in</button>
+{#<button id="sign_in"style="float:right;margin:20px"type="button" class="btn btn-default navbar-btn">Sign in</button>#}
 <!--<div style="text-align:center;float:right; margin:20px; width:30vw;">-->
-<div id="sign"></div>
-<div>
+<div id="sign_in"></div>
+<div id="sign_up" style="float:right;margin:20px">
 <h1>Sign Up</h1>
 <form id="sign_up" action="/auth/signup" method="POST">
   <div class="form-group">
@@ -46,7 +46,7 @@
 {% block bottom %}
 <script src="https://fb.me/react-0.13.3.js"></script>
 <script src="https://fb.me/JSXTransformer-0.13.3.js"></script>
-<script type="test/jsx" src='{{ static_url("login.js") }}'></script>
+<script type="text/jsx" src='{{ static_url("login.js") }}'></script>
 
 
 
