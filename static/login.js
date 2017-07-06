@@ -22,21 +22,7 @@
  }
  }*/
 //
-var Sign_in = React.createClass({
-    render: function () {
-        let style = {
-            float: 'right',
-            margin: '20px'
-        }
-        return (
-            <div>
-                <button id="sign_in" type="button" class="btn btn-default navbar-btn">Sign in</button>
-            </div>
-        );
 
-    }
-
-});
 var Sign_up = React.createClass({
     render: function () {
 
@@ -58,7 +44,7 @@ var Sign_up = React.createClass({
                         <input type="password" name="password_confirm" class="form-control" id="exampleInputPassword2"
                                placeholder="password confirm"/>
                     </div>
-                     {document.getElementById('exampleInputPassword1').value==document.getElementById('exampleInputPassword1').value?'TRUE':'FALSE'}
+
                     <button type="submit" class="btn btn-default navbar-btn">Sign up</button>
                 </form>
 
@@ -67,9 +53,7 @@ var Sign_up = React.createClass({
     }
 });
 
-        React.render(
-        <Sign_in/>
-        ,document.getElementById('sign_in'));
+
         React.render(
         <Sign_up/>
         ,document.getElementById('sign_up'));
