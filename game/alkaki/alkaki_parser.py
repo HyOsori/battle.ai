@@ -17,7 +17,6 @@ class ALKAKIParser(AIParser):
         base = super(ALKAKIParser, self).parsing_data(decoding_data)
         logging.info("PARSING DATA")
 
-        return_dict = None
         return_dict = self.game_phase(decoding_data)
         return self.make_send_msg('game', return_dict)
 

@@ -1,4 +1,5 @@
 from game.alkaki.alkaki_parser import ALKAKIParser
+import math
 
 
 class MyALKAKIParser(ALKAKIParser):
@@ -28,16 +29,23 @@ class MyALKAKIParser(ALKAKIParser):
         return return_dict
 
     # Logic Side
-    def get_predict_position(self, x_pos, y_pos, x_dir, y_dir, speed):
-        while speed > 0:
-            x_pos += x_dir * speed
-            y_pos += y_dir * speed
-            speed -= 0.1
+    @staticmethod
+    def get_direction_depending_on_position(x_prev, y_prev, x_next, y_next):
+        pass
 
-        if x_pos < 0 or x_pos > 100 or y_pos < 0 or y_pos > 100:
-            return "out"
+    @staticmethod
+    def get_force_depending_on_distance(distance):
+        force = 0
+        force_increase = 0.1
+        while force < distance:
+            force = force + force_increase
+            force_increase = force_increase + 0.1
 
-        return {
-            "x": x_pos,
-            "y": y_pos,
-        }
+        return force
+
+    @staticmethod
+    def get_distance(x_prev, y_prev, x_next, y_next):
+        return math.sqrt(
+            math.pow(x_next - x_prev, 2) +
+            math.pow(y_next - y_prev, 2))
+
