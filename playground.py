@@ -30,8 +30,6 @@ class Playground(tornado.web.Application):
         self.game_server = PlayerHandler()
         self.db = pymongo.MongoClient()
 
-        DBHelper.instance().initialize(self.db)
-
         self.handler = [
 
             # websocket handler
@@ -61,6 +59,7 @@ class Playground(tornado.web.Application):
         )
         super(Playground, self).__init__(self.handler, **self.setting)
         self.db = MongoClient()["battle"]
+        DBHelper.instance().initialize(self.db)
 
 
 def main():
