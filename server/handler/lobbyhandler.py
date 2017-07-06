@@ -54,7 +54,6 @@ class LobbyHandler(tornado.websocket.WebSocketHandler):
         game_log_list = db.game_log_list
 
     def notify_chat(self, data):
-
         message = Message()
         message.msg = CHAT
         message.msg_type = RECEIVE
