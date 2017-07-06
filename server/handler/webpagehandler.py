@@ -72,13 +72,9 @@ class SignUpHandler(BaseHandler):
         )
         user = Player(name, hashed_password)
         users_colletion = self.db.users
-        print(users_colletion)
         user_id = users_colletion.insert(user.__dict__)
-        print(user_id)
-        print(type(user_id))
-        self.set_secure_cookie(USER_COOKIE, str(user_id))
 
-        self.redirect("/lobby")
+        self.redirect("/login")
 
 
 class SignInHandler(BaseHandler):
