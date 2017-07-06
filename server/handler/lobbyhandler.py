@@ -1,8 +1,9 @@
-import json
 import tornado.websocket
 from server.string import *
 from server.gameobject.message import Message
-
+from server.db.dbhelper import DBHelper
+from server.pools.user_pool import UserPool
+from server.gameobject.user import LobbyUser
 
 class LobbyHandler(tornado.websocket.WebSocketHandler):
 
@@ -10,7 +11,14 @@ class LobbyHandler(tornado.websocket.WebSocketHandler):
         pass
 
     def open(self, *args, **kwargs):
-        pass
+        print("ObserverHandler open is called " + str(self))
+
+        lobby_user = LobbyUser(self)
+
+        lobby_pool = UserPool.instance().get_lobby_pool()
+        lobby_user.add_lobby_
+
+        self.__instance = lobby_user
 
     def on_message(self, message):
         try:
@@ -26,12 +34,12 @@ class LobbyHandler(tornado.websocket.WebSocketHandler):
         # game log
         if msg == GAME_LOG:
             if msg_type == INIT:
+                self.init_game_log()
                 pass
         # chat
         elif msg == CHAT:
-            if msg_type == INIT:
-                pass
-            elif msg_type == SEND:
+            if msg_type == SEND:
+                self.notify_chat(data)
                 pass
         elif msg == MATCH:
             if msg_type == REQUEST:
@@ -42,13 +50,19 @@ class LobbyHandler(tornado.websocket.WebSocketHandler):
         pass
 
     def init_game_log(self):
-        pass
+        db = DBHelper.instance()
+        game_log_list = db.game_log_list
 
-    def init_chat(self):
-        pass
+    def notify_chat(self, data):
 
-    def notify_chat(self):
-        pass
+        message = Message()
+        message.msg = CHAT
+        message.msg_type = RECEIVE
+        message.data = data
+
+        message = Message.dump_message(message)
+
+        self.__instance.notify_chat_sended()
 
     def request_match(self):
         pass
