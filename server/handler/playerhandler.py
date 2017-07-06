@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
-
 import functools
-import json
 import logging
 import tornado.httpserver
 import tornado.ioloop
@@ -12,13 +10,14 @@ from tornado import gen
 
 from server.string import *
 from server.gameobject.user import Player
+from server.gameobject.message import Message
+from server.pools.user_pool import UserPool
 
 
 class PlayerHandler(tornado.tcpserver.TCPServer):
-    def __init__(self, attendee_list, player_list):
+    def __init__(self):
         tornado.tcpserver.TCPServer.__init__(self)
-        self.player_list = player_list
-        self.attendee_list = attendee_list
+        # super().__init__(self)
 
     def handle_stream(self, stream, address):
         """
@@ -40,53 +39,55 @@ class PlayerHandler(tornado.tcpserver.TCPServer):
 
         :param stream:  player's stream
         '''
-        # TODO : set protocol of user_info, and handle exception of every case
-        # TODO: overall correction is needed in nearby this.
+        player_pool = UserPool.instance().get_player_pool()
+        observer_pool = UserPool.instance().get_observer_pool()
+
         player = Player(None, stream)
         try:
             while True:
-                message = yield player.read()
-                message = json.loads(message)
+                data = yield player.read()
+                message = Message.load_message(data)
 
-                username = message[DATA]["username"]
+                user_key = message.data["username"]
 
-                if username in self.player_list.keys():
-                    msg = {MSG: USER_INFO, MSG_TYPE: INIT, DATA: {RESPONSE: NO}}
-                    json_data = json.dumps(msg)
-                    stream.write(json_data.encode())
+                if user_key in player_pool:
+                    data = Message.dump_message(Message(USER_INFO, INIT, {RESPONSE: NO}))
+                    stream.write(data.encode())
                     continue
                 else:
                     break
 
-            player = Player(username, stream)
-            message = {MSG: USER_INFO, MSG_TYPE: INIT, DATA: {RESPONSE: OK}}
-            message = json.dumps(message)
-            player.send(message)
-            logging.info(username + " enter BATTLE.AI")
+            player = Player(user_key, stream)
+            data = Message.dump_message(Message(USER_INFO, INIT, {RESPONSE: OK}))
+            player.send(data)
+            logging.info(user_key + " enter BATTLE.AI")
 
-            self.player_list[username] = player
-            for attendee in self.attendee_list.values():
-                logging.debug("user notify added");
-                attendee.notice_user_added(username)
+            # add player in player pool
+            player_pool.add_player(player)
 
-            on_close_func = functools.partial(self._on_close, username)
+            # notify addition of player to observers
+            for observer in observer_pool:
+                observer.notice_user_added(user_key)
+
+            # register callback for connection close
+            # TODO: lambda vs functools.partial
+            on_close_func = functools.partial(self._on_close, player)
             stream.set_close_callback(on_close_func)
-        except Exception as e:
-            logging.error(e)
-            msg = {MSG: USER_INFO, MSG_TYPE: INIT, DATA: {RESPONSE: NO}}
-            json_data = json.dumps(msg)
-            stream.write(json_data.encode())
+        except Exception:
+            data = Message.dump_message(Message(USER_INFO, INIT, {RESPONSE, NO}))
+            stream.write(data.encode())
 
-    def _on_close(self, username):
+    def _on_close(self, player):
         '''
         when stream is closed this funciton is run
         :param username: ai client user name
         '''
-        logging.info(str(username)+" out from BATTLE.AI")
-        try:
-            self.player_list.pop(username)
-        except Exception:
-            pass
+        logging.info(str(player._id)+" out from BATTLE.AI")
 
-        for attendee in self.attendee_list.values():
-            attendee.notice_user_removed(username)
+        player_pool = UserPool.instance().get_player_pool()
+        observer_pool = UserPool.instance().get_observer_pool()
+
+        player_pool.remove_player(player)
+
+        for observer in observer_pool:
+            observer.notice_user_removed(player._id)

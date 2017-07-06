@@ -38,6 +38,7 @@ class ConnectionHandler(object):
 
     def receive_data(self):
         message = self.conn.recv(BUFFER_SIZE)
+        print(message)
         message = json.loads(message.decode())
 
         return message

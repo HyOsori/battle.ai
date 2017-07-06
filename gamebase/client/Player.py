@@ -52,11 +52,11 @@ class Player(object):
         if status is 0:
             print("normal end")
         elif 100 <= status < 200:
-            print("logic error: " + status)
+            print("logic error: " + str(status))
         elif 200 <= status < 300:
-            print("socket error: " + status)
+            print("socket error: " + str(status))
         elif 300 <= status < 400:
-            print("wrong message: " + status)
+            print("wrong message: " + str(status))
         else:
             print("unexpected error occur")
 
