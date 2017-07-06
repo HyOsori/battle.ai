@@ -17,30 +17,30 @@ More progress is expected in future
 ## Installation
 
 ### needed library
-**python 2.7 ver** and **Tornado 4.4.0**
+**python 3.5.1 ver** and **Tornado 4.4.0**
 
 
-```
+```bash
 git clone https://github.com/HyOsori/battle.ai.git
 ```
 
 ## Usage
 
-```
-cd battle.ai/server
-python Mainserver.py
+```bash
+python playground.py
 ```
 
 configuration of this project is in file **my.conf**
 
-## Contribution
-
-### ***pioneer***
+## Contributor
 
 **Frontend**
 
 [kimjieun02](https://github.com/kimjieun02 "" ), 
-[ZombieKim](https://github.com/ZombieKim "" )
+[ZombieKim](https://github.com/ZombieKim "" ),
+[OwlsKmv](https://github.com/OwlsKmv),
+[dms613412](https://github.com/dms613412)
+
 
 **GameLogic**
 
@@ -55,9 +55,6 @@ configuration of this project is in file **my.conf**
 [JunsuLime](https://github.com/JunsuLime ""), 
 [wrlawodms](https://github.com/wrlawodms "")
 
-## Credits
-
-TODO ...
 
 ## License
 

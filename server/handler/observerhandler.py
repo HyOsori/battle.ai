@@ -8,105 +8,114 @@ from server.gameobject.room import Room
 from server.handler.turngamehandler import TurnGameHandler
 from server.string import *
 from server.gameobject.user import Observer
+from server.pools.user_pool import UserPool
+from server.gameobject.message import Message
 
 
+# TODO: get db connection by self.application.db
 class ObserverHandler(tornado.websocket.WebSocketHandler):
+    # def __init__(self):
+    #     logging.debug("ObserverHandler __init__ is called")
+    #     self.__instance = None
+    #     pass
 
-    def initialize(self, attendee_list=dict(), player_list=dict(), database=None):
-        '''
-
-        :param attendee_list:
-        :param player_list:
-        :param gamehandler:
-        '''
-        self.attendee_list = attendee_list  # dict() - key : conn
-        self.player_list = player_list  # dict() - key : user_id\
-        self.database = database
-
-        logging.debug("Web soscket initialization is done")
+    def initialize(self):
+        print("ObserverHandler initialize is called")
+        pass
 
     def open(self, *args, **kwargs):
         '''
         open websocket
         '''
-        new_attendee = Observer(self)
-        self.attendee_list[self] = new_attendee
+        print("ObserverHandler open is called " + str(self))
+
+        observer = Observer(self)
+
+        observer_pool = UserPool.instance().get_observer_pool()
+        observer_pool.add_observer(observer)
+
+        self.__instance = observer
 
     def on_message(self, message):
         '''
         When receive message from Attendee, this function runs.
         :param message: message from Attendee
         '''
-        logging.debug(message)
-        request = json.loads(message)
-        try:
-            msg = request[MSG]
-            if msg == REQUEST+MATCH:
-                self._response_match(request[DATA])
-            elif msg == REQUEST+USER_LIST:
-                self._response_user_list()
-            else:
-                pass
-        except Exception as e:
-            logging.error(e)
-            pass
+        print(message)
+
+        message = Message.load_message(message)
+
+        msg = message.msg
+        if msg == REQUEST+MATCH:
+            self._response_match(message.data)
+        elif msg == REQUEST+USER_LIST:
+            self._response_user_list()
 
     def _response_user_list(self):
-        self.attendee_list[self].attendee_flag = False
 
-        players = list()
-        for player in self.player_list.values():
+        self.__instance.observer_flag = False
+
+        player_pool = UserPool.instance().get_player_pool()
+
+        runnable_players = []
+        for player in player_pool:
             if not player.playing:
-                players.append(player.get_pid())
+                runnable_players.append(player._id)
 
-        msg = {MSG: RESPONSE_ + USER_LIST, USERS: players}
+        # message = Message(RESPONSE_ + USER_LIST, None,
+        # 다른 key value 에 대해서도 kwarg 로 저장가능하도록 하기
+        msg = {MSG: RESPONSE_ + USER_LIST, USERS: runnable_players}
         json_msg = json.dumps(msg)
 
         try:
             self.write_message(json_msg)
-        except Exception as e:
-            logging.error("error in response_user_list")
-            self.attendee_list.pop(self)
+        except Exception:
+            observer_pool = UserPool.instance().get_observer_pool()
+            observer_pool.pop(self.__instance)
 
     def _response_match(self, data):
+        player_pool = UserPool.instance().get_player_pool()
+
+        # set matched player flag on!
         try:
-            players = []
-            for pid in data[USERS]:
-                logging.info("DEBUG POINT")
-                player = self.player_list.get(pid)
+            match_players = []
+            _ids = data[USERS]
+            for _id in _ids:
+                player = player_pool.get_player(_id)
                 player.room_enter()
-                players.append(player)
-        except Exception as e:
-            logging.error(e)
+                match_players.append(player)
+        except Exception:
             return
-        for pid in data[USERS]:
-            for attendee in self.attendee_list.values():
-                attendee.notice_user_removed(pid)
+
+        observer_pool = UserPool.instance().get_observer_pool()
+
+        for pid in _ids:
+            for observer in observer_pool:
+                observer.notice_user_removed(pid)
         try:
-            room = Room(players, self.attendee_list[self])
-            # TODO: factory design is needed in here
-            game_server = TurnGameHandler(room, self.player_list, self.attendee_list, int(data[SPEED]))
-        except Exception as e:
-            logging.error(e)
-            logging.error("During making room, error is occured")
+            room = Room(match_players)
+            room.add_observer(self.__instance)
+
+            game = TurnGameHandler(room)
+        except Exception:
             return
 
         # run game
-        tornado.ioloop.IOLoop.current().spawn_callback(game_server.run)
+        tornado.ioloop.IOLoop.current().spawn_callback(game.run)
         speed_list = [0.5, 0.3, 0.1, 0.05, 0]
-        msg = {MSG: RESPONSE_ + MATCH, DATA: {USERS: data[USERS], ERROR: 0, SPEED: speed_list[int(data[SPEED])]}}
-        json_msg = json.dumps(msg)
+
+        data = Message.dump_message(Message(RESPONSE_ + MATCH, None, {USERS: data[USERS], ERROR: 0, SPEED: speed_list[int(data[SPEED])]}))
 
         try:
-            self.write_message(json_msg)
-            self.attendee_list[self].room_enter()
-        except Exception as e:
-            logging.error(e)
-            self.attendee_list.pop(self)
+            self.write_message(data)
+            self.__instance.room_enter()
+        except Exception:
+            observer_pool.pop(self.__instance)
 
     # TODO : find out how to deal with this error (CORS)
     def check_origin(self, origin):
         return True
 
     def on_close(self):
-        self.attendee_list.pop(self)
+        observer_pool = UserPool.instance().get_observer_pool()
+        observer_pool.remove_observer(self.__instance)

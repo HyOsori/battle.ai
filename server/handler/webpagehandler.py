@@ -1,10 +1,6 @@
-from server.model.user import User
-from server.model.game import Game
+from server.model.player import Player
 
 import tornado.web
-from tornado import gen
-import server.debugger as logging
-import os
 import bcrypt
 import concurrent.futures
 import tornado.escape
@@ -28,10 +24,7 @@ class BaseHandler(tornado.web.RequestHandler):
         return self.application.db
 
     def get_current_user(self):
-        print("get_current_user is called")
         user_id = self.get_secure_cookie(USER_COOKIE)
-        print("user_id: " + str(user_id))
-        print(type(user_id))
         if not user_id:
             return None
         user = self.dict_to_user(self.db.users.find_one({"_id": ObjectId(user_id.decode())}))
@@ -39,7 +32,7 @@ class BaseHandler(tornado.web.RequestHandler):
 
     @staticmethod
     def dict_to_user(dict_user):
-        return User(dict_user["name"], None)
+        return Player(dict_user["name"], None)
 
 
 class IndexHandler(BaseHandler):
@@ -77,7 +70,7 @@ class SignUpHandler(BaseHandler):
             bcrypt.hashpw, tornado.escape.utf8(self.get_argument("password")),
             bcrypt.gensalt()
         )
-        user = User(name, hashed_password)
+        user = Player(name, hashed_password)
         users_colletion = self.db.users
         print(users_colletion)
         user_id = users_colletion.insert(user.__dict__)

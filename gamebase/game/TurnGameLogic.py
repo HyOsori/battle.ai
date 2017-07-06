@@ -21,7 +21,8 @@ class TurnGameLogic(object):
         Server Call When Game Start
         :return: void
         """
-        raise NotImplementedError
+        logging.info("Game Phase")
+        self._current_phase.do_start()
 
     def on_action(self, pid, dict_data):
         """
@@ -36,7 +37,7 @@ class TurnGameLogic(object):
         pass
 
     def check_msg_type(self, received_msg_type):
-        '''
+        """
         game base 에서 준 msg type 이랑 현재 player 에게 받은
         msg type 이랑 비교 ㅇㅇ
 
@@ -47,7 +48,7 @@ class TurnGameLogic(object):
         T/F 로 return gogo
         :param received_msg_type:
         :return:
-        '''
+        """
         pass
 
     def change_phase(self, index):
@@ -60,7 +61,7 @@ class TurnGameLogic(object):
             self._current_phase.on_end()
         self._current_phase = self._phase_list[index]
         self._message_type = self._current_phase.message_type
-        self._current_phase.on_start()
+        self._current_phase.do_start()
 
     def change_turn(self, index=None):
         """

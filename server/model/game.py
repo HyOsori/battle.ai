@@ -1,4 +1,4 @@
 class Game(object):
-    def __init__(self, _id):
-        self._id = _id
-
+    def __init__(self):
+        self.log_list = []
+        self.ai_list = []

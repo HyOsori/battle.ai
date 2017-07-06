@@ -18,13 +18,10 @@ class User:
 
 
 class Player(User):
-    def __init__(self, pid, conn):
+    def __init__(self, _id, conn):
         User.__init__(self, conn)
-        self.pid = pid
+        self._id = _id
         self.playing = False
-
-    def set_pid(self, pid):
-        self.pid = pid
 
     def __error_callback(self, future):
         future.set_exception(gen.TimeoutError("Timeout"))
@@ -42,9 +39,6 @@ class Player(User):
         message = yield self.conn.read_bytes(buffer_size, partial=True)
         return message.decode()
 
-    def get_pid(self):
-        return self.pid
-
     def send(self, data):
         try:
             self.conn.write(data.encode())
@@ -56,6 +50,7 @@ class Player(User):
 
     def room_out(self):
         self.playing = False
+
 
 class Observer(User):
     def __init__(self, conn):
@@ -92,4 +87,25 @@ class Observer(User):
 
     def room_out(self):
         self.observer_flag = False
+
+
+class LobbyUser(User):
+    def __init__(self, conn):
+        super().__init__(conn)
+
+
+    def notify_gamelog_added(self):
+        pass
+
+    def notify_chat_sended(self):
+        pass
+
+    def notify_ai_added(self):
+        pass
+
+    def notify_ai_deleted(self):
+        pass
+
+
+
 

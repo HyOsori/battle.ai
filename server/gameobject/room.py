@@ -1,21 +1,19 @@
 
 class Room:
-    def __init__(self, players=[], attendee=None):
+    def __init__(self, players=[], observer=None):
         self.player_list = players
-        self.attendee_list = []
+        self.observer_list = []
         self.game = None
 
-        if attendee:
-            self.add_attendee(attendee)
+        if observer:
+            self.add_observer(observer)
 
-    def add_attendee(self, attendee):
-        self.attendee_list.append(attendee)
+    def add_observer(self, observer):
+        self.observer_list.append(observer)
 
-    def del_attendee(self, attendee):
-        self.attendee_list.pop(attendee)
+    def del_observer(self, observer):
+        self.observer_list.pop(observer)
 
-    def del_player(self, player):
-        pass
 
 
 

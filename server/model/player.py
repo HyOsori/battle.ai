@@ -1,6 +1,6 @@
 class Player(object):
-    def __init__(self, _id, name, password):
-        self._id = _id
+    def __init__(self, name, encrypted_password):
         self.name = name
-        self.password = password
-    pass
+        self.password = encrypted_password
+        self.created_at
+        self.game_info_list = []
