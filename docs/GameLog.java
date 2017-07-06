@@ -7,4 +7,5 @@ public class GameLog {
 	*/
 	private Player[] players;
 	private GameResult game_result;
+	private GameMessage[] game_message;
 }

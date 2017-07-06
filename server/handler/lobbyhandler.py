@@ -16,7 +16,7 @@ class LobbyHandler(tornado.websocket.WebSocketHandler):
         lobby_user = LobbyUser(self)
 
         lobby_pool = UserPool.instance().get_lobby_pool()
-        lobby_user.add_lobby_
+        lobby_pool.add_lobby_user(lobby_user)
 
         self.__instance = lobby_user
 
@@ -62,7 +62,9 @@ class LobbyHandler(tornado.websocket.WebSocketHandler):
 
         message = Message.dump_message(message)
 
-        self.__instance.notify_chat_sended()
+        lobby_user_pool = UserPool.instance().get_lobby_pool()
+        for lobby_user in lobby_user_pool:
+            lobby_user.send(message)
 
     def request_match(self):
         pass
