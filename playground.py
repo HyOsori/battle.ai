@@ -14,54 +14,52 @@ import pymongo
 sys.path.insert(0, '../')
 # TODO : find out how to control path and error
 
+from server.db.dbhelper import DBHelper
 from server.handler.playerhandler import PlayerHandler
 from server.handler.observerhandler import ObserverHandler
 from server.conf.conf_reader import ConfigReader
 from server.handler.webpagehandler import *
+from server.handler.lobbyhandler import LobbyHandler
+from pymongo import MongoClient
 
 
 class Playground(tornado.web.Application):
     def __init__(self):
         # TODO: game_logic selection must be added, tcp_port, web_port, playing game will be argument of playground.py
 
-        self.player_list = dict()
-        self.attendee_list = dict()
-
-        self.tcp_server = PlayerHandler(self.attendee_list, self.player_list)
+        self.game_server = PlayerHandler()
         self.db = pymongo.MongoClient()
 
         self.handler = [
-            (r"/websocket", ObserverHandler, dict(player_list=self.player_list, attendee_list=self.attendee_list, database=self.db)),
-            # (r"/", HomeHandler),
+
+            # websocket handler
+            (r"/websocket", ObserverHandler),
+            (r"/lobby/socket", LobbyHandler),
+
+            # web page handler
+            (r"/", IndexHandler),
+            (r"/login", LoginPageHandler),
+            (r"/lobby", LobbyPageHandler),
             (r"/mypage", MyPageHandler),
-            (r"/", PlaygroundHandler),
-            (r"/auth/create", AuthCreateHandler),
-            (r"/auth/login", AuthLoginHandler),
-            (r"/auth/logout", AuthLogoutHandler),
+            (r"/game", GamePageHandler),
+
+            # signup signin logout request
+            (r"/auth/signin", SignInHandler),
+            (r"/auth/signup", SignUpHandler),
+            (r"/auth/logout", LogoutHandler),
         ]
         self.setting = dict(
-            blog_title=u"Battle.ai",
+            title=u"Battle.ai",
             template_path=os.path.join(os.path.dirname(__file__), "templates"),
             static_path=os.path.join(os.path.dirname(__file__), "static"),
-            ui_modules={"Entry": EntryModule},
-            xsrf_cookies=True,
-            cookie_secret="secret_code",
+            # will be xsrf_cookies=True...... soon
+            cookie_secret="123",
             login_url="/auth/login",
             debug=True,
         )
         super(Playground, self).__init__(self.handler, **self.setting)
-
-    def may_create_tables(self):
-        # try:
-        #     self.db.get("SELECT COUNT(*) from entries;")
-        # except MySQLdb.ProgrammingError:
-        #     subprocess.check_call(['mysql',
-        #                            '--host=' + options.mysql_host,
-        #                            '--database=' + options.mysql_database,
-        #                            '--user=' + options.mysql_user,
-        #                            '--password=' + options.mysql_password],
-        #                           stdin=open('schema.sql'))
-        pass
+        self.db = MongoClient()["battle"]
+        DBHelper.instance().initialize(self.db)
 
 
 def main():
@@ -76,13 +74,13 @@ def main():
     tornado.options.parse_config_file("my.conf")
     app = Playground()
 
-    io_loop = tornado.ioloop.IOLoop.current()
-    app.tcp_server.listen(tcp_port)
+    app.game_server.listen(tcp_port)
     app.listen(web_port)
 
     print("******************* Battle.AI operate *******************")
     print("                     ...... Created By GreedyOsori ......\n")
-    io_loop.start()
+    print("Version 0.0")
+    tornado.ioloop.IOLoop.current().start()
 
 if __name__ == "__main__":
     main()

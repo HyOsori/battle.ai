@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>{{ handler.settings["title"] }}</title>
+    <link rel="alternate" href="/feed" type="application/atom+xml" title="{{ handler.settings['title'] }}">
+    <!--css code-->
+    {% block head %}{% end %}
+</head>
+<body>
+<div id="header">
+    <a>{{ handler.settings["title"] }}</a>
+
+    {% if current_user %}
+    <p>{{ current_user.name }}</p>
+    {% else %}
+    <form action="/auth/signin" method="POST">
+        <input name="name" type="text">
+        <input name="password" type="password">
+        <input type="submit">
+    </form>
+    {% end %}
+</div>
+
+<div id="body">{% block body %}{% end %}</div>
+
+<!--script code-->
+{% block bottom %}{% end %}
+</body>
+</html>

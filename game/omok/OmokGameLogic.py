@@ -37,7 +37,7 @@ class OMOKGameLogic(TurnGameLogic):
         self._game_server.on_init_game(init_dict)
 
     def on_start(self):
-        logging.debug('GameLogic : ON_START')
+        logging.info('GameLogic : ON_START')
 
         # shared_dict for Initialize in Phase(Loop, Finish)
         shared_dict = self.get_shared_dict()
@@ -50,7 +50,7 @@ class OMOKGameLogic(TurnGameLogic):
         shared_dict['PHASE_LOOP'] = self.append_phase(loop_phase)
 
         # Move Loop Phase
-        logging.debug('OMOKGameLogic -> LoopPhase')
+        logging.info('OMOKGameLogic -> LoopPhase')
         self.change_phase(0)
 
 
@@ -66,9 +66,8 @@ class OMOKLoopPhase(Phase):
         self.height = None
         self.board = None
 
-    def on_start(self):
-        super(OMOKLoopPhase, self).on_start()
-        logging.debug('PHASE_LOOP : START')
+    def do_start(self):
+        logging.info('PHASE_LOOP : START')
 
         # Init data
         self.player_list = self.get_player_list()
@@ -83,7 +82,6 @@ class OMOKLoopPhase(Phase):
         self.request_to_client()
 
     def do_action(self, pid, dict_data):
-        super(OMOKLoopPhase, self).do_action(pid, dict_data)
         # logging.debug('PHASE_LOOP : DO_ACTION / pid : ' + pid)
 
         # Validate User

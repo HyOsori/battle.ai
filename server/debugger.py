@@ -3,6 +3,7 @@ import logging
 FLAG = "[SERVER]"
 BLANK = " "
 
+logging.basicConfig(level=logging.DEBUG)
 
 def info(msg):
     logging.info(FLAG+BLANK+str(msg))
