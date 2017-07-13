@@ -59,6 +59,7 @@ class Playground(tornado.web.Application):
         )
         super(Playground, self).__init__(self.handler, **self.setting)
         self.db = MongoClient()["battle"]
+
         DBHelper.instance().initialize(self.db)
 
 
