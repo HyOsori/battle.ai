@@ -1,9 +1,8 @@
 #footer{
      width:100%;
             position: fixed;
-            height: 100px;
+            height: 90px;
             bottom:0;
-
             background-color:#EEEEEE;
             font-size:15px;
             color:#424242;
@@ -12,12 +11,13 @@
 }
 
 #header{
-    position:fixed;
+    position:relative;
     width:100%;
-    height:70px;
+    height:90px;
     background-color:#009688;
     box-shadow:0 1px 0 rgba(0,0,0,.10196078);
     padding:10px;
-    z-index:999;
+    margin-top:0;
+
 
 }
