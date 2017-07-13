@@ -51,19 +51,12 @@ class LobbyHandler(tornado.websocket.WebSocketHandler):
 
     def init_game_log(self):
         db = DBHelper.instance()
-<<<<<<< Updated upstream
-        game_logs = db.game_log_list.find({})
-=======
         game_log_collection = db.game_log_list
 
         game_log_preview_collection = game_log_collection.find({},
             {"players": True, "game_results": True, "game_message_list": False})
 
         message = Message.dump_message(Message(INIT, GAME_LOG, game_log_preview_collection))
-        self.__instance.send(message)
->>>>>>> Stashed changes
-
-        message = Message.dump_message(Message(INIT, GAME_LOG, game_logs))
         self.__instance.send(message)
 
     def notify_chat(self, data):
