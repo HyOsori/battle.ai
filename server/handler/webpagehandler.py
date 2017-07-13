@@ -28,6 +28,7 @@ class BaseHandler(tornado.web.RequestHandler):
         if not user_id:
             return None
         user = self.dict_to_user(self.db.users.find_one({"_id": ObjectId(user_id.decode())}))
+        print(user)
         return user
 
     @staticmethod
@@ -91,16 +92,15 @@ class SignInHandler(BaseHandler):
             bcrypt.hashpw, tornado.escape.utf8(self.get_argument("password")),
             tornado.escape.utf8(user_dict["password"])
         )
-        print(user_dict)
-        print(hashed_password)
+
         if user_dict["password"] == hashed_password:
+            self.set_secure_cookie(USER_COOKIE, str(user_dict["_id"]))
             self.redirect("/lobby")
         else:
             self.redirect("/login")
 
 
-
 class LogoutHandler(BaseHandler):
-    def get(self):
+    def post(self):
         self.clear_cookie(USER_COOKIE)
         self.redirect("/login")
