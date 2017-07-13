@@ -22,7 +22,7 @@ class GameHandler:
         self.room = room  # player objects and observer objects are in here
         self._ids = [player._id for player in self.room.player_list]
 
-        self.delay_time = 0.5
+        self.delay_time = 0
 
         self.init_data_dict = {}
 
