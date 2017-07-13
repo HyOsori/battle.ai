@@ -6,33 +6,35 @@
     <link  rel="alternate" href="/feed" type="application/atom+xml" title="{{ handler.settings['title'] }}">
      <!--css code-->
     {% block head %}
-
    {% end %}
-</head>
-<body>
-<div id="header">
 
+</head>
+<body >
+<div>
+<div id="header">
     <a>{{ handler.settings["title"] }}</a>
 
     {% if current_user %}
     <p>{{ current_user.name }}</p>
     {% else %}
+    <div id="sign_in"  ></div>
     {% end %}
 </div>
 
-<div id="body">
-    <div id="sign_in" style="float:right;margin:20px" ></div>
-    {% block body %}{% end %}</div>
 
+<div id="body" >
+    {% block body %}{% end %}
+
+</div>
+
+    <div id="footer"></div>
 <!--script code-->
 {% block bottom %}
 
 {% end %}
 
-<div style="padding-bottom:10px">
-<p>LICENSE</p>
-<p>OPEN SOURCE</p>
-<p>GITHUB LINK</p><br>
+
+
 </div>
 <script src="https://fb.me/react-0.13.3.js"></script>
 <script src="https://fb.me/JSXTransformer-0.13.3.js"></script>
