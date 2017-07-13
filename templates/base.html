@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <title>{{ handler.settings["title"] }}</title>
     <link  rel="alternate" href="/feed" type="application/atom+xml" title="{{ handler.settings['title'] }}">
+     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+     <link rel="stylesheet" href="../static/base.css" type="text/css"/>
      <!--css code-->
     {% block head %}
    {% end %}
@@ -12,22 +14,43 @@
 <body >
 <div>
 <div id="header">
-    <a>{{ handler.settings["title"] }}</a>
-
+    <a >{{ handler.settings["title"] }}</a>
     {% if current_user %}
     <p>{{ current_user.name }}</p>
+    <form action="/auth/logout" method="GET" style="float:right">
+    <button type="submit" class="btn btn-default">Log out</button>
+    </form>
     {% else %}
-    <div id="sign_in"  ></div>
+    <div id="sign_in" >
+                <form class="form-inline" action="/auth/signin" method="POST" style="float:right">
+                  <div class="form-group">
+
+                    <input type="text" name="name" class="form-control" id="exampleInputName" placeholder="name"/>
+
+
+
+                    <input type="password" name="password" class="form-control" id="exampleInputPassword1" placeholder="password"/>
+                    </div>
+                  <button type="submit" class="btn btn-default">Sign in</button>
+
+                </form>
+    </div>
     {% end %}
 </div>
 
 
-<div id="body" >
+<div id="body" style="paddingTop:50px" >
     {% block body %}{% end %}
-
 </div>
 
-    <div id="footer"></div>
+
+    <div id="footer">
+
+                <p>LICENSE</p>
+                <p>OPEN SOURCE</p>
+                <p>GITHUB LINK</p>
+
+    </div>
 <!--script code-->
 {% block bottom %}
 

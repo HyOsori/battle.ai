@@ -28,6 +28,7 @@ var Sign_up = React.createClass({
         let style={
             float:'right',
             marginRight:'100px',
+            paddingTop:'10px',
 
             className:'form-group',
 
