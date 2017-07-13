@@ -21,7 +21,7 @@ class GameHandler:
 
         self.time_delay_list = [1, 0.7, 0.5, 0.3, 0.2]
 
-        self.delay_time = 1
+        self.delay_time = 0
         # self.delay_time = self.time_delay_list[time_index]
 
         self.init_data_dict = {}
