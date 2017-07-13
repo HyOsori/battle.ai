@@ -2,8 +2,13 @@
 from tornado import queues, gen
 import json
 from server.string import *
+from server.gameobject.message import Message
+from server.pools.user_pool import UserPool
+from server.db.dbhelper import DBHelper
+from server.model.gamelog import GameLog
 
 import server.debugger as logging
+
 
 """
 GameServer (for all games, abstract class)
@@ -12,26 +17,20 @@ GameServer (for all games, abstract class)
 
 
 class GameHandler:
-    def __init__(self, room, players, observers, game_logic, time_index=4, database=None):
-        self.game_logic = game_logic  # TODO: rename ...
+    def __init__(self, room, game):
+        self.game = game
         self.room = room  # player objects and observer objects are in here
-        self.pid_list = [p.get_pid() for p in self.room.player_list]
-        self.players = players  # WHY NEEDED? - when game room destroy - player added in list
-        self.observers = observers  # WHY NEEDED? - when game room destroy - attendee.notify_user_added
-
-        self.time_delay_list = [1, 0.7, 0.5, 0.3, 0.2]
+        self._ids = [player._id for player in self.room.player_list]
 
         self.delay_time = 0
-        # self.delay_time = self.time_delay_list[time_index]
 
         self.init_data_dict = {}
 
         self.current_msg_type = "start"  # TODO: remove
         self.game_end = False
-
-        self.game_end = False
-
         self.played = None  # player currently finished turn
+
+        self.game_message_list = []
 
     @gen.coroutine
     def run(self):
@@ -52,41 +51,44 @@ class GameHandler:
 
     @gen.coroutine
     def request_ready(self):
-        for attendee in self.room.attendee_list:
-            message = {MSG: GAME_HANDLER, MSG_TYPE: READY, DATA: self.init_data_dict}
-            attendee.send(json.dumps(message))
 
-        try:
-            for pid, init_data in self.init_data_dict.items():
-                player = self.find_player_by_pid(pid)
-                message = {MSG: GAME_HANDLER, MSG_TYPE: READY, DATA: init_data}
-                player.send(json.dumps(message))
+        # notify initial data to observers
+        for observer in self.room.observer_list:
+            data = Message.dump_message(Message(GAME_HANDLER, READY, self.init_data_dict))
+            observer.send(data)
 
-                message = yield player.read()
-                message = json.loads(message)
+        # send initial data to players
+        for _id, init_data in self.init_data_dict.items():
+            player = self.find_player(_id)
+            data = Message.dump_message(Message(GAME_HANDLER, READY, init_data))
+            player.send(data)
 
-                logging.debug("message: " + str(message))
-                if message[MSG_TYPE] == READY and message[DATA][RESPONSE] == OK:
-                    pass
-                else:
-                    # set error code for game end
-                    return False
-        except Exception as e:
-            e.with_traceback()
-            return False
+            message = yield player.read()
+            message = Message.load_message(message)
+
+            # and check response is OK or not
+            if message.msg_type == READY and message.data[RESPONSE] == OK:
+                pass
+            else:
+                # set error code for game end
+                return False
 
     def on_init_game(self, init_data_dict):
-        logging.debug("init_data_dict: " + str(init_data_dict))
+        """
+        callback function used at game part
+        game part set init_data_dict using this function.
+
+        :param init_data_dict:
+        """
         self.init_data_dict = init_data_dict
 
-    def find_player_by_pid(self, pid):
+    def find_player(self, _id):
         for player in self.room.player_list:
-            logging.debug("player id:" + player.pid + "    pid: " + pid)
-            if pid == player.pid:
+            if _id == player._id:
                 return player
         return None
 
-    def request(self, pid, msg_type, data):
+    def request(self, _id, msg_type, data):
         """
         callback function
         game logic call this function to request player's response
@@ -103,11 +105,14 @@ class GameHandler:
         :param msg_type: notifying message
         :param data: message data
         """
-        message = {MSG: GAME_DATA, MSG_TYPE: msg_type, DATA: data}
-        json_data = json.dumps(message)
 
-        for attendee in self.room.attendee_list:
-            attendee.send(json_data)
+        data = Message.dump_message(Message(GAME_DATA, msg_type, data))
+
+        # data to save in database
+        self.game_message_list.append(data)
+
+        for observer in self.room.observer_list:
+            observer.send(data)
 
     def on_end(self, error_code, message):
         """
@@ -120,13 +125,12 @@ class GameHandler:
 
     def handle_game_end(self, error_code, message={}):
 
-        message = {MSG: GAME_HANDLER, MSG_TYPE: END, ERROR_CODE: error_code, DATA: message}
-        message = json.dumps(message)
+        data = Message.dump_message(Message(GAME_HANDLER, END, message, error_code))
 
         for player in self.room.player_list:
-            player.send(message)
-        for attendee in self.room.attendee_list:
-            attendee.send(message)
+            player.send(data)
+        for observer in self.room.observer_list:
+            observer.send(data)
 
         self.game_end = True
 
@@ -136,18 +140,20 @@ class GameHandler:
         """
         logging.info("=====Destroy Room=====")
 
-        logging.info(type(self.players))
-        logging.info(str(self.players))
+        game_log = GameLog()
+        game_log.players = self._ids
+        game_log.game_result = "end"
+        game_log.game_result = self.game_message_list
+
+        db = DBHelper.instance().db
+        db.game_log_list.insert(game_log.__dict__)
+
+        observer_pool = UserPool.instance().get_observer_pool()
 
         for player in self.room.player_list:
-            try:
-                player.room_out()
-                for attendee in self.observers.values():
-                    attendee.notice_user_added(player.get_pid())
-            except Exception as e:
-                logging.error("DEBUG POINT")
-                logging.error(type(e))
-                pass
+            player.room_out()
+            for observer in observer_pool:
+                observer.notice_user_added(player._id)
 
     @gen.coroutine
     def delay_action(self):
