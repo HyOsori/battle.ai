@@ -1,4 +1,4 @@
-import game.debugger as logging
+import utils.debugger as logging
 
 # coding=utf-8
 
