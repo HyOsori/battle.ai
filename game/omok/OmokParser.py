@@ -1,11 +1,9 @@
 #-*-coding:utf-8-*-
-import base64
-import json
 import sys
-import zlib
+
 from gamebase.client.AIParser import AIParser
 
-import game.debugger as logging
+import utils.debugger as logging
 
 sys.path.insert(0,'../')
 

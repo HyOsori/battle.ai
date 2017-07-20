@@ -1,4 +1,4 @@
-from gamebase.client.string import *
+from battle_player.base.string import *
 
 
 class LogicHandler(object):

@@ -1,13 +1,11 @@
-import base64
 import json
 import logging
-import random
 import sys
-import zlib
-
-from gamebase.game.Phase import Phase
 
 from gamebase.game.TurnGameLogic import TurnGameLogic
+
+import random
+from game.base.Phase import Phase
 
 sys.path.insert(0, '../')
 logging.basicConfig(level=logging.DEBUG)

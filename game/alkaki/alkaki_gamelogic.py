@@ -1,9 +1,10 @@
+import math
 import sys
 
-from gamebase.game.Phase import Phase
-from gamebase.game.TurnGameLogic import TurnGameLogic
-import game.debugger as logging
-import math
+from game.base.TurnGameLogic import TurnGameLogic
+
+import utils.debugger as logging
+from game.base.Phase import Phase
 
 sys.path.insert(0, '../')
 
