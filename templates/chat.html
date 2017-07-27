@@ -1,0 +1,21 @@
+<html lang="ko">
+<head>
+    <link rel="stylesheet" type="text/css" href="{{ static_url('lobby/chat.css') }}">
+    <meta charset="utf-8">
+</head>
+
+<body>
+
+<div id="Chatting_Nawa">
+
+</div>
+
+<div id="Chatting">
+    <input type="text" id="Chatting_Real" class="box" onkeydown="if(event.keyCode == 13) document.getElementById('Chatting_Click').click()">
+    <button id="Chatting_Click" class="box"></button>
+</div>
+
+</body>
+<script type="text/javascript" src="{{ static_url('lobby/chat.js') }}"></script>
+
+</html>
