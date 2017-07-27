@@ -1,7 +1,7 @@
 import json
 import socket
 
-from battle_player.base.string import *
+from battle_player.base.constant import *
 
 BUFFER_SIZE = 512
 
