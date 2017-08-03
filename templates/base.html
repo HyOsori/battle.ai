@@ -6,6 +6,12 @@
     <link  rel="alternate" href="/feed" type="application/atom+xml" title="{{ handler.settings['title'] }}">
      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
      <link rel="stylesheet" href="../static/base.css" type="text/css"/>
+    <style>
+        .form-inline .form-control {
+            margin-right: 6px;
+        }
+
+    </style>
      <!--css code-->
     {% block head %}
    {% end %}
@@ -16,9 +22,13 @@
 <div id="header">
     <a >{{ handler.settings["title"] }}</a>
     {% if current_user %}
-    <p>{{ current_user.name }}</p>
-    <form action="/auth/logout" method="GET" style="float:right">
-    <button type="submit" class="btn btn-default">Log out</button>
+
+    <form class="header_button" action="/auth/logout" method="POST" >
+        <div>
+            {{ current_user.name }}
+            <button type="submit" style="" class="btn btn-default">Log out</button>
+
+        </div>
     </form>
     {% else %}
     <div id="sign_in" >
