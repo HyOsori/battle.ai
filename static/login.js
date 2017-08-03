@@ -5,6 +5,7 @@ var Sign_up = React.createClass({
             marginRight: '100px',
             paddingTop: '10px'
         }
+
         return (
             <div style={style}>
                 <h1>Sign Up</h1>
@@ -30,13 +31,12 @@ var Sign_up = React.createClass({
                     {console.log(document.getElementById('exampleInputPassword1'))}
                 </form>
 
-
-                { ( (document.getElementById('exampleInputPassword1').valueOf()!==null) ?
-                    (( document.getElementById('exampleInputPassword1').valueOf() !== document.getElementById('exampleInputPassword2').valueOf()) ?
-                        alert("Passwords Don't Match") : alert('success')) : '')}
+                    {(document.getElementById('exampleInputPassword1')!== null) ?
+                        ( document.getElementById('exampleInputPassword1').value !== document.getElementById('exampleInputPassword2').value) ?
+                            alert("Passwords Don't Match") : alert("success") : ''}
                 {console.log(document.getElementById('exampleInputPassword1'))}
 
-                {console.log(document.getElementById('exampleInputPassword1')).valueOf()}
+
             </div>
         );
     }
