@@ -74,7 +74,7 @@ class PlayerHandler(tornado.tcpserver.TCPServer):
             on_close_func = functools.partial(self._on_close, player)
             stream.set_close_callback(on_close_func)
         except Exception:
-            data = Message.dump_message(Message(USER_INFO, INIT, {RESPONSE, NO}))
+            data = Message.dump_message(Message(USER_INFO, INIT, {RESPONSE: NO}))
             stream.write(data.encode())
 
     def _on_close(self, player):

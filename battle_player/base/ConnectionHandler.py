@@ -1,8 +1,9 @@
 import json
 import socket
-from gamebase.client.string import *
 
-BUFFER_SIZE = 256
+from battle_player.base.constant import *
+
+BUFFER_SIZE = 512
 
 
 class ConnectionHandler(object):
@@ -38,7 +39,6 @@ class ConnectionHandler(object):
 
     def receive_data(self):
         message = self.conn.recv(BUFFER_SIZE)
-        print(message)
         message = json.loads(message.decode())
 
         return message

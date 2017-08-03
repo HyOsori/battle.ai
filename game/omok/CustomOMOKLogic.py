@@ -1,5 +1,6 @@
 from gamebase.client.LogicHandler import LogicHandler
-from gamebase.client.string import *
+
+from battle_player.base.constant import *
 
 BOARD = "board"
 

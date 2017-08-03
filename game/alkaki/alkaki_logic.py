@@ -1,22 +1,38 @@
-from game.alkaki.alkaki_parser import ALKAKIParser
+from battle_player.base.LogicHandler import LogicHandler
+from utils.constant import *
 import math
 
 
-class MyALKAKIParser(ALKAKIParser):
+class CustomAlkakiLogic(LogicHandler):
+
     def __init__(self):
+        """
+        Develop own your OMOK AI
+        width and height are board's width and height
+        empty place is represented integer 0
+        and your color is represented by number 0 1 2 ...
+
+        your color is set automatically.
+        """
         self.board_size = None
         self.count = None
         self.radius = None
         self.player_pos = None
 
-    def init_phase(self, init_data):
-        self.board_size = init_data['board_size']
-        self.count = init_data['count']
-        self.radius = init_data['radius']
-        self.player_pos = init_data['player_pos']
+    def init_phase(self, msg_type, data):
+        """
+        :param msg_type:
+        :param data:
+        :param init_data: {"width": (Integer), "height": (Integer), "color": (Integer)}
+        :return: None
+        """
+        self.board_size = data['board_size']
+        self.count = data['count']
+        self.radius = data['radius']
+        self.player_pos = data['player_pos']
+        return msg_type, {"response": "OK"}
 
-    def game_phase(self, board_data):
-
+    def loop_phase(self, msg_type, data):
         index = 0
         direction = self.get_direction_depending_on_position(0, 0, 1, 0)
         force = self.get_distance(0, 0, 1, 0)
@@ -29,7 +45,7 @@ class MyALKAKIParser(ALKAKIParser):
             'direction': direction,
             'force': force
         }
-        return return_dict
+        return msg_type, return_dict
 
     # Logic Side
     def get_direction_depending_on_position(self, x_prev, y_prev, x_next, y_next):
@@ -52,4 +68,3 @@ class MyALKAKIParser(ALKAKIParser):
         return math.sqrt(
             math.pow(x_next - x_prev, 2) +
             math.pow(y_next - y_prev, 2))
-

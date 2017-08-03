@@ -4,8 +4,11 @@ import json
 from server.string import *
 from server.gameobject.message import Message
 from server.pools.user_pool import UserPool
+from server.db.dbhelper import DBHelper
+from server.model.gamelog import GameLog
 
 import server.debugger as logging
+
 
 """
 GameServer (for all games, abstract class)
@@ -19,13 +22,15 @@ class GameHandler:
         self.room = room  # player objects and observer objects are in here
         self._ids = [player._id for player in self.room.player_list]
 
-        self.delay_time = 0.5
+        self.delay_time = 0
 
         self.init_data_dict = {}
 
         self.current_msg_type = "start"  # TODO: remove
         self.game_end = False
         self.played = None  # player currently finished turn
+
+        self.game_message_list = []
 
     @gen.coroutine
     def run(self):
@@ -103,6 +108,9 @@ class GameHandler:
 
         data = Message.dump_message(Message(GAME_DATA, msg_type, data))
 
+        # data to save in database
+        self.game_message_list.append(data)
+
         for observer in self.room.observer_list:
             observer.send(data)
 
@@ -131,6 +139,14 @@ class GameHandler:
         When all round is ended, room is destroyed. Clients get back to robby.
         """
         logging.info("=====Destroy Room=====")
+
+        game_log = GameLog()
+        game_log.players = self._ids
+        game_log.game_result = "end"
+        game_log.game_result = self.game_message_list
+
+        db = DBHelper.instance().db
+        db.game_log_list.insert(game_log.__dict__)
 
         observer_pool = UserPool.instance().get_observer_pool()
 

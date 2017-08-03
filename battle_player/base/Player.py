@@ -1,6 +1,5 @@
-from gamebase.client.ConnectionHandler import ConnectionHandler
-from gamebase.client.string import *
-
+from battle_player.base.ConnectionHandler import ConnectionHandler
+from battle_player.base.constant import *
 
 ADDRESS = "127.0.0.1"
 PORT = 9001

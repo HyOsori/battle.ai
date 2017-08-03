@@ -15,7 +15,7 @@ import server.debugger as logging
 
 class TurnGameHandler(GameHandler):
     def __init__(self, room):
-        game = OMOKGameLogic(self)
+        game = ALKAKIGameLogic(self)
         super().__init__(room, game)
 
     @gen.coroutine

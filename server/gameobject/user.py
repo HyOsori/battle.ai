@@ -97,7 +97,7 @@ class LobbyUser(User):
     def notify_gamelog_added(self):
         pass
 
-    def notify_chat_sended(self):
+    def notify_chat_update(self):
         pass
 
     def notify_ai_added(self):
@@ -106,6 +106,10 @@ class LobbyUser(User):
     def notify_ai_deleted(self):
         pass
 
-
+    def send(self, data):
+        try:
+            self.conn.write_message(data)
+        except Exception as e:
+            logging.error(str(e))
 
 
