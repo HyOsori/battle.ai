@@ -1,4 +1,4 @@
-from battle_player.base.string import *
+from battle_player.base.constant import *
 
 
 class LogicHandler(object):
