@@ -41,11 +41,9 @@ msgSendBtn.addEventListener("click", function() {
 ////////////////
 
 function recvChat(JSON_data) {
-  console.log(JSON_data)
-  var chatting_box = document.getElementById("Chatting_Nawa");
+  var chatting_box = document.getElementById("lobby_chat");
   var li = document.createElement("li");
   var data = JSON_data.data;
-  console.log(data)
   var name = data.name;
   var date = data.date;
   var msg = data.message;

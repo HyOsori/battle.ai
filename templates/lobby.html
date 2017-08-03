@@ -34,6 +34,10 @@
 				<div id="lobby_chat" class="box">
 
 				</div>
+                <div id="lobby_write_Chat" class="box">
+					<input type="text" id="Chatting_Real" class="box" onkeydown="if(event.keyCode == 13) document.getElementById('Chatting_Click').click()">
+					<button id="Chatting_Click" class="box"></button>
+                </div>
 			</div>
 		</div>
 		<div id="lobby_right_component" class="lobby_component">
@@ -50,4 +54,8 @@
 		</div>
 	</div>
 	</div>
+{% end %}
+
+{% block bottom %}
+    <script type="text/javascript" src="{{ static_url('lobby/chat.js') }}"></script>
 {% end %}

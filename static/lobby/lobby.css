@@ -1,5 +1,4 @@
 
-
 #wrapper_lobby {
 	background: #FFFAF0;
 	margin:0;
@@ -9,10 +8,9 @@
 	top: 56px;
 	height: calc(100% - 112px);
 }
-	
+
 #lobby {
 	margin:0 auto;
-	height:100%;
 	padding:0;
 	max-width:960px;
 	}
@@ -57,10 +55,20 @@
 
 #lobby_chat {
 	background: #DCDCDC;
-	margin: auto;
+	margin: 0 auto;
+	padding:0;
 	top : 12px;
 	width : calc(100% - 48px);
-	height: calc(100% - 36px);
+	height: calc(100% - 60px); //24px 남음
+	overflow-y: auto;
+}
+
+#lobby_write_Chat {
+	margin : 0 auto;
+	padding : 0;
+	max-width :none;
+	width : calc(100% - 48px);
+	height :24px;
 }
 
 #lobby_right_wrapper_AIlist {
@@ -91,4 +99,18 @@
 	top : 12px;
 	width : calc(100% - 48px);
 	height: calc(100% - 36px);
+}
+
+#Chatting_Real {
+	background : #BBBBBB;
+	float : left;
+	width : 92%;
+	height : 100%;
+}
+
+#Chatting_Click {
+	background: pink;
+	float : right;
+	width: 8%;
+	height: 100%
 }
