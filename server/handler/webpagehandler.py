@@ -32,6 +32,8 @@ class BaseHandler(tornado.web.RequestHandler):
 
     @staticmethod
     def dict_to_user(dict_user):
+        if dict_user in None:
+            return None
         return Player(dict_user["name"], None)
 
 
