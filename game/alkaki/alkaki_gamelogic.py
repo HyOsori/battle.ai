@@ -186,6 +186,29 @@ class ALKAKIGamePhase(Phase):
 
         # 형 변환후 힘 넣기
         is_game_end = None
+        logging.info("prev")
+        logging.info(index)
+        # 0~n 까지중 죽은거 무시
+        # 5~n 까지중 죽은거 무시
+        my_count = index
+        i_validate_arr = validate_user * 5
+        for i in range(5):
+            if self.array_egg[i_validate_arr + i].alive:
+                if my_count == 0:
+                    index += i
+                    break
+                else:
+                    my_count -= 1
+
+        if index < i_validate_arr or index > i_validate_arr + 5:
+            logging.info("error occured by array in 205line")
+        logging.info("next")
+        logging.info(index)
+        # 0이 들어왔다
+        # 0~5중 체크해서 살아있는애로
+        # 1이 들어왔다
+        # 0~5중 체크해서 두번째 살아있는애로
+
         try:
             self.array_egg[index].add_force(direction[0], direction[1], force)
             self.run_physics()
@@ -195,8 +218,8 @@ class ALKAKIGamePhase(Phase):
             logging.info("[Error] user_game_error")
             self.end(180, None)
 
-        for i in range(10):
-            logging.info(self.array_egg[i].x_pos)
+        # for i in range(10):
+        #     logging.info(self.array_egg[i].x_pos)
 
         try:
             if is_game_end["type"] == "win":
