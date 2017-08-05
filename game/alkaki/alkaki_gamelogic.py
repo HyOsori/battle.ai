@@ -150,7 +150,8 @@ class ALKAKIGamePhase(Phase):
             self.end(106, None)
 
         try:
-            self.request_to_server(0, 0, [0.0, 0.0], 0)
+            # self.request_to_server(0, 0, [0.0, 0.0], 0)
+            self.request_to_server(0, self.array_egg)
         except Exception as e:
             logging.info(e)
             logging.info("[Error] request_to_server_error")
@@ -226,7 +227,8 @@ class ALKAKIGamePhase(Phase):
 
         try:
             # Requests to Server(Handler) game data
-            self.request_to_server(validate_user, 0, [direction[0], direction[1]], force)
+            #self.request_to_server(validate_user, 0, [direction[0], direction[1]], force)
+            self.request_to_server(validate_user, self.array_egg)
         except Exception as e:
             logging.info(e)
             logging.info("[Error] request_to_server_error")
@@ -363,16 +365,51 @@ class ALKAKIGamePhase(Phase):
         }
         self.notify("game", notify_dict)
 
-    def request_to_server(self, turn, index, direction, force):
+    # def request_to_server(self, turn, index, direction, force):
+    #     logging.info('Request ' + self.now_turn() + '\'s decision')
+    #
+    #     request_dict = {
+    #         'turn': turn,
+    #         'index': index,
+    #         'direction': direction,
+    #         'force': force
+    #     }
+    #     self.request(self.now_turn(), request_dict)
+    def request_to_server(self, index, array):
         logging.info('Request ' + self.now_turn() + '\'s decision')
+        # 내가 0일때 나 0~4 적 5~9
+        my_cnt = 0
+        enemy_cnt = 0
+
+        for i in range(5):
+            if array[index * 5 + i].alive:
+                my_cnt += 1
+            if array[(1-index) * 5 + i].alive:
+                enemy_cnt += 1
+
+        my_arr = [[0 for _ in range(2)] for _ in range(my_cnt)]
+        enemy_arr = [[0 for _ in range(2)] for _ in range(enemy_cnt)]
+
+        my_cnt = 0
+        enemy_cnt = 0
+
+        for i in range(5):
+            if array[index * 5 + i].alive:
+                my_arr[my_cnt][0] = array[index * 5 + i].x_pos
+                my_arr[my_cnt][1] = array[index * 5 + i].y_pos
+                my_cnt += 1
+            if array[(1-index) * 5 + i].alive:
+                enemy_arr[enemy_cnt][0] = array[(1-index) * 5 + i].x_pos
+                enemy_arr[enemy_cnt][1] = array[(1-index) * 5 + i].y_pos
+                enemy_cnt += 1
+
+        # 내가 1일때 나 5~9 적 0~4
         request_dict = {
-            'turn': turn,
             'index': index,
-            'direction': direction,
-            'force': force
+            'my_arr': my_arr,
+            'enemy_arr': enemy_arr
         }
         self.request(self.now_turn(), request_dict)
-
 
 class Egg:
     x_pos = None
