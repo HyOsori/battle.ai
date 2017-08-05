@@ -26,6 +26,7 @@ class ALKAKIGameLogic(TurnGameLogic):
             logging.info(e)
             logging.info("[Error] init_variable_error")
             self.end(101, None)
+            return
 
     def on_ready(self, player_list):
         try:
@@ -34,6 +35,7 @@ class ALKAKIGameLogic(TurnGameLogic):
             logging.info(e)
             logging.info("[Error] get_player_list_error")
             self.end(130, None)
+            return
 
         # Here makes dict for multi player init variable
         init_dict = {}
@@ -59,6 +61,7 @@ class ALKAKIGameLogic(TurnGameLogic):
             logging.info(e)
             logging.info("[Error] set_init_dict_using_init_variable_error")
             self.end(102, None)
+            return
 
         # Send Server
         try:
@@ -67,6 +70,7 @@ class ALKAKIGameLogic(TurnGameLogic):
             logging.info(e)
             logging.info("[Error] set_init_dict_using_init_variable_error")
             self.end(160, None)
+            return
 
     def on_start(self):
         # shared_dict-init out of this class(Phase)
@@ -80,6 +84,7 @@ class ALKAKIGameLogic(TurnGameLogic):
             logging.info(e)
             logging.info("[Error] set_shared_dict_to_send_other_phase_error")
             self.end(103, None)
+            return
 
         try:
             # Register Phase (phase name free)
@@ -91,6 +96,7 @@ class ALKAKIGameLogic(TurnGameLogic):
             logging.info(e)
             logging.info("[Error] change_phase_error")
             self.end(105, None)
+            return
 
 
 class ALKAKIGamePhase(Phase):
@@ -117,6 +123,7 @@ class ALKAKIGamePhase(Phase):
             logging.info(e)
             logging.info("[Error] init_variable_error")
             self.end(101, None)
+            return
 
     def do_start(self):
         logging.info("do_start")
@@ -135,11 +142,11 @@ class ALKAKIGamePhase(Phase):
                 self.array_egg[i] = Egg(self.player_pos[i][0], self.player_pos[i][1], 0)
             for i in range(self.count, self.count * 2):
                 self.array_egg[i] = Egg(self.player_pos[i][0], self.player_pos[i][1], 1)
-
         except Exception as e:
             logging.info(e)
             logging.info("[Error] get_shared_dict_error")
             self.end(104, None)
+            return
 
         try:
             # Send server msg
@@ -148,6 +155,7 @@ class ALKAKIGamePhase(Phase):
             logging.info(e)
             logging.info("[Error] change_turn_error")
             self.end(106, None)
+            return
 
         try:
             # self.request_to_server(0, 0, [0.0, 0.0], 0)
@@ -156,6 +164,8 @@ class ALKAKIGamePhase(Phase):
             logging.info(e)
             logging.info("[Error] request_to_server_error")
             self.end(162, None)
+            return
+
 
     def do_action(self, pid, dict_data):
         index = None
@@ -170,6 +180,7 @@ class ALKAKIGamePhase(Phase):
             logging.info(e)
             logging.info("[Error] get_game_dict_data_error")
             self.end(131, None)
+            return
 
         # validate_user
         validate_user = 0
@@ -183,6 +194,7 @@ class ALKAKIGamePhase(Phase):
             logging.info(e)
             logging.info("[Error] get_game_dict_data_error")
             self.end(107, None)
+            return
 
         # 형 변환후 힘 넣기
         is_game_end = None
@@ -190,8 +202,9 @@ class ALKAKIGamePhase(Phase):
         logging.info(index)
         # 0~n 까지중 죽은거 무시
         # 5~n 까지중 죽은거 무시
-        my_count = index
+
         i_validate_arr = validate_user * 5
+        my_count = index - i_validate_arr
         for i in range(5):
             if self.array_egg[i_validate_arr + i].alive:
                 if my_count == 0:
@@ -204,10 +217,6 @@ class ALKAKIGamePhase(Phase):
             logging.info("error occured by array in 205line")
         logging.info("next")
         logging.info(index)
-        # 0이 들어왔다
-        # 0~5중 체크해서 살아있는애로
-        # 1이 들어왔다
-        # 0~5중 체크해서 두번째 살아있는애로
 
         try:
             self.array_egg[index].add_force(direction[0], direction[1], force)
@@ -217,15 +226,27 @@ class ALKAKIGamePhase(Phase):
             logging.info(e)
             logging.info("[Error] user_game_error")
             self.end(180, None)
+            return
 
         # for i in range(10):
         #     logging.info(self.array_egg[i].x_pos)
 
         try:
+            # Notify to Observer(Web) game data
+            self.notify_to_observer(validate_user, index - i_validate_arr, [direction[0], direction[1]], force)
+        except Exception as e:
+            logging.info(e)
+            logging.info("[Error] notify_to_observer_error")
+            self.end(161, None)
+            return
+
+        try:
             if is_game_end["type"] == "win":
                 self.end(0, {'winner': is_game_end['person']})
+                return
             elif is_game_end["type"] == "draw":
                 self.end(1, {'winner': is_game_end['person']})
+                return
             elif is_game_end["type"] == "play":
                 pass
 
@@ -239,14 +260,7 @@ class ALKAKIGamePhase(Phase):
             logging.info(e)
             logging.info("[Error] change_turn_error")
             self.end(106, None)
-
-        try:
-            # Notify to Observer(Web) game data
-            self.notify_to_observer(validate_user, 0, [direction[0], direction[1]], force)
-        except Exception as e:
-            logging.info(e)
-            logging.info("[Error] notify_to_observer_error")
-            self.end(161, None)
+            return
 
         try:
             # Requests to Server(Handler) game data
@@ -256,6 +270,7 @@ class ALKAKIGamePhase(Phase):
             logging.info(e)
             logging.info("[Error] request_to_server_error")
             self.end(162, None)
+            return
 
     def run_physics(self):
         # 충돌 체크
@@ -351,10 +366,13 @@ class ALKAKIGamePhase(Phase):
         array_alive_list = []
         game_end = False
         for index_pid in range(len(self.player_list)):
+
             pid = self.player_list[index_pid]
             count = 0
+
             # 죽은 돌 전부 세기
             for i in range(self.count):
+                logging.info(self.array_egg[(index_pid * self.count) + i].alive)
                 if not self.array_egg[(index_pid * self.count) + i].alive:
                     count = count + 1
             if count == self.count:
