@@ -1,5 +1,5 @@
 from battle_player.base.LogicHandler import LogicHandler
-from utils.string import *
+from utils.constant import *
 import math
 
 
