@@ -27,11 +27,14 @@ class BaseHandler(tornado.web.RequestHandler):
         user_id = self.get_secure_cookie(USER_COOKIE)
         if not user_id:
             return None
-        user = self.dict_to_user(self.db.users.find_one({"_id": ObjectId(user_id.decode())}))
+        user_dict = self.db.users.find_one({"_id": ObjectId(user_id.decode())})
+        user = self.dict_to_user(user_dict)
         return user
 
     @staticmethod
     def dict_to_user(dict_user):
+        if dict_user is None:
+            return None
         return Player(dict_user["name"], None)
 
 

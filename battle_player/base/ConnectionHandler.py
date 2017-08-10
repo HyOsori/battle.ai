@@ -3,8 +3,7 @@ import socket
 
 from battle_player.base.constant import *
 
-BUFFER_SIZE = 512
-
+BUFFER_SIZE = 1024
 
 class ConnectionHandler(object):
     def __init__(self):
