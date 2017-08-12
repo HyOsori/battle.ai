@@ -32,6 +32,8 @@ class GameHandler:
 
         self.game_message_list = []
 
+        self.game_result = ""
+
     @gen.coroutine
     def run(self):
         """
@@ -125,6 +127,7 @@ class GameHandler:
 
     def handle_game_end(self, error_code, message={}):
 
+        self.game_result = message
         data = Message.dump_message(Message(GAME_HANDLER, END, message, error_code))
 
         for player in self.room.player_list:
@@ -142,7 +145,7 @@ class GameHandler:
 
         game_log = GameLog()
         game_log.players = self._ids
-        game_log.game_result = "end"
+        game_log.game_result = self.game_result
         game_log.game_message_list = self.game_message_list
 
         db = DBHelper.instance().db
