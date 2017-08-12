@@ -41,15 +41,15 @@ class TurnGameHandler(GameHandler):
                 else:
                     self.handle_game_end(MESSAGE_TYPE_ERROR, {})
         except TimeoutError:
-            self.handle_game_end(TIME_OUT, {})
+            self.handle_game_end(TIME_OUT)
         except json.JSONDecodeError:
-            self.handle_game_end(NOT_JSON_DATA, {})
+            self.handle_game_end(NOT_JSON_DATA)
         except tornado.iostream.StreamClosedError:
-            self.handle_game_end(CONNECTION_LOST, {})
+            self.handle_game_end(CONNECTION_LOST)
         except Exception as e:
             traceback.print_tb(e)
             logging.error("unexpected exception: " + str(repr(e)) + "  " + str(type(e)))
-            self.handle_game_end(UNEXPECTED_ERROR, {})
+            self.handle_game_end(UNEXPECTED_ERROR)
 
     def request(self, _id, msg_type, data):
         logging.info("request is called")

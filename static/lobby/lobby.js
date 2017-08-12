@@ -1,8 +1,16 @@
 var ws = new WebSocket("ws://" + window.location.host + "/lobby/socket");
 ws.onopen = function(evt){
+  var gamelog = new Object();
+  var set;
 
+  gamelog.msg = "gamelog";
+  gamelog.msg_type = "init";
+
+  set = JSON.stringify(gamelog);
+  ws.send(set);
 };
 ws.onmessage = function(evt){
+    var ddd;
     recvChat(JSON.parse(evt.data))
 };
 ws.onclose = function(){
