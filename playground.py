@@ -16,6 +16,7 @@ sys.path.insert(0, '../')
 
 from server.db.dbhelper import DBHelper
 from server.handler.playerhandler import PlayerHandler
+from server.handler.gameobserverhandler import GameObserverHandler
 from server.handler.observerhandler import ObserverHandler
 from server.conf.conf_reader import ConfigReader
 from server.handler.webpagehandler import *
@@ -34,6 +35,7 @@ class Playground(tornado.web.Application):
 
             # websocket handler
             (r"/websocket", ObserverHandler),
+            (r"/game/socket", GameObserverHandler),
             (r"/lobby/socket", LobbyHandler),
 
             # web page handler
