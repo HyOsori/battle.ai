@@ -41,17 +41,28 @@ class LobbyHandler(tornado.websocket.WebSocketHandler):
             if msg_type == SEND:
                 self.notify_chat(data)
                 pass
-        elif msg == MATCH:
-            if msg_type == REQUEST:
-                # TODO: redirect game page
+        elif msg == USER:
+            if msg_type == INIT:
+
                 pass
 
     def on_close(self):
         pass
 
     def init_game_log(self):
-        db = DBHelper.instance()
-        game_log_list = db.game_log_list
+        db_helper = DBHelper.instance()
+
+        game_log_list = db_helper.db.game_log_list.find({}, {"_id": True, "players": True, "game_result": True})
+
+        result = list()
+        for game_log in game_log_list:
+            game_log["_id"] = str(game_log["_id"])
+            result.append(game_log)
+
+        message = Message(GAME_LOG, INIT, result)
+        message = Message.dump_message(message)
+
+        self.__instance.send(message)
 
     def notify_chat(self, data):
         message = Message()
@@ -65,8 +76,19 @@ class LobbyHandler(tornado.websocket.WebSocketHandler):
         for lobby_user in lobby_user_pool:
             lobby_user.send(message)
 
-    def request_match(self):
-        pass
+    def init_user_list(self):
+
+        player_pool = UserPool.instance().get_player_pool()
+
+        runnable_players = []
+        for player in player_pool:
+            if not player.playing:
+                runnable_players.append(player._id)
+
+        message = Message(USER, INIT, runnable_players)
+        message = Message.dump_message(message)
+
+        self.__instance.send(message)
 
 
 

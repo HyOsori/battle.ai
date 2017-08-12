@@ -1,0 +1,118 @@
+
+#wrapper_lobby {
+	background: #FFFAF0;
+	margin:0;
+	padding:0;
+	position: absolute;
+	width: 100%;
+	top: 56px;
+	height: calc(100% - 112px);
+}
+
+#lobby {
+	margin:0 auto;
+	padding:0;
+	max-width:960px;
+	height : 100%
+	}
+
+.lobby_component {
+	height:100%;
+	margin : 0px;
+	padding : 0px;
+}
+
+#lobby_left_component {
+	float: left;
+	width: 60%;
+}
+
+#lobby_right_component {
+	float: right;
+	width: 40%;
+}
+
+#lobby_left_wrapper_log {
+	margin: 0;
+	padding : 0;
+	width : 100%;
+	height : 72%;
+}
+
+#lobby_left_wrapper_chat {
+	margin: 0;
+	padding : 0;
+	width : 100%;
+	height : 28%;
+}
+
+#lobby_log {
+	background: #E0FFFF;
+	margin: auto;
+	top : 24px;
+	width : calc(100% - 48px);
+	height: calc(100% - 36px);
+}
+
+#lobby_chat {
+	background: #DCDCDC;
+	margin: 0 auto;
+	padding:0;
+	top : 12px;
+	width : calc(100% - 48px);
+	height: calc(100% - 60px);
+	overflow-y: auto;
+}
+
+#lobby_write_Chat {
+	display : flex;
+	margin : 0 auto;
+	padding : 0;
+	max-width :none;
+	width : calc(100% - 48px);
+	height :24px;
+}
+
+#lobby_right_wrapper_AIlist {
+	margin : 0;
+	padding : 0;
+	width: 100%;
+	height :85%;
+}
+
+#lobby_right_wrapper_match {
+	margin : 0;
+	padding : 0;
+	width: 100%;
+	height :15%;
+}
+
+#lobby_AIlist {
+	background: #ffd1cc;
+	margin: auto;
+	top : 24px;
+	width : calc(100% - 48px);
+	height: calc(100% - 36px);
+}
+
+#lobby_match {
+	background: #ccffe6;
+	margin: auto;
+	top : 12px;
+	width : calc(100% - 48px);
+	height: calc(100% - 36px);
+}
+
+#Chatting_Real {
+	background : #BBBBBB;
+	float : left;
+	flex-grow : 175;
+	height : 100%;
+}
+
+#Chatting_Click {
+	background: pink;
+	float : right;
+	flex-grow : 1;
+	height: 100%
+}

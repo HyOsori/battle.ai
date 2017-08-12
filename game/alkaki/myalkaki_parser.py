@@ -1,6 +1,6 @@
 from game.alkaki.alkaki_parser import ALKAKIParser
 import math
-
+import utils.debugger as logging
 
 class MyALKAKIParser(ALKAKIParser):
     def __init__(self):
@@ -18,6 +18,7 @@ class MyALKAKIParser(ALKAKIParser):
     def game_phase(self, board_data):
 
         index = 0
+        logging.info(board_data)
         direction = self.get_direction_depending_on_position(0, 0, 1, 0)
         force = self.get_distance(0, 0, 1, 0)
 
