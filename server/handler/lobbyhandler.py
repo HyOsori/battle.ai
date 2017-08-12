@@ -51,7 +51,12 @@ class LobbyHandler(tornado.websocket.WebSocketHandler):
 
     def init_game_log(self):
         db = DBHelper.instance()
-        game_log_list = db.game_log_list
+        game_log_list = db.game_log_list.find({}, {"_id": True, "players": True, "game_result": True})
+
+        print(game_log_list)
+        # lobby_user_pool = UserPool.instance().get_lobby_pool()
+        # for lobby_user in lobby_user_pool:
+        #     lobby_user.send()
 
     def notify_chat(self, data):
         message = Message()
