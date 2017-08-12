@@ -8,7 +8,8 @@
 {% end %}
 
 {% block body %}
-	<div id="header">
+
+    <div id="header">
 		<div id="header_left_component">
 			<h1>Battle AI</h1>
 		</div>
@@ -23,39 +24,41 @@
 	</div>
 
 	<div id="wrapper_lobby">
-	<div id="lobby">
-		<div id="lobby_left_component" class="lobby_component">
-			<div id="lobby_left_wrapper_log">
-				<div id="lobby_log" class="box">
+        <div id="lobby">
+            <div id="lobby_left_component" class="lobby_component">
+                <div id="lobby_left_wrapper_log">
+                    <div id="lobby_log" class="box">
 
-				</div>
-			</div>
-			<div id="lobby_left_wrapper_chat">
-				<div id="lobby_chat" class="box">
-
-				</div>
-                <div id="lobby_write_Chat" class="box">
-					<input type="text" id="Chatting_Real" class="box" onkeydown="if(event.keyCode == 13) document.getElementById('Chatting_Click').click()">
-					<button id="Chatting_Click" class="box"></button>
+                    </div>
                 </div>
-			</div>
-		</div>
-		<div id="lobby_right_component" class="lobby_component">
-			<div id="lobby_right_wrapper_AIlist">
-				<div id="lobby_AIlist" class="box">
+                <div id="lobby_left_wrapper_chat">
+                    <div id="lobby_chat" class="box">
 
-				</div>
-			</div>
-			<div id="lobby_right_wrapper_match">
-				<div id="lobby_match" class="box">
+                    </div>
 
-				</div>
-			</div>
-		</div>
-	</div>
+                    <div id="lobby_write_Chat" class="box">
+                        <input type="text" id="Chatting_Real" class="box" onkeydown="if(event.keyCode == 13) document.getElementById('Chatting_Click').click()">
+                        <button id="Chatting_Click" class="box"></button>
+                    </div>
+
+                </div>
+            </div>
+            <div id="lobby_right_component" class="lobby_component">
+                <div id="lobby_right_wrapper_AIlist">
+                    <div id="lobby_AIlist" class="box">
+
+                    </div>
+                </div>
+                <div id="lobby_right_wrapper_match">
+                    <div id="lobby_match" class="box">
+
+                    </div>
+                </div>
+            </div>
+        </div>
 	</div>
 {% end %}
-
 {% block bottom %}
-    <script type="text/javascript" src="{{ static_url('lobby/chat.js') }}"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+        <script src="{{ static_url('lobby/lobby.js') }}"></script>
 {% end %}

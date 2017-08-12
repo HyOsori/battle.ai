@@ -47,7 +47,7 @@ class LoginPageHandler(BaseHandler):
 
 class LobbyPageHandler(BaseHandler):
     def get(self, *args, **kwargs):
-        self.render("chat.html")
+        self.render("lobby.html")
 
 
 class GamePageHandler(BaseHandler):
