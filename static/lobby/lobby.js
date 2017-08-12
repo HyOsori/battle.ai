@@ -10,19 +10,25 @@ ws.onopen = function(evt){
   ws.send(set);
 };
 ws.onmessage = function(evt){
-    var ddd;
-    recvChat(JSON.parse(evt.data))
+    var checker = evt.msg;
+
+    if(checker == "gamelog"){
+      recvLog(JSON.parse(evt.data));
+    }
+    else if(checker == "chat"){
+      recvChat(JSON.parse(evt.data));
+    }
 };
 ws.onclose = function(){
 
 
 };
 
-///////보내기
+///////(아래)채팅 보내기
 
 
   var msgSendBtn = document.getElementById("Chatting_Click");
-msgSendBtn.addEventListener("click", function() {
+  msgSendBtn.addEventListener("click", function() {
   var input_box = document.getElementById("Chatting_Real");
   var text = input_box.value;
   var sauce = new Object();
@@ -46,7 +52,7 @@ msgSendBtn.addEventListener("click", function() {
   input_box.value = "";
 });
 
-////////////////
+///////(아래)채팅창에 나타내기
 
 function recvChat(JSON_data) {
   var chatting_box = document.getElementById("lobby_chat");
@@ -58,4 +64,11 @@ function recvChat(JSON_data) {
   var text = "(" + date + ")" + name + ": " + msg;
   li.appendChild(document.createTextNode(text));
   chatting_box.appendChild(li);
+}
+
+///////(아래)로그창에 나타내기
+
+function recvLog(JSON_data) {
+
+
 }
