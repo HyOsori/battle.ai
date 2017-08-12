@@ -1,16 +1,35 @@
 {% extends "base.html" %}
+<!--css code-->
+<link href="/login.css" type="text/css">
+{% block head %}
+
+<link href="bootstrap.min.css">
+{% end %}
 
 {% block body %}
-<h1>Sign Up</h1>
-<form action="/auth/signup" method="POST">
-  Name: <input name="name" type="text"><br>
-  Password: <input name="password" type="password"><br>
-  Password confirm <input name="password_confirm" type="password"><br>
-  {% module xsrf_form_html() %}
-  <input type="submit">
-</form>
+<!-- Latest compiled and minified CSS -->
+{#<button id="sign_in"style="float:right;margin:20px"type="button" class="btn btn-default navbar-btn">Sign in</button>#}
+<!--<div style="text-align:center;float:right; margin:20px; width:30vw;">-->
+
+<div id="sign_up" style=" 'float':right;
+            'marginRight':100px;
+            'paddingTop':10px;
+           ">
+
+</div>
+<!--
+    {% module xsrf_form_html() %}
+
+</form>  -->
 <br>
-<p>LICENSE</p><br>
-<p>OPEN SOURCE</p><br>
-<p>GITHUB LINK</p><br>
+
+{% end %}
+
+{% block bottom %}
+
+<script type="text/jsx" src='{{ static_url("login.js") }}'></script>
+
+
+
+
 {% end %}

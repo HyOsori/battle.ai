@@ -75,13 +75,9 @@ class SignUpHandler(BaseHandler):
         )
         user = Player(name, hashed_password)
         users_colletion = self.db.users
-        print(users_colletion)
         user_id = users_colletion.insert(user.__dict__)
-        print(user_id)
-        print(type(user_id))
-        self.set_secure_cookie(USER_COOKIE, str(user_id))
 
-        self.redirect("/lobby")
+        self.redirect("/login")
 
 
 class SignInHandler(BaseHandler):
@@ -98,16 +94,16 @@ class SignInHandler(BaseHandler):
             bcrypt.hashpw, tornado.escape.utf8(self.get_argument("password")),
             tornado.escape.utf8(user_dict["password"])
         )
-        print(user_dict)
-        print(hashed_password)
+
         if user_dict["password"] == hashed_password:
+            self.set_secure_cookie(USER_COOKIE, str(user_dict["_id"]))
             self.redirect("/lobby")
         else:
             self.redirect("/login")
 
 
 class LogoutHandler(BaseHandler):
-    def get(self):
+    def post(self):
         self.clear_cookie(USER_COOKIE)
         self.redirect("/login")
 
