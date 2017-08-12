@@ -106,8 +106,21 @@ class SignInHandler(BaseHandler):
             self.redirect("/login")
 
 
-
 class LogoutHandler(BaseHandler):
     def get(self):
         self.clear_cookie(USER_COOKIE)
         self.redirect("/login")
+
+
+class MatchHandler(BaseHandler):
+    def post(self):
+        match_type = self.get_argument("type")
+        result_dict = dict()
+        result_dict["type"] = match_type
+
+        if match_type == "gamelog":
+            result_dict["players"] = self.get_argument("players")
+        elif match_type == "user":
+            result_dict["_id"] = self.get_argument("_id")
+
+        self.render("index.html", match_data=result_dict)

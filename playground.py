@@ -43,6 +43,9 @@ class Playground(tornado.web.Application):
             (r"/mypage", MyPageHandler),
             (r"/game", GamePageHandler),
 
+            # lobby request handler
+            (r"/lobby/game/request", MatchHandler),
+
             # signup signin logout request
             (r"/auth/signin", SignInHandler),
             (r"/auth/signup", SignUpHandler),
