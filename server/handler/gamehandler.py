@@ -158,6 +158,15 @@ class GameHandler:
             for observer in observer_pool:
                 observer.notice_user_added(player._id)
 
+        game_log._id = str(game_log._id)
+        game_log.game_message_list = None
+        message = Message(GAME_LOG, ADD, game_log.__dict__)
+        message = Message.dump_message(message)
+
+        lobby_user_pool = UserPool.instance().get_lobby_pool()
+        for lobby_user in lobby_user_pool:
+            lobby_user.send(message)
+
     @gen.coroutine
     def delay_action(self):
         yield gen.sleep(self.delay_time)
