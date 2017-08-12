@@ -13,6 +13,7 @@
 	margin:0 auto;
 	padding:0;
 	max-width:960px;
+	height : 100%
 	}
 
 .lobby_component {
@@ -59,11 +60,12 @@
 	padding:0;
 	top : 12px;
 	width : calc(100% - 48px);
-	height: calc(100% - 60px); //24px 남음
+	height: calc(100% - 60px);
 	overflow-y: auto;
 }
 
 #lobby_write_Chat {
+	display : flex;
 	margin : 0 auto;
 	padding : 0;
 	max-width :none;
@@ -104,13 +106,13 @@
 #Chatting_Real {
 	background : #BBBBBB;
 	float : left;
-	width : 92%;
+	flex-grow : 175;
 	height : 100%;
 }
 
 #Chatting_Click {
 	background: pink;
 	float : right;
-	width: 8%;
+	flex-grow : 1;
 	height: 100%
 }
