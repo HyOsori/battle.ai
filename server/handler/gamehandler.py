@@ -143,7 +143,7 @@ class GameHandler:
         game_log = GameLog()
         game_log.players = self._ids
         game_log.game_result = "end"
-        game_log.game_result = self.game_message_list
+        game_log.game_message_list = self.game_message_list
 
         db = DBHelper.instance().db
         db.game_log_list.insert(game_log.__dict__)
