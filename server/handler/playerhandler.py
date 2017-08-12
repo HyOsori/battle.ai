@@ -66,6 +66,13 @@ class PlayerHandler(tornado.tcpserver.TCPServer):
             player_pool.add_player(player)
 
             # notify addition of player to observers
+            message = Message(USER, ADD, user_key)
+            message = Message.dump_message(message)
+
+            lobby_user_pool = UserPool.instance().get_lobby_pool()
+            for lobby_user in lobby_user_pool:
+                lobby_user.send(message)
+
             for observer in observer_pool:
                 observer.notice_user_added(user_key)
 
