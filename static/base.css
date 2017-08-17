@@ -29,3 +29,16 @@
    transform:translateY(-50%);
     right: 12px;
 }
+
+
+html{
+    height:100%;
+}
+
+body{
+    height:100%;
+}
+
+#body{
+    height:100%;
+}
