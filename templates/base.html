@@ -3,68 +3,69 @@
 <head>
     <meta charset="UTF-8">
     <title>{{ handler.settings["title"] }}</title>
-    <link  rel="alternate" href="/feed" type="application/atom+xml" title="{{ handler.settings['title'] }}">
-     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-     <link rel="stylesheet" href="../static/base.css" type="text/css"/>
+    <link rel="alternate" href="/feed" type="application/atom+xml" title="{{ handler.settings['title'] }}">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="../static/base.css" type="text/css"/>
     <style>
         .form-inline .form-control {
             margin-right: 6px;
         }
 
     </style>
-     <!--css code-->
+    <!--css code-->
     {% block head %}
-   {% end %}
+    {% end %}
 
 </head>
-<body >
-<div>
-<div id="header">
-    <a >{{ handler.settings["title"] }}</a>
-    {% if current_user %}
+<body>
+<div style="height: 100%">
 
-    <form class="header_button" action="/auth/logout" method="POST" >
-        <div>
-            {{ current_user.name }}
-            <button type="submit" style="" class="btn btn-default">Log out</button>
+    <div id="header">
+        <a>{{ handler.settings["title"] }}</a>
+        {% if current_user %}
 
-        </div>
-    </form>
-    {% else %}
-    <div id="sign_in" >
-                <form class="form-inline" action="/auth/signin" method="POST" style="float:right">
-                  <div class="form-group">
+        <form class="header_button" action="/auth/logout" method="POST">
+            <div>
+                {{ current_user.name }}
+                <button type="submit" style="" class="btn btn-default">Log out</button>
+
+            </div>
+        </form>
+        {% else %}
+        <div id="sign_in">
+            <form class="form-inline" action="/auth/signin" method="POST" style="float:right">
+                <div class="form-group">
 
                     <input type="text" name="name" class="form-control" id="exampleInputName" placeholder="name"/>
 
+                    <input type="password" name="password" class="form-control" id="exampleInputPassword1"
+                           placeholder="password"/>
+                </div>
+                <button type="submit" class="btn btn-default">Sign in</button>
 
-
-                    <input type="password" name="password" class="form-control" id="exampleInputPassword1" placeholder="password"/>
-                    </div>
-                  <button type="submit" class="btn btn-default">Sign in</button>
-
-                </form>
+            </form>
+        </div>
+        {% end %}
     </div>
-    {% end %}
-</div>
 
 
-<div id="body" style="paddingTop:50px" >
-    {% block body %}{% end %}
-</div>
+    <div id="body" style="paddingTop:50px">
+        {% block body %}{% end %}
+    </div>
 
 
     <div id="footer">
 
-                <p>LICENSE</p>
-                <p>OPEN SOURCE</p>
-                <p>GITHUB LINK</p>
+        <p>LICENSE</p>
+        <p>OPEN SOURCE</p>
+        <p>GITHUB LINK</p>
 
     </div>
-<!--script code-->
-{% block bottom %}
+    <!--script code-->
+    {% block bottom %}
 
-{% end %}
+    {% end %}
 
 
 </div>
