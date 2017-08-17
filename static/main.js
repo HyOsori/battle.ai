@@ -11,7 +11,7 @@ window.onload = function() {
             var data = jQuery.parseJSON(received_msg);
             var request;
 
-            console.log(received_msg);
+            //console.log(received_msg);
             message += ">> " + received_msg + "<br>";
             Lobby.message_box.innerHTML = message;
 
