@@ -28,8 +28,9 @@ var Sign_up = React.createClass({
     render: function () {
         let style = {
             float: 'right',
-            marginRight: '100px',
-            paddingTop: '10px'
+            marginRight: '200px',
+            paddingTop: '100px',
+            width:'20%',
         }
 
         return (
