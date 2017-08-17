@@ -8,6 +8,7 @@ from game.base.Phase import Phase
 
 sys.path.insert(0, '../')
 
+FRICTION = 10
 
 class ALKAKIGameLogic(TurnGameLogic):
     def __init__(self, game_server):
@@ -18,9 +19,9 @@ class ALKAKIGameLogic(TurnGameLogic):
         # Position Egg
         # Here init game dependent variable
         try:
-            self.board_size = 100
+            self.board_size = 100000
             self.count = 5
-            self.radius = 3
+            self.radius = 3000
             self.player_pos = []
         except Exception as e:
             logging.info(e)
@@ -51,8 +52,8 @@ class ALKAKIGameLogic(TurnGameLogic):
 
                 pos = [[0 for _ in range(2)] for _ in range(5)]
                 for i_row in range(self.count):
-                    pos[i_row][0] = (i_row + 1) * 47 / 3 + 3
-                    pos[i_row][1] = color_count * 47 * 4 / 3 + 3 + (49 / 3)
+                    pos[i_row][0] = int((i_row + 1) * 47000 / 3 + 3000)
+                    pos[i_row][1] = int(color_count * 47000 * 4 / 3 + 3000 + (49000 / 3))
 
                 self.player_pos += pos
                 init_dict[i]['player_pos'] = pos
@@ -174,7 +175,7 @@ class ALKAKIGamePhase(Phase):
         try:
             index = dict_data['index']
             direction = dict_data['direction']
-            force = dict_data['force']
+            force = int(dict_data['force'])
         except Exception as e:
             logging.info(e)
             logging.info("[Error] get_game_dict_data_error")
@@ -197,8 +198,6 @@ class ALKAKIGamePhase(Phase):
 
         # 형 변환후 힘 넣기
         is_game_end = None
-        logging.info("prev")
-        logging.info(index)
         # 0~n 까지중 죽은거 무시
         # 5~n 까지중 죽은거 무시
 
@@ -214,23 +213,14 @@ class ALKAKIGamePhase(Phase):
 
         if index < i_validate_arr or index > i_validate_arr + 5:
             logging.info("error occured by array in 205line")
-        logging.info("next")
-        logging.info(index)
 
         try:
-            logging.info(direction[0])
-            logging.info(direction[1])
-            distance = math.sqrt(math.pow(direction[0], 2) + math.pow(direction[1], 2))
+            direction = list(map(int, direction))
+            distance = int(math.sqrt(direction[0] ** 2 + direction[1] ** 2))
 
-            logging.info(distance)
-
-            if math.fabs(distance) > 0.000000001:
-                x_dir = direction[0] / distance
-                y_dir = direction[1] / distance
-            else:
-                x_dir = 0
-                y_dir = 0
-
+            x_dir = direction[0] / distance
+            y_dir = direction[1] / distance
+            # TODO : direction < 1 죽여
             self.array_egg[index].add_force(x_dir, y_dir, force)
 
         except Exception as e:
@@ -308,10 +298,13 @@ class ALKAKIGamePhase(Phase):
                 my_speed = self.array_egg[i].speed
                 my_x_dir = self.array_egg[i].x_dir
                 my_y_dir = self.array_egg[i].y_dir
-
-                self.array_egg[i].x_pos += my_x_dir * my_speed
-                self.array_egg[i].y_pos += my_y_dir * my_speed
-                self.array_egg[i].speed -= 0.1
+                logging.info("--------")
+                logging.info(my_speed)
+                logging.info(my_y_dir * my_speed)
+                logging.info(self.array_egg[i].y_pos)
+                self.array_egg[i].x_pos += int(my_x_dir * my_speed)
+                self.array_egg[i].y_pos += int(my_y_dir * my_speed)
+                self.array_egg[i].speed -= FRICTION
 
                 for j in range(len(self.array_egg)):
                     check_meet = False
@@ -376,8 +369,8 @@ class ALKAKIGamePhase(Phase):
                 break
 
         for i in range(len(self.array_egg)):
-            if self.array_egg[i].x_pos < 0 or self.array_egg[i].x_pos > 100 or \
-                            self.array_egg[i].y_pos < 0 or self.array_egg[i].y_pos > 100:
+            if self.array_egg[i].x_pos < 0 or self.array_egg[i].x_pos > 100000 or \
+                            self.array_egg[i].y_pos < 0 or self.array_egg[i].y_pos > 100000:
                 self.array_egg[i].alive = False
 
         if check_remain_energy:

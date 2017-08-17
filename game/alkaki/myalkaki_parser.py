@@ -19,11 +19,20 @@ class MyALKAKIParser(ALKAKIParser):
 
         index = 0
         logging.info(board_data)
-        direction = self.get_direction_depending_on_position(0, 0, 1, 0)
-        force = self.get_distance(0, 0, 1, 0)
 
-        if force > 5:
-            force = 5
+        # direction = self.get_direction_depending_on_position(0, 0, 1, 0)
+        # force = self.get_force_depending_on_distance(self.get_distance(0, 0, 1, 0))
+        #
+        # if force > 5:
+        #     force = 5
+        #
+        # force = 0.5
+        my_arr = board_data["my_arr"]
+        enemy_arr = board_data["enemy_arr"]
+
+        index = 0
+        direction = [enemy_arr[0][0] - my_arr[0][0], enemy_arr[0][1] - my_arr[0][1]]
+        force = 0.5
 
         return_dict = {
             'index': index,
