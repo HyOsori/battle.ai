@@ -332,7 +332,7 @@ class ALKAKIGamePhase(Phase):
 
                             cos_b = float(self.array_egg[i].x_dir * self.array_egg[j].x_dir
                                           + self.array_egg[i].y_dir * self.array_egg[j].y_dir)
-                            cos_a = float(math.sqrt(1 - math.fabs(cos_b)))
+                            cos_a = float(math.sqrt(math.fabs(1 - math.fabs(cos_b))))
 
                             if 0 < int(cos_a * 10000) < 1:
                                 cos_a = 0.0001
@@ -455,8 +455,8 @@ class ALKAKIGamePhase(Phase):
         # 내가 1일때 나 5~9 적 0~4
         request_dict = {
             'index': index,
-            'my_arr': my_arr,
-            'enemy_arr': enemy_arr
+            'my_arr': enemy_arr,
+            'enemy_arr': my_arr
         }
         self.request(self.now_turn(), request_dict)
 

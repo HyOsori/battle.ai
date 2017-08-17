@@ -38,8 +38,8 @@ class CustomAlkakiLogic(LogicHandler):
         enemy_arr = data["enemy_arr"]
 
         index = 0
-        direction = [enemy_arr[0][0] - my_arr[0][0], enemy_arr[0][1] - my_arr[0][1]]
-        force = 3000
+        direction = [0, 1]
+        force = 1000
 
         return_dict = {
             'index': index,
