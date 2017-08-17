@@ -39,8 +39,7 @@ class Playground(tornado.web.Application):
             (r"/lobby/socket", LobbyHandler),
 
             # web page handler
-            (r"/", IndexHandler),
-            (r"/login", LoginPageHandler),
+            (r"/", LoginPageHandler),
             (r"/lobby", LobbyPageHandler),
             (r"/mypage", MyPageHandler),
             (r"/game", GamePageHandler),
