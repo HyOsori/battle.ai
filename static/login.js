@@ -11,10 +11,10 @@ var Sign_up = React.createClass({
             if (this.state.password === this.state.password_confirm) {
                 return true;
             } else {
-                alert("달라");
+                alert("비밀번호가 일치하지 않습니다.");
             }
         } else {
-            alert("공백 시러 빼에엥")
+            alert("비밀번호를 입력해주세요.")
         }
         return false;
     },
