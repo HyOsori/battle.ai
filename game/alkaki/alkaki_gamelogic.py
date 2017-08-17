@@ -166,7 +166,6 @@ class ALKAKIGamePhase(Phase):
             self.end(162, None)
             return
 
-
     def do_action(self, pid, dict_data):
         index = None
         direction = None
@@ -219,14 +218,43 @@ class ALKAKIGamePhase(Phase):
         logging.info(index)
 
         try:
-            self.array_egg[index].add_force(direction[0], direction[1], force)
-            self.run_physics()
-            is_game_end = self.check_game_end()
+            logging.info(direction[0])
+            logging.info(direction[1])
+            distance = math.sqrt(math.pow(direction[0], 2) + math.pow(direction[1], 2))
+
+            logging.info(distance)
+
+            if math.fabs(distance) > 0.000000001:
+                x_dir = direction[0] / distance
+                y_dir = direction[1] / distance
+            else:
+                x_dir = 0
+                y_dir = 0
+
+            self.array_egg[index].add_force(x_dir, y_dir, force)
+
         except Exception as e:
             logging.info(e)
             logging.info("[Error] user_game_error")
             self.end(180, None)
             return
+
+        try:
+            self.run_physics()
+        except Exception as e:
+            logging.info(e)
+            logging.info("[Error] user_game_error")
+            self.end(182, None)
+            return
+
+        try:
+            is_game_end = self.check_game_end()
+        except Exception as e:
+            logging.info(e)
+            logging.info("[Error] user_game_error")
+            self.end(183, None)
+            return
+
 
         # for i in range(10):
         #     logging.info(self.array_egg[i].x_pos)
