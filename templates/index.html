@@ -1,86 +1,16 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <link rel="stylesheet" type="text/css" href="{{ static_url('examples/pixels/frame.css')}}" >
-        <link rel="stylesheet" type="text/css" href="{{ static_url('examples/pixels/lobby.css')}}" >
-        <link rel="stylesheet" type="text/css" href="{{ static_url('examples/pixels/ingame.css')}}" >
-        <link rel="stylesheet" type="text/css" href="{{ static_url('examples/pixels/game_result.css')}}" >
-        <link rel="stylesheet" type="text/css" href="{{ static_url('_plugin/alertify.core.css')}}" />
-        <link rel="stylesheet" type="text/css" href="{{ static_url('_plugin/alertify.default.css')}}" />
-    </head>
-    <body>
-        <div id="id_lobby" class="class_page class_lobby">
-			<h1 class="class_title">TITLE</h1>
-            <div class="class_context">
-				<div class="class_center">
-                    <div class="class_top">
-                        <button id="id_logTab_btn">Log</button>
-                        <button id="id_searchTab_btn">Search</button>
-                        <div id="id_options">
-                            <div id="id_setSpeed_text">Speed</div>
-                            <input type="range" id="id_setSpeed" max="4" min="0"/>
-                        </div>
-                    </div>
-					<ul id="id_log"></ul>
-                    <div id="id_search">
-                        <div id="id_searchBox">
-                            <input type="text" id="id_search_input" />
-                            <button id="id_search_btn">Search</button>
-                        </div>
-                        <ul id="id_searchResults_ul"></ul>
-                    </div>
-					<div id="id_messages"></div>
-				</div>
-				<div class="class_right">
-					<ul id="id_playerList_ul"></ul>
-                    <div class="class_buttons">
-                        <button id="id_match_btn" disabled="true">Match</button>
-                    </div>
-				</div>
-			</div>
-		</div>
-        <div id="id_gameBoard" class="class_page class_gameBoard">
-			<h1 class="class_title">TITLE</h1>
-            <div class="class_context">
-				<div class="class_center">
-                    <div class="class_canvasContainer">
-                        <canvas id="id_gameBoard_canvas" width="490" height="490"></canvas>
-                    </div>
-				</div>
-				<div class="class_right">
-                    <div id="id_chart1" class="class_chart"></div>
-                    <div id="id_chart2" class="class_chart"></div>
-				</div>
-			</div>
-        </div>
-        <div id="id_gameResult" class="class_page class_gameResult">
-			<h1 class="class_title">TITLE</h1>
-            <div class="class_context">
-				<div class="class_center">
-                    <div class="class_canvasContainer">
-                        <canvas id="id_resultBoard_canvas"></canvas>
-                    </div>
-				</div>
-				<div class="class_right">
-					<ul id="id_gameResults_ul"></ul>
-                    <div class="class_buttons">
-					    <button id="id_goToLobby_btn" class="class_button">home</button>
-                    </div>
-				</div>
-			</div>
-        </div>
-        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
-        <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-        <script type="text/javascript" src="{{ static_url('_plugin/pako.js') }}"></script>
-        <script type="text/javascript" src="{{ static_url('_plugin/Queue.js') }}"></script>
-        <script type="text/javascript" src="{{ static_url('_plugin/alertify.js') }}"></script>
-        <script type="text/javascript" src="{{ static_url('_base/basicFunction.js') }}"></script>
-        <script type="text/javascript" src="{{ static_url('_base/lobby.js') }}"></script>
-        <script type="text/javascript" src="{{ static_url('_base/gameBoard.js') }}"></script>
-        <script type="text/javascript" src="{{ static_url('_base/gameResult.js') }}"></script>
-        <script type="text/javascript" src="{{ static_url('examples/alkaki/gameBoard.js') }}"></script>
-        <script type="text/javascript" src="{{ static_url('examples/alkaki/setting.js') }}"></script>
-        <script type="text/javascript" src="{{ static_url('main.js') }}"></script>
-        <br><br>
-    </body>
-</html>
+{% extends "base.html" %}
+
+{% block head %}
+    <link rel="stylesheet" href="{{ static_url('game/game.css')}}" >
+{% end %}
+
+
+{% block body %}
+    <div id="Game"></div>
+{% end %}
+
+
+{% block bottom %}
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+    <script type="text/jsx" src="{{ static_url('game/game.js') }}"></script>
+{% end %}
