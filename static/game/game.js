@@ -86,37 +86,14 @@ const Game = React.createClass({
     return (
       <div>
         <Board players={ this.props.players } ref={ instance => { this.board = instance; }}/>
-        <RightSide />
       </div>
     );
   }
 });
 
 Game.defaultProps = {
-  players: ["player1", "player2"]
+  players: ["PLAYER1", "PLAYER2"]
 };
-
-const RightSide = React.createClass({
-  render: function() {
-    return (
-      <aside id="rightSide">
-        <Chart name="chart1"/>
-        <Chart name="chart2"/>
-      </aside>
-    );
-  }
-});
-
-const Chart = React.createClass({
-  render: function() {
-    return (
-      <section>
-        <header>{this.props.name}</header>
-        <div className="chart_content"></div>
-      </section>
-    );
-  }
-});
 
 const Board = React.createClass({
   getInitialState: function(){
@@ -235,10 +212,12 @@ const Board = React.createClass({
     return (
       <section id="center">
         <h3>
+          <span>&#9899; </span>
           {this.props.players.map((name, i) => {
               if (i >= this.props.players.length - 1) { return (<span key={i}>{name}</span>); }
               else { return (<span key={i}>{name} vs </span>); }
           })}
+          <span> &#9898;</span>
         </h3>
         <section id>
           <canvas id="board" width="480" height="480">Your Browser does not support Canvas!</canvas>
