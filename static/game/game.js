@@ -157,11 +157,6 @@ const Board = React.createClass({
     var y = y_rate * this.state.board_ratio;
     var radius = this.state.egg_radius_rate * this.state.board_ratio;
 
-    console.log("============================");
-    console.log("x: " + x);
-    console.log("y: " + y);
-    console.log("radius: " + radius);
-
     ctx.beginPath();
     if (color == 0) {
         ctx.arc(x, y, radius, 0, Math.PI * 2);
