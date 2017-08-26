@@ -1,8 +1,6 @@
 const Game = React.createClass({
-  getInitialState: function(){
-    return { messages : [] }
-  },
   componentDidMount: function(){
+    this.turn_results = new Queue();
     this.connection = new WebSocket("ws://" + window.location.host + "/websocket");
     this.connection.onmessage = evt => {
       console.log("message: " + evt.data);
@@ -45,6 +43,20 @@ const Game = React.createClass({
            *    data
            *    winner : [(string)]
            */
+          var turn_data = this.turn_results;
+          
+          var drawing = setInterval(function() {
+            if (turn_data.isEmpty()) {
+                clearInterval(drawing);
+                alertify.alert(data.data['winner'][0] + ' 승리!');
+                setTimeout("console.log('로비로 돌아갑니다.')", 2000);
+                return;
+            }
+
+            if (this.board.state.is_turn_end) {
+              this.board.drawTurnResult(turn_data.dequeue());
+            }
+          }, 0);
         }
       } else if (data.msg == "game_data") {
         if (data.msg_type == "game") {
@@ -58,6 +70,8 @@ const Game = React.createClass({
            *    direction : [x, y]
            *    force : (integer)
            */
+
+          this.board.drawTurnResult(data);
         }
       }
     };
@@ -82,6 +96,9 @@ const Game = React.createClass({
     req = JSON.stringify(json);
     this.connection.send(req);
   },
+  saveTurnResult: function(JSON_data) {
+    this.state.turn_results.enqueue(JSON_data);
+  },
   render: function() {
     return (
       <div>
@@ -98,6 +115,8 @@ Game.defaultProps = {
 const Board = React.createClass({
   getInitialState: function(){
     return {
+      is_turn_end: true,
+
       frame: 50,
       board_size_num: 18,
       margin_size_rate: 3,
@@ -203,6 +222,23 @@ const Board = React.createClass({
       this.drawEgg(x, y, color);
     })
   },
+  drawTurnResult: function(JSON_data) {
+    var game_data = JSON_data.data;
+    var direction = game_data.direction;
+    var index = game_data.index;
+    var turn = game_data.turn;
+    var force = game_data.force;
+
+	  this.state.egg_pos[index + turn * this.state.egg_cnt[0]].addForce(direction[0], direction[1], force);
+
+	  this.state.is_turn_end = false;
+
+    console.log("drawTurnResult!");
+	  /*
+	  runPhysics();
+	  updateBoard();
+	  */
+  },
   render: function() {
     return (
       <section id="center">
@@ -221,6 +257,8 @@ const Board = React.createClass({
     );
   }
 });
+
+
 
 function Egg(x_pos, y_pos, color) {
 	this.x_pos = x_pos;
