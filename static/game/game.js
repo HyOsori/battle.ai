@@ -242,13 +242,12 @@ const Board = React.createClass({
     var index = game_data.index;
     var turn = game_data.turn;
     var force = game_data.force;
+    var color_index = this.state.egg_pos[0].color == turn ? 0 : 5;
 
-	  this.state.egg_pos[index + turn * this.state.egg_cnt[0]].addForce(direction[0], direction[1], force);
+	  this.state.egg_pos[color_index + index].addForce(direction[0], direction[1], force);
 
 	  this.state.is_turn_end = false;
 
-    console.log("drawTurnResult!");
-	  
 	  this.runPhysics();
 	  this.updateBoard();
   },
