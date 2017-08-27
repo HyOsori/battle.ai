@@ -214,13 +214,13 @@ const Board = React.createClass({
 
     this.drawLine();
     
-    this.state.egg_pos.forEach(egg => {
-      console.log(egg);
+    for (var i = 0; i < this.state.egg_pos.length; ++i) {
+      egg = this.state.egg_pos[i];
       x = egg.x_pos;
       y = egg.y_pos;
       color = egg.color;
       this.drawEgg(x, y, color);
-    })
+    }
   },
   drawTurnResult: function(JSON_data) {
     var game_data = JSON_data.data;
@@ -234,10 +234,113 @@ const Board = React.createClass({
 	  this.state.is_turn_end = false;
 
     console.log("drawTurnResult!");
-	  /*
-	  runPhysics();
-	  updateBoard();
-	  */
+	  
+	  this.runPhysics();
+	  this.updateBoard();
+  },
+  runPhysics: function(){
+    // check_meet use for checking kiss Eggs
+    var check_meet;
+    for (var i = 0; i < this.state.egg_pos.length; ++i) {
+      if (this.state.egg_pos[i].speed > 0) {
+        // Egg Move
+        this.state.egg_pos[i].x_pos += this.state.egg_pos[i].x_dir * this.state.egg_pos[i].speed;
+        this.state.egg_pos[i].y_pos += this.state.egg_pos[i].y_dir * this.state.egg_pos[i].speed;
+        this.state.egg_pos[i].speed -= 0.1; // accelate = ㎍ (friction) -> 50 Frame /50
+
+        for (var j = 0; j < this.state.egg_pos.length; ++j) {
+          check_meet = false;
+          if (j != i) {
+            while (this.state.egg_pos[i].isMeet(this.state.egg_pos[j].x_pos, this.state.egg_pos[j].y_pos, 
+                                                        this.state.egg_radius_rate, this.state.board_size_rate)) {
+              if (!check_meet) { check_meet = true; }
+              if (this.state.egg_pos[i].x_pos > this.state.egg_pos[j].x_pos) {
+                this.state.egg_pos[i].x_pos = this.state.egg_pos[i].x_pos + Math.abs(this.state.egg_pos[i].x_dir);
+              } else {
+                this.state.egg_pos[i].x_pos = this.state.egg_pos[i].x_pos - Math.abs(this.state.egg_pos[i].x_dir);
+              }
+
+              if (this.state.egg_pos[i].y_pos > this.state.egg_pos[j].y_pos) {
+                this.state.egg_pos[i].y_pos = this.state.egg_pos[i].y_pos + Math.abs(this.state.egg_pos[i].y_dir);
+              } else {
+                this.state.egg_pos[i].y_pos = this.state.egg_pos[i].y_pos - Math.abs(this.state.egg_pos[i].y_dir);
+              }
+            }
+
+            if (check_meet) {
+              // When Kiss Break direction Degree = A
+              // When Kiss Other Egg's direction between origin Degree = B
+              // Calculate Two Egg's direction and speed
+              var kiss_dir_x = (this.state.egg_pos[j].x_pos - this.state.egg_pos[i].x_pos);
+              var kiss_dir_y = (this.state.egg_pos[j].y_pos - this.state.egg_pos[i].y_pos);
+              var distance = Math.sqrt(kiss_dir_x * kiss_dir_x + kiss_dir_y * kiss_dir_y);
+
+              this.state.egg_pos[j].x_dir = kiss_dir_x / distance;
+              this.state.egg_pos[j].y_dir = kiss_dir_y / distance;
+
+              var cosB = (this.state.egg_pos[i].x_dir * this.state.egg_pos[j].x_dir +
+                                       this.state.egg_pos[i].y_dir * this.state.egg_pos[j].y_dir);
+              var cosA = Math.sqrt(1 - Math.abs(cosB));
+
+              if (cosA < 0.0001 && cosA > 0) cosA = 0.0001;
+              if (cosA > -0.0001 && cosA < 0) cosA = -0.0001;
+              if (cosB < 0.0001 && cosB > 0) cosB = 0.0001;
+              if (cosB > -0.0001 && cosB < 0) cosB = -0.0001;
+
+              this.state.egg_pos[i].x_dir = this.state.egg_pos[i].x_dir - (this.state.egg_pos[j].x_dir) * cosB;
+              this.state.egg_pos[i].y_dir = this.state.egg_pos[i].y_dir - (this.state.egg_pos[j].y_dir) * cosB;
+
+              this.state.egg_pos[j].speed = this.state.egg_pos[i].speed * (1 / (cosA * cosA / cosB + cosB));
+              this.state.egg_pos[i].speed = this.state.egg_pos[i].speed * (1 / (cosB * cosB / cosA + cosA));
+
+            }
+          }
+        }
+      }
+    }
+
+    // If Egg have Energy Run Again
+    var check_remain_energy = false;
+
+    for (i = 0; i < this.state.egg_pos.length; ++i) {
+      if (this.state.egg_pos[i].speed > 0) {
+        check_remain_energy = true;
+        break;
+      }
+    }
+
+    for (i = 0; i < this.state.egg_pos.length; ++i) {
+      if (this.state.egg_pos[i].x_pos < 0 || this.state.egg_pos[i].x_pos > 100 ||
+            this.state.egg_pos[i].y_pos < 0 || this.state.egg_pos[i].y_pos > 100) {
+        this.state.egg_pos[i].alive = false;
+        break;
+      }
+    }
+
+    if (check_remain_energy) {
+      setTimeout(this.runPhysics, 1000 / this.state.frame);
+    } else {
+      this.state.is_turn_end = true;
+    }
+  },
+  updateBoard: function() {
+    var x, y, color, egg;
+
+    this.drawLine();
+  
+    for (var i = 0; i < this.state.egg_pos.length; ++i) {
+      egg = this.state.egg_pos[i];
+      x = egg.x_pos;
+      y = egg.y_pos;
+      color = egg.color;
+      if (egg.alive) {
+        this.drawEgg(x, y, color);
+      }
+    }
+  
+    if (!this.state.is_turn_end) {
+      setTimeout(this.updateBoard, 1000 / this.state.frame);
+    }
   },
   render: function() {
     return (
@@ -277,11 +380,12 @@ Egg.prototype.addForce = function(x_dir, y_dir, force) {
 	return true;
 };
 
-Egg.prototype.isMeet = function(x, y) {
-  var radius = GameBoard.egg_radius;
+Egg.prototype.isMeet = function(x, y, rad, board) {
+  var radius = rad;
+  var board_size = board;
   var distance = Math.sqrt((this.x_pos - x) * (this.x_pos - x) + (this.y_pos - y) * (this.y_pos - y));
 
-  return (distance <= radius * 2) && this.alive && x >= 0 && x <= Board.state.board_size_rate && y >= 0 && y <= Board.state.board_size_rate;
+  return (distance <= radius * 2) && this.alive && x >= 0 && x <= board_size && y >= 0 && y <= board_size;
 };
 
 React.render(<Game/>, document.getElementById('Game'));
