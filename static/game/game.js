@@ -1,4 +1,9 @@
 const Game = React.createClass({
+  getInitialState: function() {
+    return {
+      is_game_end: false
+    }
+  },
   componentDidMount: function(){
     this.turn_results = new Queue();
     this.connection = new WebSocket("ws://" + window.location.host + "/websocket");
@@ -43,18 +48,24 @@ const Game = React.createClass({
            *    data
            *    winner : [(string)]
            */
+          this.state.is_game_end = true;
+
+          var is_end = this.state.is_game_end;
           var turn_data = this.turn_results;
-          
+          var board = this.board;
+
           var drawing = setInterval(function() {
-            if (turn_data.isEmpty()) {
+            if (is_end) {
+              if (turn_data.isEmpty()) {
                 clearInterval(drawing);
                 alertify.alert(data.data['winner'][0] + ' 승리!');
                 setTimeout("console.log('로비로 돌아갑니다.')", 2000);
                 return;
-            }
+              }
 
-            if (this.board.state.is_turn_end) {
-              this.board.drawTurnResult(turn_data.dequeue());
+              if (board.getTurnEnd()) {
+                board.drawTurnResult(turn_data.dequeue());
+              }
             }
           }, 0);
         }
@@ -71,7 +82,7 @@ const Game = React.createClass({
            *    force : (integer)
            */
 
-          this.board.drawTurnResult(data);
+          this.saveTurnResult(data);
         }
       }
     };
@@ -97,7 +108,7 @@ const Game = React.createClass({
     this.connection.send(req);
   },
   saveTurnResult: function(JSON_data) {
-    this.state.turn_results.enqueue(JSON_data);
+    this.turn_results.enqueue(JSON_data);
   },
   render: function() {
     return (
@@ -130,6 +141,9 @@ const Board = React.createClass({
       egg_cnt: [],                //black_cnt, white_cnt
       egg_pos: []                 //[Egg, Egg, ...]
     }
+  },
+  getTurnEnd: function() {
+    return this.state.is_turn_end;
   },
   drawLine: function() {
     var canvas = document.getElementById("board");
