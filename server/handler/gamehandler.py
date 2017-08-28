@@ -22,7 +22,7 @@ class GameHandler:
         self.room = room  # player objects and observer objects are in here
         self._ids = [player._id for player in self.room.player_list]
 
-        self.delay_time = 0.5
+        self.delay_time = 0
 
         self.init_data_dict = {}
 
@@ -31,6 +31,8 @@ class GameHandler:
         self.played = None  # player currently finished turn
 
         self.game_message_list = []
+
+        self.game_result = ""
 
     @gen.coroutine
     def run(self):
@@ -125,6 +127,7 @@ class GameHandler:
 
     def handle_game_end(self, error_code, message={}):
 
+        self.game_result = message
         data = Message.dump_message(Message(GAME_HANDLER, END, message, error_code))
 
         for player in self.room.player_list:
@@ -142,11 +145,14 @@ class GameHandler:
 
         game_log = GameLog()
         game_log.players = self._ids
-        game_log.game_result = "end"
-        game_log.game_result = self.game_message_list
+        game_log.game_result = self.game_result
+        game_log.game_message_list = self.game_message_list
 
         db = DBHelper.instance().db
         db.game_log_list.insert(game_log.__dict__)
+
+        for observer in self.room.observer_list:
+            observer.room_out()
 
         observer_pool = UserPool.instance().get_observer_pool()
 
@@ -154,6 +160,15 @@ class GameHandler:
             player.room_out()
             for observer in observer_pool:
                 observer.notice_user_added(player._id)
+
+        game_log._id = str(game_log._id)
+        game_log.game_message_list = None
+        message = Message(GAME_LOG, ADD, game_log.__dict__)
+        message = Message.dump_message(message)
+
+        lobby_user_pool = UserPool.instance().get_lobby_pool()
+        for lobby_user in lobby_user_pool:
+            lobby_user.send(message)
 
     @gen.coroutine
     def delay_action(self):

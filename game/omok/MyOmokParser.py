@@ -1,7 +1,5 @@
 from game.omok.OmokParser import OMOKParser
 
-import game.debugger as logging
-
 
 class MyOMOKParser(OMOKParser):
     def __init__(self):

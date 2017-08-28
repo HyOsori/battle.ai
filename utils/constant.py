@@ -30,7 +30,6 @@ ERROR = "error"
 ERROR_MSG = "error_msg"
 ROUND_RESULT = "round_result"
 GAME_RESULT = "game_result"
-GAME_MESSAGE_LIST = "game_message_list"
 END = "end"
 
 GAME_LOG = "gamelog"

@@ -1,4 +1,4 @@
-from gamebase.client.Player import Player, play
+from battle_player.base.Player import play
 from game.omok.CustomOMOKLogic import CustomOMOKLogic
 
 if __name__ == "__main__":

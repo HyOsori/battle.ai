@@ -21,7 +21,7 @@ Lobby.playerClickHandler = function(event) {
     if (Lobby.countSelectedPlayer() >= setting.min_match_cnt && Lobby.countSelectedPlayer() <= setting.max_match_cnt) {
         Lobby.match_btn.removeAttribute('disabled');
     }
-}
+};
 
 Lobby.countSelectedPlayer = function() {
     var count = 0;
@@ -32,7 +32,7 @@ Lobby.countSelectedPlayer = function() {
         }
     }
     return count;
-}
+};
 
 Lobby.renewPlayerList = function(JSON_data) {
     var users = JSON_data.users;
@@ -57,7 +57,7 @@ Lobby.renewPlayerList = function(JSON_data) {
             }
         }
     })
-}
+};
 
 Lobby.addPlayer = function(JSON_data) {
     var user = JSON_data.user;
@@ -79,7 +79,7 @@ Lobby.addPlayer = function(JSON_data) {
             Lobby.player_list.appendChild(li);
         }
     }
-}
+};
 
 Lobby.removePlayer = function(JSON_data) {
     var user = JSON_data.user;
@@ -94,8 +94,13 @@ Lobby.removePlayer = function(JSON_data) {
     if (Lobby.countSelectedPlayer() < setting.min_match_cnt) {
         Lobby.match_btn.disabled = 'true';
     }
-}
+};
 
 Lobby.getMatchResponse = function(JSON_data) {
-    loadPage("gameBoard");
-}
+    if (setting.use_animation) {
+        //loading();
+        return;
+    } else {
+        loadPage("gameBoard");
+    }
+};

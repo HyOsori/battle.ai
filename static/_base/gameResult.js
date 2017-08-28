@@ -10,4 +10,4 @@ GameResult.homeBtn = document.getElementById("id_goToLobby_btn");
 GameResult.recvGameResult = function(JSON_data) {
     resizeCanvas(GameResult.canvas);
     loadPage("gameResult");
-}
+};

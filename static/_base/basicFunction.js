@@ -49,6 +49,10 @@ function resizeCanvas(canvas) {
     clearCanvas(canvas);
 }
 
+function loading() {
+    //TODO
+}
+
 function JSONtoString(object) {
     var results = [];
     for (var property in object) {

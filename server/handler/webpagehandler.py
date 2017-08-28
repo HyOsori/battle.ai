@@ -27,17 +27,24 @@ class BaseHandler(tornado.web.RequestHandler):
         user_id = self.get_secure_cookie(USER_COOKIE)
         if not user_id:
             return None
-        user = self.dict_to_user(self.db.users.find_one({"_id": ObjectId(user_id.decode())}))
+        user_dict = self.db.users.find_one({"_id": ObjectId(user_id.decode())})
+        user = self.dict_to_user(user_dict)
         return user
 
     @staticmethod
     def dict_to_user(dict_user):
+        if dict_user is None:
+            return None
         return Player(dict_user["name"], None)
 
 
 class IndexHandler(BaseHandler):
     def get(self, *args, **kwargs):
-        self.render("index.html")
+        user = self.get_current_user()
+        if user is None:
+            self.redirect("/")
+        else:
+            self.render("index.html")
 
 
 class LoginPageHandler(BaseHandler):
@@ -47,17 +54,25 @@ class LoginPageHandler(BaseHandler):
 
 class LobbyPageHandler(BaseHandler):
     def get(self, *args, **kwargs):
-        self.render("lobby.html")
+        user = self.get_current_user()
+        if user is None:
+            self.redirect("/")
+        else:
+            self.render("lobby.html")
 
 
 class GamePageHandler(BaseHandler):
     def get(self, *args, **kwargs):
-        pass
+        user = self.get_current_user()
+        if user in None:
+            self.redirect("/")
+        else:
+            self.render("game.html")
 
 
 class MyPageHandler(BaseHandler):
     def get(self, *args, **kwargs):
-        pass
+        self.render("index.html")
 
 
 class SignUpHandler(BaseHandler):
@@ -72,11 +87,7 @@ class SignUpHandler(BaseHandler):
         )
         user = Player(name, hashed_password)
         users_colletion = self.db.users
-        print(users_colletion)
         user_id = users_colletion.insert(user.__dict__)
-        print(user_id)
-        print(type(user_id))
-        self.set_secure_cookie(USER_COOKIE, str(user_id))
 
         self.redirect("/lobby")
 
@@ -87,7 +98,7 @@ class SignInHandler(BaseHandler):
         name = self.get_argument("name")
         user_dict = self.db.users.find_one({"name": name})
         if not user_dict:
-            self.redirect("/login")
+            self.redirect("/")
 
         password = self.get_argument("password")
 
@@ -95,16 +106,32 @@ class SignInHandler(BaseHandler):
             bcrypt.hashpw, tornado.escape.utf8(self.get_argument("password")),
             tornado.escape.utf8(user_dict["password"])
         )
-        print(user_dict)
-        print(hashed_password)
+
         if user_dict["password"] == hashed_password:
+            self.set_secure_cookie(USER_COOKIE, str(user_dict["_id"]))
             self.redirect("/lobby")
         else:
-            self.redirect("/login")
-
+            self.redirect("/")
 
 
 class LogoutHandler(BaseHandler):
-    def get(self):
+    def post(self):
         self.clear_cookie(USER_COOKIE)
-        self.redirect("/login")
+        self.redirect("/")
+
+
+class MatchHandler(BaseHandler):
+    def post(self):
+        result_dict = dict()
+        match_type = self.get_body_argument("type")
+        result_dict["type"] = match_type
+        try:
+            result_dict["players"] = self.get_body_argument("players")
+        except:
+            pass
+        try:
+            result_dict["_id"] = self.get_body_argument("_id")
+        except:
+            pass
+
+        self.write(result_dict)

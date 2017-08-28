@@ -1,5 +1,64 @@
 {% extends "base.html" %}
 
+{% block head %}
+        <link rel="stylesheet" type="text/css" href="{{static_url('lobby/header.css')}}">
+		<link rel="stylesheet" type="text/css" href="{{static_url('lobby/lobby.css')}}">
+		<link rel="stylesheet" type="text/css" href="{{static_url('lobby/footer.css')}}">
+		<link rel="stylesheet" type="text/css" href="{{static_url('lobby/config.css')}}">
+{% end %}
+
 {% block body %}
-<h1>Lobby</h1>
+
+    <div id="header">
+		<div id="header_left_component">
+			<h1>Battle AI</h1>
+		</div>
+		<div id="header_right_component">
+			<div id="header_wrapper_name">
+				<h2>Name</h2>
+			</div>
+			<div id="header_wrapper_rank">
+				<h2>Rank</h2>
+			</div>
+		</div>
+	</div>
+
+	<div id="wrapper_lobby">
+        <div id="lobby">
+            <div id="lobby_left_component" class="lobby_component">
+                <div id="lobby_left_wrapper_log">
+                    <div id="lobby_log" class="box">
+                        <ul id="li-game-log"></ul>
+                    </div>
+                </div>
+                <div id="lobby_left_wrapper_chat">
+                    <div id="lobby_chat" class="box">
+
+                    </div>
+
+                    <div id="lobby_write_Chat" class="box">
+                        <input type="text" id="Chatting_Real" class="box" onkeydown="if(event.keyCode == 13) document.getElementById('Chatting_Click').click()">
+                        <button id="Chatting_Click" class="box"></button>
+                    </div>
+
+                </div>
+            </div>
+            <div id="lobby_right_component" class="lobby_component">
+                <div id="lobby_right_wrapper_AIlist">
+                    <div id="lobby_AIlist" class="box">
+
+                    </div>
+                </div>
+                <div id="lobby_right_wrapper_match">
+                    <div id="lobby_match" class="box">
+                        <button id="Match_btn" onclick ="Matcher();">Match</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+	</div>
+{% end %}
+{% block bottom %}
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+        <script src="{{ static_url('lobby/lobby.js') }}"></script>
 {% end %}
