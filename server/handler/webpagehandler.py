@@ -76,8 +76,7 @@ class GamePageHandler(BaseHandler):
                 data["players"] = self.get_argument("players")
             except:
                 pass
-            print(data)
-            # self.render("index.html")
+            self.render("index.html", data=data)
 
 
 class MyPageHandler(BaseHandler):
