@@ -78,7 +78,7 @@ class GamePageHandler(BaseHandler):
                 data["players"].append(self.get_argument("player2"))
             except:
                 pass
-            
+
             self.render("index.html", data=data)
 
 
