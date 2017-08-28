@@ -64,7 +64,7 @@ class LobbyPageHandler(BaseHandler):
 class GamePageHandler(BaseHandler):
     def get(self, *args, **kwargs):
         user = self.get_current_user()
-        if user in None:
+        if user is None:
             self.redirect("/")
         else:
             self.render("game.html")
