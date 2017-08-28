@@ -151,6 +151,9 @@ class GameHandler:
         db = DBHelper.instance().db
         db.game_log_list.insert(game_log.__dict__)
 
+        for observer in self.room.observer_list:
+            observer.room_out()
+
         observer_pool = UserPool.instance().get_observer_pool()
 
         for player in self.room.player_list:

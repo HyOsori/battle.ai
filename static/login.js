@@ -6,11 +6,17 @@ var Sign_up = React.createClass({
             password_confirm: ''
         };
     },
-    componentDidMount: function() {
-        function validateSignup() {
-            alert("A");
-            return this.state.password === this.state.password_confirm;
+    loginSubmit() {
+        if (this.state.password !== '') {
+            if (this.state.password === this.state.password_confirm) {
+                return true;
+            } else {
+                alert("비밀번호가 일치하지 않습니다.");
+            }
+        } else {
+            alert("비밀번호를 입력해주세요.")
         }
+        return false;
     },
     handleChange: function (e) {
         let nextState = {};
@@ -30,7 +36,7 @@ var Sign_up = React.createClass({
             <div style={style}>
                 <h1>Sign Up</h1>
 
-                <form action="/auth/signup" method="POST" id="react_sign_up" onsubmit="return validateSignup()">
+                <form action="/auth/signup" method="POST" id="react_sign_up" onSubmit={this.loginSubmit}>
                     <div className="form-group">
                         <label >Name</label>
                         <input type="text" name="name" className="form-control" id="exampleInputName" value={this.state.name} placeholder="name" onChange={this.handleChange}/>
@@ -49,7 +55,7 @@ var Sign_up = React.createClass({
                     <button type="submit" className="btn btn-default navbar-btn">Sign up</button>
 
                 </form>
-                {(this.state.password === this.state.password_confirm)? alert("A"): alert("B")}
+
 
             </div>
         );

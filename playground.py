@@ -39,8 +39,7 @@ class Playground(tornado.web.Application):
             (r"/lobby/socket", LobbyHandler),
 
             # web page handler
-            (r"/", IndexHandler),
-            (r"/login", LoginPageHandler),
+            (r"/", LoginPageHandler),
             (r"/lobby", LobbyPageHandler),
             (r"/mypage", MyPageHandler),
             (r"/game", GamePageHandler),
@@ -64,6 +63,7 @@ class Playground(tornado.web.Application):
         )
         super(Playground, self).__init__(self.handler, **self.setting)
         self.db = MongoClient()["battle"]
+
         DBHelper.instance().initialize(self.db)
 
 

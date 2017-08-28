@@ -92,17 +92,17 @@ const Game = React.createClass({
         req = JSON.stringify(json);
         this.connection.send(req);
       */
-      this.match("user");
+      this.match();
     }
   },
-  match: function(type) {
+  match: function() {
     var json = new Object();
     var data = new Object();
     var req;
     json.msg = "gamehandler";
     json.msg_type = "match";
 
-    data.type = type;
+    data.type = this.props.type;
     data.players = this.props.players;
 
     json.data = data;
@@ -123,7 +123,8 @@ const Game = React.createClass({
 });
 
 Game.defaultProps = {
-  players: ["PLAYER1", "PLAYER2"]
+  players: ["PLAYER1", "PLAYER2"],
+  type: "user"
 };
 
 const Board = React.createClass({
@@ -409,6 +410,7 @@ function decodeData(str_data) {
   var decoded_str = str_data.replace(/&#39;/g, '\"');
   var match_data = jQuery.parseJSON(decoded_str);
   var players = match_data.players;
+  var type = match_data.type;
 
-  React.render(<Game players={ players } />, document.getElementById('Game'));
+  React.render(<Game players={ players } type={ type }/>, document.getElementById('Game'));
 }
