@@ -6,13 +6,11 @@ const Game = React.createClass({
   },
   componentDidMount: function(){
     this.turn_results = new Queue();
-    this.connection = new WebSocket("ws://" + window.location.host + "/websocket");
+    this.connection = new WebSocket("ws://" + window.location.host + "/game/socket");
     this.connection.onmessage = evt => {
       console.log("message: " + evt.data);
       var data = jQuery.parseJSON(evt.data);
-      if (data.msg == "notice_user_added" && data.user == "AI2") {
-        this.match("AI1", "AI2");
-      } else if (data.msg == "response_match") {
+      if (data.msg == "response_match") {
         /**
          *    msg : response_match
          *    msg_type : null
@@ -94,16 +92,21 @@ const Game = React.createClass({
         req = JSON.stringify(json);
         this.connection.send(req);
       */
+      this.match("user");
     }
   },
-  match: function(player1, player2) {
+  match: function(type) {
     var json = new Object();
     var data = new Object();
     var req;
-    json.msg = "request_match";
-    data.users = [player1, player2];
-    data.speed = "2";
+    json.msg = "gamehandler";
+    json.msg_type = "match";
+
+    data.type = type;
+    data.players = this.props.players;
+
     json.data = data;
+
     req = JSON.stringify(json);
     this.connection.send(req);
   },
@@ -402,4 +405,10 @@ Egg.prototype.isMeet = function(x, y, rad, board) {
   return (distance <= radius * 2) && this.alive && x >= 0 && x <= board_size && y >= 0 && y <= board_size;
 };
 
-React.render(<Game/>, document.getElementById('Game'));
+function decodeData(str_data) {
+  var decoded_str = str_data.replace(/&#39;/g, '\"');
+  var match_data = jQuery.parseJSON(decoded_str);
+  var players = match_data.players;
+
+  React.render(<Game players={ players } />, document.getElementById('Game'));
+}

@@ -17,4 +17,8 @@
     <script src="{{ static_url('_plugin/alertify.js') }}"></script>
     <script src="{{ static_url('_plugin/Queue.js') }}"></script>
     <script type="text/jsx" src="{{ static_url('game/game.js') }}"></script>
+    <script type="text/jsx">
+        var data = "{{ data }}";
+        decodeData(data);
+    </script>
 {% end %}
