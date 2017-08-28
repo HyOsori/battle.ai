@@ -7,7 +7,6 @@
     font-size: 15px;
     color: #424242;
     padding: 10px;
-    margin-bottom: 50px;
     font-family: inherit;
 }
 
@@ -19,7 +18,6 @@
     box-shadow: 0 1px 0 rgba(0, 0, 0, .10196078);
     padding: 5px;
     margin-top: 0;
-
 }
 .header_button {
     position: absolute;
