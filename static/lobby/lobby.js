@@ -138,9 +138,7 @@ function AImatch(AI1, AI2) {
 function clickListGameLog(_id) {
     $.post("lobby/game/request", {type: "gamelog", _id: _id},
         function (val) {
-            location.replace("/game")
-            // TODO: get 으로 /game page 열기
-            console.log(val)
+            location.replace("/game?type=" + "gamelog" + "&_id=" + _id)
         });
 }
 
