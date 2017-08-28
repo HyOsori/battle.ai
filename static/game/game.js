@@ -129,8 +129,9 @@ const Board = React.createClass({
       is_turn_end: true,
 
       frame: 50,
+      friction: 1000,
       board_size_num: 18,
-      margin_size_rate: 3,
+      margin_size_rate: 30000,
       dot_size: 3,
 
       board_size_rate: -1,
@@ -243,9 +244,10 @@ const Board = React.createClass({
     var turn = game_data.turn;
     var force = game_data.force;
     var color_index = this.state.egg_pos[0].color == turn ? 0 : 5;
+    var distance = Math.sqrt(direction[0] * direction[0] + direction[1] * direction[1]);
 
-	  this.state.egg_pos[color_index + index].addForce(direction[0], direction[1], force);
-
+	  this.state.egg_pos[color_index + index].addForce(direction[0] / distance, direction[1] / distance, force);
+    
 	  this.state.is_turn_end = false;
 
 	  this.runPhysics();
@@ -259,7 +261,7 @@ const Board = React.createClass({
         // Egg Move
         this.state.egg_pos[i].x_pos += this.state.egg_pos[i].x_dir * this.state.egg_pos[i].speed;
         this.state.egg_pos[i].y_pos += this.state.egg_pos[i].y_dir * this.state.egg_pos[i].speed;
-        this.state.egg_pos[i].speed -= 0.1; // accelate = ㎍ (friction) -> 50 Frame /50
+        this.state.egg_pos[i].speed -= this.state.friction; // accelate = ㎍ (friction) -> 50 Frame /50
 
         for (var j = 0; j < this.state.egg_pos.length; ++j) {
           check_meet = false;
@@ -373,7 +375,6 @@ const Board = React.createClass({
     );
   }
 });
-
 
 
 function Egg(x_pos, y_pos, color) {
