@@ -43,7 +43,7 @@ class LobbyHandler(tornado.websocket.WebSocketHandler):
                 pass
         elif msg == USER:
             if msg_type == INIT:
-
+                self.init_user_list()
                 pass
 
     def on_close(self):
