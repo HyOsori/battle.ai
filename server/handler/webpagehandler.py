@@ -122,13 +122,16 @@ class LogoutHandler(BaseHandler):
 
 class MatchHandler(BaseHandler):
     def post(self):
-        match_type = self.get_argument("type")
         result_dict = dict()
+        match_type = self.get_body_argument("type")
         result_dict["type"] = match_type
+        try:
+            result_dict["players"] = self.get_body_argument("players")
+        except:
+            pass
+        try:
+            result_dict["_id"] = self.get_body_argument("_id")
+        except:
+            pass
 
-        if match_type == "gamelog":
-            result_dict["players"] = self.get_argument("players")
-        elif match_type == "user":
-            result_dict["_id"] = self.get_argument("_id")
-
-        self.render("index.html", match_data=result_dict)
+        self.write(result_dict)
