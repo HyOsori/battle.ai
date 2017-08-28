@@ -9,7 +9,6 @@ import tornado.httpserver
 import tornado.ioloop
 import tornado.options
 import tornado.web
-import unicodedata
 from bson.objectid import ObjectId
 
 USER_COOKIE = "battle_player"
@@ -64,10 +63,21 @@ class LobbyPageHandler(BaseHandler):
 class GamePageHandler(BaseHandler):
     def get(self, *args, **kwargs):
         user = self.get_current_user()
-        if user in None:
+        if user is None:
             self.redirect("/")
         else:
-            self.render("game.html")
+            data = dict()
+            data["type"] = self.get_argument("type")
+            try:
+                data["_id"] = self.get_argument("_id")
+            except:
+                pass
+            try:
+                data["players"] = self.get_argument("players")
+            except:
+                pass
+            print(data)
+            # self.render("index.html")
 
 
 class MyPageHandler(BaseHandler):

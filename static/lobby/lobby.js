@@ -122,25 +122,17 @@ function recvLog(JSON_data) {
 
 ///////(아래) AImatch 시킬 경우 "POST"로 데이터 전송
 function AImatch(AI1, AI2) {
-  $.ajax({
-    type: 'POST',
-    async: true,
-    url: '/lobby/game/request',
-    data: {
-        players: 'hi',
-        type: 'user',
-    },
-    dataType : 'json'
-  });
+  $.post("lobby/game/request", {type: "user", players:[AI1, AI2]},
+      function(val) {
+        location.replace("/game?type=" + "user" + "&player1=" + AI1 + "&player2=" + AI2)
+      });
 }
 
 ///////(아래) log 눌렀을 경우 "POST" 로 데이터 전송
 function clickListGameLog(_id) {
     $.post("lobby/game/request", {type: "gamelog", _id: _id},
         function (val) {
-            location.replace("/game")
-            // TODO: get 으로 /game page 열기
-            console.log(val)
+            location.replace("/game?type=" + "gamelog" + "&_id=" + _id)
         });
 }
 
