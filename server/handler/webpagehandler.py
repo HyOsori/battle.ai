@@ -40,7 +40,11 @@ class BaseHandler(tornado.web.RequestHandler):
 
 class IndexHandler(BaseHandler):
     def get(self, *args, **kwargs):
-        self.render("index.html")
+        user = self.get_current_user()
+        if user is None:
+            self.redirect("/")
+        else:
+            self.render("index.html")
 
 
 class LoginPageHandler(BaseHandler):
@@ -50,17 +54,25 @@ class LoginPageHandler(BaseHandler):
 
 class LobbyPageHandler(BaseHandler):
     def get(self, *args, **kwargs):
-        self.render("lobby.html")
+        user = self.get_current_user()
+        if user is None:
+            self.redirect("/")
+        else:
+            self.render("lobby.html")
 
 
 class GamePageHandler(BaseHandler):
     def get(self, *args, **kwargs):
-        pass
+        user = self.get_current_user()
+        if user in None:
+            self.redirect("/")
+        else:
+            self.render("game.html")
 
 
 class MyPageHandler(BaseHandler):
     def get(self, *args, **kwargs):
-        pass
+        self.render("index.html")
 
 
 class SignUpHandler(BaseHandler):
@@ -77,7 +89,7 @@ class SignUpHandler(BaseHandler):
         users_colletion = self.db.users
         user_id = users_colletion.insert(user.__dict__)
 
-        self.redirect("/login")
+        self.redirect("/lobby")
 
 
 class SignInHandler(BaseHandler):
@@ -86,7 +98,7 @@ class SignInHandler(BaseHandler):
         name = self.get_argument("name")
         user_dict = self.db.users.find_one({"name": name})
         if not user_dict:
-            self.redirect("/login")
+            self.redirect("/")
 
         password = self.get_argument("password")
 
@@ -99,24 +111,27 @@ class SignInHandler(BaseHandler):
             self.set_secure_cookie(USER_COOKIE, str(user_dict["_id"]))
             self.redirect("/lobby")
         else:
-            self.redirect("/login")
+            self.redirect("/")
 
 
 class LogoutHandler(BaseHandler):
     def post(self):
         self.clear_cookie(USER_COOKIE)
-        self.redirect("/login")
+        self.redirect("/")
 
 
 class MatchHandler(BaseHandler):
     def post(self):
-        match_type = self.get_argument("type")
         result_dict = dict()
+        match_type = self.get_body_argument("type")
         result_dict["type"] = match_type
+        try:
+            result_dict["players"] = self.get_body_argument("players")
+        except:
+            pass
+        try:
+            result_dict["_id"] = self.get_body_argument("_id")
+        except:
+            pass
 
-        if match_type == "gamelog":
-            result_dict["players"] = self.get_argument("players")
-        elif match_type == "user":
-            result_dict["_id"] = self.get_argument("_id")
-
-        self.render("index.html", match_data=result_dict)
+        self.write(result_dict)
