@@ -329,8 +329,8 @@ const Board = React.createClass({
     }
 
     for (i = 0; i < this.state.egg_pos.length; ++i) {
-      if (this.state.egg_pos[i].x_pos < 0 || this.state.egg_pos[i].x_pos > 100 ||
-            this.state.egg_pos[i].y_pos < 0 || this.state.egg_pos[i].y_pos > 100) {
+      if (this.state.egg_pos[i].x_pos < 0 || this.state.egg_pos[i].x_pos > this.state.board_size_rate ||
+            this.state.egg_pos[i].y_pos < 0 || this.state.egg_pos[i].y_pos > this.state.board_size_rate) {
         this.state.egg_pos[i].alive = false;
         break;
       }
