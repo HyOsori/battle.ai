@@ -38,10 +38,11 @@ class CustomAlkakiLogic(LogicHandler):
         enemy_arr = data['enemy_arr']
 
         direction = self.get_direction_depending_on_position(0, 0, 3, 3)
-        force = self.get_distance(my_arr[0][0], my_arr[0][1], enemy_arr[0][0], enemy_arr[0][1])
+        #force = self.get_distance(my_arr[0][0], my_arr[0][1], enemy_arr[0][0], enemy_arr[0][1]) * 10000;
 
-        if force > 5:
-            force = 5
+        #if force > 50000:
+        #    force = 50000
+        force = 50000
 
         return_dict = {
             'index': index,
