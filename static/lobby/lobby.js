@@ -127,25 +127,20 @@ function AImatch(AI1, AI2) {
     async: true,
     url: '/lobby/game/request',
     data: {
+        players: 'hi',
         type: 'user',
-        players: [AI1, AI2]
     },
-    dataType : 'text'
+    dataType : 'json'
   });
 }
 
 ///////(아래) log 눌렀을 경우 "POST" 로 데이터 전송
 function clickListGameLog(_id) {
-    $.ajax({
-        type: 'POST',
-        async: true,
-        url: '/lobby/game/request',
-        data: {
-            type: 'gamelog',
-            _id: _id
-        },
-        dataType : 'text'
-    });
+    $.post("lobby/game/request", {type: "gamelog", _id: _id},
+        function (val) {
+            // TODO: get 으로 /game page 열기
+            console.log(val)
+        });
 }
 
 //////(아래) log 창에 처음 결과 나타낼때
