@@ -188,10 +188,11 @@ class ALKAKIGamePhase(Phase):
         validate_user = 0
         try:
             if pid == self.player_list[0]:
-                validate_user = 0
-            elif pid == self.player_list[1]:
                 validate_user = 1
                 index += self.count
+            elif pid == self.player_list[1]:
+                validate_user = 0
+
         except Exception as e:
             logging.info(e)
             logging.info("[Error] get_game_dict_data_error")
@@ -200,8 +201,6 @@ class ALKAKIGamePhase(Phase):
 
         # 형 변환후 힘 넣기
         is_game_end = None
-        logging.info("prev")
-        logging.info(index)
         # 0~n 까지중 죽은거 무시
         # 5~n 까지중 죽은거 무시
 
@@ -217,8 +216,7 @@ class ALKAKIGamePhase(Phase):
 
         if index < i_validate_arr or index > i_validate_arr + 5:
             logging.info("error occured by array in 205line")
-        logging.info("next")
-        logging.info(index)
+
 
         try:
             self.array_egg[index].add_force(direction[0], direction[1], force)
@@ -288,9 +286,6 @@ class ALKAKIGamePhase(Phase):
                 self.array_egg[i].y_pos += int(my_y_dir * my_speed)
                 self.array_egg[i].speed -= int(0.1 * RATE)
 
-                logging.info(my_speed)
-                logging.info(my_x_dir)
-
                 for j in range(len(self.array_egg)):
                     check_meet = False
                     if j is not i and self.array_egg[j].alive:
@@ -319,21 +314,21 @@ class ALKAKIGamePhase(Phase):
                             kiss_dir_y = self.array_egg[j].y_pos - self.array_egg[i].y_pos
                             distance = math.sqrt(kiss_dir_x * kiss_dir_x + kiss_dir_y * kiss_dir_y)
 
-                            self.array_egg[j].x_dir = int(kiss_dir_x / distance)
-                            self.array_egg[j].y_dir = int(kiss_dir_y / distance)
+                            self.array_egg[j].x_dir = float(kiss_dir_x / distance)
+                            self.array_egg[j].y_dir = float(kiss_dir_y / distance)
 
                             cos_b = float(self.array_egg[i].x_dir * self.array_egg[j].x_dir
                                           + self.array_egg[i].y_dir * self.array_egg[j].y_dir)
                             cos_a = float(math.sqrt(1 - math.fabs(cos_b)))
 
-                            if 0 < int(cos_a * 10000) < 1:
+                            if 0.0 < cos_a * 10000 < 1.0:
                                 cos_a = 0.0001
-                            elif -1 < int(cos_a * 10000) < 0:
+                            elif -1.0 < cos_a * 10000 < 0.0:
                                 cos_a = -0.0001
 
-                            if 0 < int(cos_b * 10000) < 1:
+                            if 0.0 < cos_b * 10000 < 1.0:
                                 cos_b = 0.0001
-                            elif -1 < int(cos_b * 10000) < 0:
+                            elif -1.0 < cos_b * 10000 < 0.0:
                                 cos_b = -0.0001
 
                             self.array_egg[i].x_dir -= int(self.array_egg[j].x_dir * cos_b)
@@ -351,6 +346,7 @@ class ALKAKIGamePhase(Phase):
                                 self.array_egg[i].speed = int(self.array_egg[j].speed * \
                                     (1 / (cos_b * cos_b / cos_a + cos_a)))
 
+
         check_remain_energy = False
         for i in range(len(self.array_egg)):
             if self.array_egg[i].speed > 0 and self.array_egg[i].alive:
@@ -359,7 +355,7 @@ class ALKAKIGamePhase(Phase):
 
         for i in range(len(self.array_egg)):
             if self.array_egg[i].x_pos < 0 or self.array_egg[i].x_pos > self.board_size or \
-                            self.array_egg[i].y_pos < 0 or self.array_egg[i].y_pos > self.board_size :
+                            self.array_egg[i].y_pos < 0 or self.array_egg[i].y_pos > self.board_size:
                 self.array_egg[i].alive = False
 
         if check_remain_energy:
