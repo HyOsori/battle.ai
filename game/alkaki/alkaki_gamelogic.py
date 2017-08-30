@@ -220,7 +220,9 @@ class ALKAKIGamePhase(Phase):
 
         try:
             self.array_egg[index].add_force(direction[0], direction[1], force)
+            logging.info("before run physics")
             self.run_physics()
+            logging.info("after run physics")
             is_game_end = self.check_game_end()
         except Exception as e:
             logging.info(e)
@@ -273,17 +275,18 @@ class ALKAKIGamePhase(Phase):
             return
 
     def run_physics(self):
+        logging.info("run_physics is called")
         # 충돌 체크
         for i in range(len(self.array_egg)):
             if self.array_egg[i].speed > 0 and self.array_egg[i].alive:
 
                 my_speed = int(self.array_egg[i].speed)
                 distance_dir = math.sqrt(math.pow(self.array_egg[i].x_dir, 2) + math.pow(self.array_egg[i].y_dir, 2))
-                my_x_dir = self.array_egg[i].x_dir / distance_dir
-                my_y_dir = self.array_egg[i].y_dir / distance_dir
+                self.array_egg[i].x_dir = self.array_egg[i].x_dir / distance_dir
+                self.array_egg[i].y_dir = self.array_egg[i].y_dir / distance_dir
 
-                self.array_egg[i].x_pos += int(my_x_dir * my_speed)
-                self.array_egg[i].y_pos += int(my_y_dir * my_speed)
+                self.array_egg[i].x_pos += int(self.array_egg[i].x_dir * my_speed)
+                self.array_egg[i].y_pos += int(self.array_egg[i].y_dir * my_speed)
                 self.array_egg[i].speed -= int(0.1 * RATE)
 
                 for j in range(len(self.array_egg)):
@@ -296,17 +299,17 @@ class ALKAKIGamePhase(Phase):
                                 check_meet = True
 
                             if self.array_egg[i].x_pos > self.array_egg[j].x_pos:
-                                self.array_egg[i].x_pos += math.fabs(self.array_egg[i].x_dir * RATE)
+                                self.array_egg[i].x_pos += math.fabs(self.array_egg[i].x_dir * RATE) + 1
                                 self.array_egg[i].x_pos = int(self.array_egg[i].x_pos)
                             else:
-                                self.array_egg[i].x_pos -= math.fabs(self.array_egg[i].x_dir * RATE)
+                                self.array_egg[i].x_pos -= math.fabs(self.array_egg[i].x_dir * RATE) + 1
                                 self.array_egg[i].x_pos = int(self.array_egg[i].x_pos)
 
                             if self.array_egg[i].y_pos > self.array_egg[j].y_pos:
-                                self.array_egg[i].y_pos += math.fabs(self.array_egg[i].y_dir * RATE)
+                                self.array_egg[i].y_pos += math.fabs(self.array_egg[i].y_dir * RATE) + 1
                                 self.array_egg[i].y_pos = int(self.array_egg[i].x_pos)
                             else:
-                                self.array_egg[i].y_pos -= math.fabs(self.array_egg[i].y_dir * RATE)
+                                self.array_egg[i].y_pos -= math.fabs(self.array_egg[i].y_dir * RATE) + 1
                                 self.array_egg[i].y_pos = int(self.array_egg[i].x_pos)
 
                         if check_meet:
