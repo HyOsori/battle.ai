@@ -45,20 +45,62 @@ class GameObserverHandler(tornado.websocket.WebSocketHandler):
 
         message = Message.load_message(message)
 
-        if message.msg == GAME_HANDLER:
+        # TODO: gamehandler rename ..
+        if message.msg == "gamehandler":
             if message.msg_type == MATCH:
                 self.handle_match(message.data)
 
     def handle_match(self, data):
-        type = data["type"]
+        match_type = data["type"]
+        print("handle_match is called with type: " + match_type);
 
-        if type == GAME_LOG:
+        if match_type == GAME_LOG:
             self.handle_gamelog_match(data["_id"])
-        elif type == USER:
+        elif match_type == USER:
             self.handle_user_match(data["players"])
 
     def handle_user_match(self, players):
-        pass
+        print("handle_user_match is called with players: " + str(players))
+        player_pool = UserPool.instance().get_player_pool()
+
+        # set matched player flag on!
+        try:
+            match_players = []
+            _ids = players
+            for _id in _ids:
+                player = player_pool.get_player(_id)
+                player.room_enter()
+                match_players.append(player)
+        except Exception as e:
+            print(e)
+            return
+
+        observer_pool = UserPool.instance().get_observer_pool()
+        for pid in _ids:
+            for observer in observer_pool:
+                observer.notice_user_removed(pid)
+        try:
+            room = Room(match_players)
+            room.add_observer(self.__instance)
+
+            game = TurnGameHandler(room)
+        except Exception as e:
+            print(e)
+            return
+
+        # run game
+        tornado.ioloop.IOLoop.current().spawn_callback(game.run)
+
+        data = Message.dump_message(
+            Message(RESPONSE_ + MATCH, None, {USERS: _ids}))
+
+        try:
+            self.write_message(data)
+            self.__instance.room_enter()
+        except Exception as e:
+            print(e)
+            observer_pool.pop(self.__instance)
+
 
     def handle_gamelog_match(self, _id):
         pass
