@@ -9,6 +9,7 @@ from game.base.Phase import Phase
 sys.path.insert(0, '../')
 
 RATE = 10000
+ROUND_DIGIT = 3
 
 class ALKAKIGameLogic(TurnGameLogic):
     def __init__(self, game_server):
@@ -320,9 +321,10 @@ class ALKAKIGamePhase(Phase):
                             self.array_egg[j].x_dir = float(kiss_dir_x / distance)
                             self.array_egg[j].y_dir = float(kiss_dir_y / distance)
 
-                            cos_b = float(self.array_egg[i].x_dir * self.array_egg[j].x_dir
-                                          + self.array_egg[i].y_dir * self.array_egg[j].y_dir)
-                            cos_a = float(math.sqrt(1 - math.fabs(cos_b)))
+                            cos_b = round(float(self.array_egg[i].x_dir * self.array_egg[j].x_dir
+                                          + self.array_egg[i].y_dir * self.array_egg[j].y_dir), ROUND_DIGIT)
+
+                            cos_a = round(float(math.sqrt(1 - abs(cos_b))), ROUND_DIGIT)
 
                             if 0.0 < cos_a * 10000 < 1.0:
                                 cos_a = 0.0001
