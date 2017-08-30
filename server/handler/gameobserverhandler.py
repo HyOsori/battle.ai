@@ -10,6 +10,8 @@ from server.string import *
 from server.gameobject.user import Observer
 from server.pools.user_pool import UserPool
 from server.gameobject.message import Message
+from server.db.dbhelper import DBHelper
+from bson.objectid import ObjectId
 
 
 # TODO: get db connection by self.application.db
@@ -54,8 +56,9 @@ class GameObserverHandler(tornado.websocket.WebSocketHandler):
         match_type = data["type"]
         print("handle_match is called with type: " + match_type);
 
-        if match_type == GAME_LOG:
-            self.handle_gamelog_match(data["_id"])
+        if match_type == "gamelog":
+            self.handle_gamelog_match("59a6ec7c66f68806609e8377")
+            # self.handle_gamelog_match(data["_id"])
         elif match_type == USER:
             self.handle_user_match(data["players"])
 
@@ -103,7 +106,24 @@ class GameObserverHandler(tornado.websocket.WebSocketHandler):
 
 
     def handle_gamelog_match(self, _id):
-        pass
+        print("handle_gamelog_match is called with _id: " + str(_id))
+        db_helper = DBHelper.instance()
+
+        game_log = db_helper.db.game_log_list.find_one({"_id": ObjectId(_id)})
+        if game_log is None:
+            return
+
+        data = Message.dump_message(
+            Message(RESPONSE_ + MATCH, "gamelog", {RESPONSE: OK}))
+
+        self.write_message(data.encode())
+
+        for message in game_log["game_message_list"]:
+            # print(message)
+            self.write_message(message.encode())
+        # data = Message.dump_message(Message(RESPONSE_ + MATCH, None, {USERS: game_log, ERROR: 0, SPEED: speed_list[int(data[SPEED])]}))
+
+
 
     def _response_user_list(self):
 
