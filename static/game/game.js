@@ -274,15 +274,15 @@ const Board = React.createClass({
                                                         this.state.egg_radius_rate, this.state.board_size_rate)) {
               if (!check_meet) { check_meet = true; }
               if (this.state.egg_pos[i].x_pos > this.state.egg_pos[j].x_pos) {
-                this.state.egg_pos[i].x_pos = this.state.egg_pos[i].x_pos + Math.abs(this.state.egg_pos[i].x_dir);
+                this.state.egg_pos[i].x_pos += Math.abs(this.state.egg_pos[i].x_dir) + 1;
               } else {
-                this.state.egg_pos[i].x_pos = this.state.egg_pos[i].x_pos - Math.abs(this.state.egg_pos[i].x_dir);
+                this.state.egg_pos[i].x_pos -= Math.abs(this.state.egg_pos[i].x_dir) + 1;
               }
 
               if (this.state.egg_pos[i].y_pos > this.state.egg_pos[j].y_pos) {
-                this.state.egg_pos[i].y_pos = this.state.egg_pos[i].y_pos + Math.abs(this.state.egg_pos[i].y_dir);
+                this.state.egg_pos[i].y_pos += Math.abs(this.state.egg_pos[i].y_dir) + 1;
               } else {
-                this.state.egg_pos[i].y_pos = this.state.egg_pos[i].y_pos - Math.abs(this.state.egg_pos[i].y_dir);
+                this.state.egg_pos[i].y_pos -= Math.abs(this.state.egg_pos[i].y_dir) + 1;
               }
             }
 
@@ -300,6 +300,9 @@ const Board = React.createClass({
               var cosB = (this.state.egg_pos[i].x_dir * this.state.egg_pos[j].x_dir +
                                        this.state.egg_pos[i].y_dir * this.state.egg_pos[j].y_dir);
               var cosA = Math.sqrt(1 - Math.abs(cosB));
+
+              cosB.toFixed(3);
+              cosA.toFixed(3);
 
               if (cosA < 0.0001 && cosA > 0) cosA = 0.0001;
               if (cosA > -0.0001 && cosA < 0) cosA = -0.0001;
