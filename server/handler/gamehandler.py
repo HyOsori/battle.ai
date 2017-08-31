@@ -57,6 +57,7 @@ class GameHandler:
         # notify initial data to observers
         for observer in self.room.observer_list:
             data = Message.dump_message(Message(GAME_HANDLER, READY, self.init_data_dict))
+            self.game_message_list.append(data)
             observer.send(data)
 
         # send initial data to players
@@ -129,6 +130,7 @@ class GameHandler:
 
         self.game_result = message
         data = Message.dump_message(Message(GAME_HANDLER, END, message, error_code))
+        self.game_message_list.append(data)
 
         for player in self.room.player_list:
             player.send(data)
