@@ -16,12 +16,15 @@ More progress is expected in future
 
 ## Installation
 
-### needed library
-**python 3.5.1 ver** and **Tornado 4.4.0**
-
+### requirements
+* python version 3.5.1
+* tornado 4.4.1
+* pymongo
+* bcrypt
 
 ```bash
 git clone https://github.com/HyOsori/battle.ai.git
+pip install > requirments.txt
 ```
 
 ## Usage
@@ -31,6 +34,14 @@ python playground.py
 ```
 
 configuration of this project is in file **my.conf**
+
+## Battle.ai season1
+
+// TODO: (photo)
+
+## Battle.ai season2
+
+// TODO: (description and photo)
 
 ## Contributor
 
