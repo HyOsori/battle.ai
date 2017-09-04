@@ -42,7 +42,7 @@ class CustomAlkakiLogic(LogicHandler):
 
         #if force > 50000:
         #    force = 50000
-        force = 50000
+        force = 10000
 
         return_dict = {
             'index': index,

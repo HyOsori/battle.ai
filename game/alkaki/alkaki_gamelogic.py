@@ -42,7 +42,7 @@ class ALKAKIGameLogic(TurnGameLogic):
         # Here makes dict for multi player init variable
         init_dict = {}
         try:
-            color_count = 0
+            color_count = 1
 
             for i in player_list:
                 init_dict[i] = {}
@@ -58,7 +58,7 @@ class ALKAKIGameLogic(TurnGameLogic):
 
                 self.player_pos += pos
                 init_dict[i]['player_pos'] = pos
-                color_count += 1
+                color_count -= 1
         except Exception as e:
             logging.info(e)
             logging.info("[Error] set_init_dict_using_init_variable_error")
@@ -141,9 +141,10 @@ class ALKAKIGamePhase(Phase):
             self.player_pos = self.shared_dict['player_pos']
 
             for i in range(self.count):
-                self.array_egg[i] = Egg(self.player_pos[i][0], self.player_pos[i][1], 0)
-            for i in range(self.count, self.count * 2):
                 self.array_egg[i] = Egg(self.player_pos[i][0], self.player_pos[i][1], 1)
+            for i in range(self.count, self.count * 2):
+                self.array_egg[i] = Egg(self.player_pos[i][0], self.player_pos[i][1], 0)
+
         except Exception as e:
             logging.info(e)
             logging.info("[Error] get_shared_dict_error")
@@ -190,9 +191,9 @@ class ALKAKIGamePhase(Phase):
         try:
             if pid == self.player_list[0]:
                 validate_user = 1
-                index += self.count
             elif pid == self.player_list[1]:
                 validate_user = 0
+                index += self.count
 
         except Exception as e:
             logging.info(e)
@@ -205,7 +206,7 @@ class ALKAKIGamePhase(Phase):
         # 0~n 까지중 죽은거 무시
         # 5~n 까지중 죽은거 무시
 
-        i_validate_arr = validate_user * 5
+        i_validate_arr = ((validate_user + 1) % 2) * 5
         my_count = index - i_validate_arr
         for i in range(5):
             if self.array_egg[i_validate_arr + i].alive:
