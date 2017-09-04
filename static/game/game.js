@@ -256,6 +256,16 @@ const Board = React.createClass({
 
 	  this.runPhysics();
 	  this.updateBoard();
+
+    var log_str = "[[" + this.state.egg_pos[0].x_pos + ", " + this.state.egg_pos[0].y_pos + "]";
+
+    for (var i = 1; i < this.state.egg_pos.length; ++i) {
+      log_str = log_str + ", [" + this.state.egg_pos[i].x_pos + ", " + this.state.egg_pos[i].y_pos + "]";
+    }
+
+    log_str = log_str + "]";
+
+    console.log(log_str);
   },
   runPhysics: function(){
     // check_meet use for checking kiss Eggs
