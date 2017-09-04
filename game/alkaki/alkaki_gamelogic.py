@@ -11,6 +11,7 @@ sys.path.insert(0, '../')
 RATE = 10000
 ROUND_DIGIT = 3
 
+
 class ALKAKIGameLogic(TurnGameLogic):
     def __init__(self, game_server):
         super(ALKAKIGameLogic, self).__init__(game_server)
@@ -53,8 +54,8 @@ class ALKAKIGameLogic(TurnGameLogic):
 
                 pos = [[0 for _ in range(2)] for _ in range(5)]
                 for i_row in range(self.count):
-                    pos[i_row][0] = int(((i_row + 1) * 47 / 3 + 3) * RATE)
-                    pos[i_row][1] = int((color_count * 47 * 4 / 3 + 3 + (49 / 3)) * RATE)
+                    pos[i_row][0] = MathUtil.int(((i_row + 1) * 47 / 3 + 3) * RATE)
+                    pos[i_row][1] = MathUtil.int((color_count * 47 * 4 / 3 + 3 + (49 / 3)) * RATE)
 
                 self.player_pos += pos
                 init_dict[i]['player_pos'] = pos
@@ -128,7 +129,6 @@ class ALKAKIGamePhase(Phase):
             return
 
     def do_start(self):
-        logging.info("do_start")
         # Init data
         self.player_list = self.get_player_list()
         self.shared_dict = self.get_shared_dict()
@@ -169,7 +169,6 @@ class ALKAKIGamePhase(Phase):
             self.end(162, None)
             return
 
-
     def do_action(self, pid, dict_data):
         index = None
         direction = None
@@ -184,7 +183,6 @@ class ALKAKIGamePhase(Phase):
             logging.info("[Error] get_game_dict_data_error")
             self.end(131, None)
             return
-
 
         # validate_user
         validate_user = 0
@@ -219,21 +217,15 @@ class ALKAKIGamePhase(Phase):
         if index < i_validate_arr or index > i_validate_arr + 5:
             logging.info("error occured by array in 205line")
 
-
         try:
             self.array_egg[index].add_force(direction[0], direction[1], force)
-            logging.info("before run physics")
             self.run_physics()
-            logging.info("after run physics")
             is_game_end = self.check_game_end()
         except Exception as e:
             logging.info(e)
             logging.info("[Error] user_game_error")
             self.end(180, None)
             return
-
-        # for i in range(10):
-        #     logging.info(self.array_egg[i].x_pos)
 
         try:
             # Notify to Observer(Web) game data
@@ -268,7 +260,7 @@ class ALKAKIGamePhase(Phase):
 
         try:
             # Requests to Server(Handler) game data
-            #self.request_to_server(validate_user, 0, [direction[0], direction[1]], force)
+            # self.request_to_server(validate_user, 0, [direction[0], direction[1]], force)
             self.request_to_server(validate_user, self.array_egg)
         except Exception as e:
             logging.info(e)
@@ -277,19 +269,19 @@ class ALKAKIGamePhase(Phase):
             return
 
     def run_physics(self):
-        logging.info("run_physics is called")
         # 충돌 체크
         for i in range(len(self.array_egg)):
-            if self.array_egg[i].speed > 0 and self.array_egg[i].alive:
+            if self.array_egg[i].speed > 0:
 
-                my_speed = int(self.array_egg[i].speed)
+                self.array_egg[i].speed = MathUtil.int(self.array_egg[i].speed)
                 distance_dir = math.sqrt(math.pow(self.array_egg[i].x_dir, 2) + math.pow(self.array_egg[i].y_dir, 2))
+
                 self.array_egg[i].x_dir = self.array_egg[i].x_dir / distance_dir
                 self.array_egg[i].y_dir = self.array_egg[i].y_dir / distance_dir
 
-                self.array_egg[i].x_pos += int(self.array_egg[i].x_dir * my_speed)
-                self.array_egg[i].y_pos += int(self.array_egg[i].y_dir * my_speed)
-                self.array_egg[i].speed -= int(0.1 * RATE)
+                self.array_egg[i].x_pos += MathUtil.int(self.array_egg[i].x_dir * self.array_egg[i].speed)
+                self.array_egg[i].y_pos += MathUtil.int(self.array_egg[i].y_dir * self.array_egg[i].speed)
+                self.array_egg[i].speed -= MathUtil.int(0.1 * RATE)
 
                 for j in range(len(self.array_egg)):
                     check_meet = False
@@ -301,31 +293,31 @@ class ALKAKIGamePhase(Phase):
                                 check_meet = True
 
                             if self.array_egg[i].x_pos > self.array_egg[j].x_pos:
-                                self.array_egg[i].x_pos += math.fabs(self.array_egg[i].x_dir * RATE) + 1
-                                self.array_egg[i].x_pos = int(self.array_egg[i].x_pos)
+                                self.array_egg[i].x_pos += (math.fabs(self.array_egg[i].x_dir * RATE) + 1)
+                                self.array_egg[i].x_pos = MathUtil.int(self.array_egg[i].x_pos)
                             else:
-                                self.array_egg[i].x_pos -= math.fabs(self.array_egg[i].x_dir * RATE) + 1
-                                self.array_egg[i].x_pos = int(self.array_egg[i].x_pos)
+                                self.array_egg[i].x_pos -= (math.fabs(self.array_egg[i].x_dir * RATE) + 1)
+                                self.array_egg[i].x_pos = MathUtil.int(self.array_egg[i].x_pos)
 
                             if self.array_egg[i].y_pos > self.array_egg[j].y_pos:
-                                self.array_egg[i].y_pos += math.fabs(self.array_egg[i].y_dir * RATE) + 1
-                                self.array_egg[i].y_pos = int(self.array_egg[i].x_pos)
+                                self.array_egg[i].y_pos += (math.fabs(self.array_egg[i].y_dir * RATE) + 1)
+                                self.array_egg[i].y_pos = MathUtil.int(self.array_egg[i].y_pos)
                             else:
-                                self.array_egg[i].y_pos -= math.fabs(self.array_egg[i].y_dir * RATE) + 1
-                                self.array_egg[i].y_pos = int(self.array_egg[i].x_pos)
+                                self.array_egg[i].y_pos -= (math.fabs(self.array_egg[i].y_dir * RATE) + 1)
+                                self.array_egg[i].y_pos = MathUtil.int(self.array_egg[i].y_pos)
 
                         if check_meet:
                             kiss_dir_x = self.array_egg[j].x_pos - self.array_egg[i].x_pos
                             kiss_dir_y = self.array_egg[j].y_pos - self.array_egg[i].y_pos
                             distance = math.sqrt(kiss_dir_x * kiss_dir_x + kiss_dir_y * kiss_dir_y)
 
-                            self.array_egg[j].x_dir = float(kiss_dir_x / distance)
-                            self.array_egg[j].y_dir = float(kiss_dir_y / distance)
+                            self.array_egg[j].x_dir = kiss_dir_x / distance
+                            self.array_egg[j].y_dir = kiss_dir_y / distance
 
-                            cos_b = round(float(self.array_egg[i].x_dir * self.array_egg[j].x_dir
-                                          + self.array_egg[i].y_dir * self.array_egg[j].y_dir), ROUND_DIGIT)
+                            cos_b = float(self.array_egg[i].x_dir * self.array_egg[j].x_dir
+                                                + self.array_egg[i].y_dir * self.array_egg[j].y_dir)
 
-                            cos_a = round(float(math.sqrt(1 - abs(cos_b))), ROUND_DIGIT)
+                            cos_a = float(math.sqrt(1 - abs(cos_b)))
 
                             if 0.0 < cos_a * 10000 < 1.0:
                                 cos_a = 0.0001
@@ -337,21 +329,20 @@ class ALKAKIGamePhase(Phase):
                             elif -1.0 < cos_b * 10000 < 0.0:
                                 cos_b = -0.0001
 
-                            self.array_egg[i].x_dir -= int(self.array_egg[j].x_dir * cos_b)
-                            self.array_egg[i].y_dir -= int(self.array_egg[j].y_dir * cos_b)
+                            self.array_egg[i].x_dir -= MathUtil.int(self.array_egg[j].x_dir * cos_b)
+                            self.array_egg[i].y_dir -= MathUtil.int(self.array_egg[j].y_dir * cos_b)
 
                             if cos_b == 0:
                                 self.array_egg[j].speed = 0
                             else:
-                                self.array_egg[j].speed = int(self.array_egg[i].speed * \
-                                    (1 / (cos_a * cos_a / cos_b + cos_b)))
+                                self.array_egg[j].speed = MathUtil.int(self.array_egg[i].speed * \
+                                                                       (1 / (cos_a * cos_a / cos_b + cos_b)))
 
                             if cos_a == 0:
                                 self.array_egg[i].speed = 0
                             else:
-                                self.array_egg[i].speed = int(self.array_egg[j].speed * \
-                                    (1 / (cos_b * cos_b / cos_a + cos_a)))
-
+                                self.array_egg[i].speed = MathUtil.int(self.array_egg[j].speed * \
+                                                                       (1 / (cos_b * cos_b / cos_a + cos_a)))
 
         check_remain_energy = False
         for i in range(len(self.array_egg)):
@@ -417,16 +408,6 @@ class ALKAKIGamePhase(Phase):
         }
         self.notify("game", notify_dict)
 
-    # def request_to_server(self, turn, index, direction, force):
-    #     logging.info('Request ' + self.now_turn() + '\'s decision')
-    #
-    #     request_dict = {
-    #         'turn': turn,
-    #         'index': index,
-    #         'direction': direction,
-    #         'force': force
-    #     }
-    #     self.request(self.now_turn(), request_dict)
     def request_to_server(self, index, array):
         logging.info('Request ' + self.now_turn() + '\'s decision')
         # 내가 0일때 나 0~4 적 5~9
@@ -436,7 +417,7 @@ class ALKAKIGamePhase(Phase):
         for i in range(5):
             if array[index * 5 + i].alive:
                 my_cnt += 1
-            if array[(1-index) * 5 + i].alive:
+            if array[(1 - index) * 5 + i].alive:
                 enemy_cnt += 1
 
         my_arr = [[0 for _ in range(2)] for _ in range(my_cnt)]
@@ -450,9 +431,9 @@ class ALKAKIGamePhase(Phase):
                 my_arr[my_cnt][0] = array[index * 5 + i].x_pos
                 my_arr[my_cnt][1] = array[index * 5 + i].y_pos
                 my_cnt += 1
-            if array[(1-index) * 5 + i].alive:
-                enemy_arr[enemy_cnt][0] = array[(1-index) * 5 + i].x_pos
-                enemy_arr[enemy_cnt][1] = array[(1-index) * 5 + i].y_pos
+            if array[(1 - index) * 5 + i].alive:
+                enemy_arr[enemy_cnt][0] = array[(1 - index) * 5 + i].x_pos
+                enemy_arr[enemy_cnt][1] = array[(1 - index) * 5 + i].y_pos
                 enemy_cnt += 1
 
         # 내가 1일때 나 5~9 적 0~4
@@ -462,6 +443,7 @@ class ALKAKIGamePhase(Phase):
             'enemy_arr': enemy_arr
         }
         self.request(self.now_turn(), request_dict)
+
 
 class Egg:
     x_pos = None
@@ -485,3 +467,14 @@ class Egg:
         self.x_dir = x_dir
         self.y_dir = y_dir
         self.speed = speed
+
+
+class MathUtil:
+    @staticmethod
+    def int(num):
+        if num > 0:
+            return int(num)
+        elif num == 0:
+            return 0
+        else:
+            return int(num) - 1
