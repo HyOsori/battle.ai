@@ -124,14 +124,11 @@ const Game = React.createClass({
     }
 });
 
-Game.defaultProps = {
-    players: ["PLAYER1", "PLAYER2"],
-    type: "user"
-};
-
 const Board = React.createClass({
     getInitialState: function () {
         return {
+            players: [],
+
             is_turn_end: true,
 
             frame: 50,
@@ -215,6 +212,7 @@ const Board = React.createClass({
         var player_color = -1;
         var x, y;
         var init_eggs_indices = [];
+        var users = [];
 
         this.state.egg_pos = new Array();
 
@@ -227,8 +225,11 @@ const Board = React.createClass({
                 x = pos[0];
                 y = pos[1];
                 this.state.egg_pos.push(new Egg(x, y, player_color));
-            })
+            });
+            users[player_color] = key;
         }
+
+        this.setState({ players: users });
 
         this.state.board_ratio = canvas.height / this.state.board_size_rate;
         this.state.line_interval_rate = (this.state.board_size_rate - this.state.margin_size_rate * 2) / this.state.board_size_num;
@@ -387,8 +388,8 @@ const Board = React.createClass({
             <section id="center">
                 <h3>
                     <span>&#9899; </span>
-                    {this.props.players.map((name, i) => {
-                        if (i >= this.props.players.length - 1) {
+                    {this.state.players.map((name, i) => {
+                        if (i >= this.state.players.length - 1) {
                             return (<span key={i}>{name}</span>);
                         }
                         else {
