@@ -54,6 +54,8 @@ const Game = React.createClass({
 
                     var drawing = setInterval(function () {
                         if (is_end) {
+                            // 디버깅 할 때 한프레임씩 볼 수 있다
+                            //board.funcSleep(200);
                             if (turn_data.isEmpty()) {
                                 clearInterval(drawing);
                                 alertify.alert('<b>' + data.data['winner'][0] + ' 승리!</b><br>잠시 후 로비로 돌아갑니다.');
@@ -264,14 +266,14 @@ const Board = React.createClass({
         // check_meet use for checking kiss Eggs
         var check_meet;
         for (var i = 0; i < this.state.egg_pos.length; ++i) {
-            if (this.state.egg_pos[i].speed > 0) {
+            if (this.state.egg_pos[i].speed > 0 && this.state.egg_pos[i].alive) {
 
                 var distance_dir = Math.sqrt(Math.pow(this.state.egg_pos[i].x_dir, 2) +
                     Math.pow(this.state.egg_pos[i].y_dir, 2));
 
                 this.state.egg_pos[i].speed = Math.floor(this.state.egg_pos[i].speed);
 
-                if (distance_dir === 0) {
+                if (distance_dir < 0.0000001 || this.state.egg_pos[i].speed < 5) {
                     this.state.egg_pos[i].speed = 0;
                     continue;
                 }
@@ -292,6 +294,7 @@ const Board = React.createClass({
                             if (!check_meet) {
                                 check_meet = true;
                             }
+
                             if (this.state.egg_pos[i].x_pos > this.state.egg_pos[j].x_pos) {
                                 this.state.egg_pos[i].x_pos += (Math.abs(this.state.egg_pos[i].x_dir * 10000) + 1);
                                 this.state.egg_pos[i].x_pos = Math.floor(this.state.egg_pos[i].x_pos);
@@ -316,6 +319,8 @@ const Board = React.createClass({
                             // Calculate Two Egg's direction and speed
                             var kiss_dir_x = (this.state.egg_pos[j].x_pos - this.state.egg_pos[i].x_pos);
                             var kiss_dir_y = (this.state.egg_pos[j].y_pos - this.state.egg_pos[i].y_pos);
+
+
                             var distance = Math.sqrt(kiss_dir_x * kiss_dir_x + kiss_dir_y * kiss_dir_y);
 
                             this.state.egg_pos[j].x_dir = kiss_dir_x / distance;
@@ -325,19 +330,24 @@ const Board = React.createClass({
                             this.state.egg_pos[i].y_dir * this.state.egg_pos[j].y_dir);
                             var cosA = Math.sqrt(1 - Math.abs(cosB));
 
-                            cosB.toFixed(3);
-                            cosA.toFixed(3);
-
                             if (cosA < 0.0001 && cosA > 0) cosA = 0.0001;
                             if (cosA > -0.0001 && cosA < 0) cosA = -0.0001;
                             if (cosB < 0.0001 && cosB > 0) cosB = 0.0001;
                             if (cosB > -0.0001 && cosB < 0) cosB = -0.0001;
 
+
                             this.state.egg_pos[i].x_dir = this.state.egg_pos[i].x_dir - (this.state.egg_pos[j].x_dir) * cosB;
                             this.state.egg_pos[i].y_dir = this.state.egg_pos[i].y_dir - (this.state.egg_pos[j].y_dir) * cosB;
 
-                            this.state.egg_pos[j].speed = Math.floor(this.state.egg_pos[i].speed * (1 / (cosA * cosA / cosB + cosB)));
-                            this.state.egg_pos[i].speed = Math.floor(this.state.egg_pos[i].speed * (1 / (cosB * cosB / cosA + cosA)));
+                            if (cosB === 0)
+                                this.state.egg_pos[j].speed = 0;
+                            else
+                                this.state.egg_pos[j].speed = Math.floor(this.state.egg_pos[i].speed * (1 / (cosA * cosA / cosB + cosB)));
+
+                            if (cosA === 0)
+                                this.state.egg_pos[i].speed = 0;
+                            else
+                                this.state.egg_pos[i].speed = Math.floor(this.state.egg_pos[j].speed * (1 / (cosB * cosB / cosA + cosA)));
 
                         }
                     }
@@ -349,16 +359,16 @@ const Board = React.createClass({
         var check_remain_energy = false;
 
         for (i = 0; i < this.state.egg_pos.length; ++i) {
-            if (this.state.egg_pos[i].speed > 0) {
-                check_remain_energy = true;
-                break;
+            if (this.state.egg_pos[i].x_pos < 0 || this.state.egg_pos[i].x_pos > this.state.board_size_rate ||
+                this.state.egg_pos[i].y_pos < 0 || this.state.egg_pos[i].y_pos > this.state.board_size_rate) {
+                this.state.egg_pos[i].alive = false;
             }
         }
 
         for (i = 0; i < this.state.egg_pos.length; ++i) {
-            if (this.state.egg_pos[i].x_pos < 0 || this.state.egg_pos[i].x_pos > this.state.board_size_rate ||
-                this.state.egg_pos[i].y_pos < 0 || this.state.egg_pos[i].y_pos > this.state.board_size_rate) {
-                this.state.egg_pos[i].alive = false;
+            if (this.state.egg_pos[i].speed > 0 && this.state.egg_pos[i].alive) {
+                check_remain_energy = true;
+                break;
             }
         }
 
@@ -385,6 +395,19 @@ const Board = React.createClass({
 
         if (!this.state.is_turn_end) {
             setTimeout(this.updateBoard, 1000 / this.state.frame);
+        }
+    },
+    funcSleep: function(num) {
+        var now = new Date();
+
+        var stop = now.getTime() + num;
+
+        while(true){
+
+            now = new Date();
+
+            if(now.getTime() > stop) return;
+
         }
     },
     render: function () {

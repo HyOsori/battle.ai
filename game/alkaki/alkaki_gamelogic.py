@@ -271,12 +271,16 @@ class ALKAKIGamePhase(Phase):
     def run_physics(self):
         # 충돌 체크
         for i in range(len(self.array_egg)):
-            if self.array_egg[i].speed > 0:
+            if self.array_egg[i].speed > 0 and self.array_egg[i].alive:
 
                 self.array_egg[i].speed = MathUtil.int(self.array_egg[i].speed)
                 distance_dir = math.sqrt(math.pow(self.array_egg[i].x_dir, 2) + math.pow(self.array_egg[i].y_dir, 2))
 
-                if distance_dir == 0:
+                if distance_dir < 0.0000001:
+                    self.array_egg[i].speed = 0
+                    continue
+
+                if self.array_egg[i].speed < 5:
                     self.array_egg[i].speed = 0
                     continue
 
@@ -333,8 +337,8 @@ class ALKAKIGamePhase(Phase):
                             elif -1.0 < cos_b * 10000 < 0.0:
                                 cos_b = -0.0001
 
-                            self.array_egg[i].x_dir -= MathUtil.int(self.array_egg[j].x_dir * cos_b)
-                            self.array_egg[i].y_dir -= MathUtil.int(self.array_egg[j].y_dir * cos_b)
+                            self.array_egg[i].x_dir -= self.array_egg[j].x_dir * cos_b
+                            self.array_egg[i].y_dir -= self.array_egg[j].y_dir * cos_b
 
                             if cos_b == 0:
                                 self.array_egg[j].speed = 0
@@ -348,16 +352,16 @@ class ALKAKIGamePhase(Phase):
                                 self.array_egg[i].speed = MathUtil.int(self.array_egg[j].speed * \
                                                                        (1 / (cos_b * cos_b / cos_a + cos_a)))
 
+        for i in range(len(self.array_egg)):
+            if self.array_egg[i].x_pos < 0 or self.array_egg[i].x_pos > self.board_size or \
+                            self.array_egg[i].y_pos < 0 or self.array_egg[i].y_pos > self.board_size:
+                self.array_egg[i].alive = False
+
         check_remain_energy = False
         for i in range(len(self.array_egg)):
             if self.array_egg[i].speed > 0 and self.array_egg[i].alive:
                 check_remain_energy = True
                 break
-
-        for i in range(len(self.array_egg)):
-            if self.array_egg[i].x_pos < 0 or self.array_egg[i].x_pos > self.board_size or \
-                            self.array_egg[i].y_pos < 0 or self.array_egg[i].y_pos > self.board_size:
-                self.array_egg[i].alive = False
 
         if check_remain_energy:
             self.run_physics()
@@ -476,9 +480,4 @@ class Egg:
 class MathUtil:
     @staticmethod
     def int(num):
-        if num > 0:
-            return int(num)
-        elif num == 0:
-            return 0
-        else:
-            return int(num) - 1
+        return int(math.floor(num))
