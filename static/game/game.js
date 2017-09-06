@@ -250,7 +250,7 @@ const Board = React.createClass({
         var index = game_data.index;
         var turn = game_data.turn;
         var force = game_data.force;
-        var color_index = this.state.egg_pos[0].color == turn ? 0 : 5;
+        var color_index = this.state.egg_pos[0].color === turn ? 0 : 5;
         var distance = Math.sqrt(direction[0] * direction[0] + direction[1] * direction[1]);
 
         this.state.egg_pos[color_index + index].addForce(direction[0] / distance, direction[1] / distance, force);
@@ -259,7 +259,6 @@ const Board = React.createClass({
 
         this.runPhysics();
         this.updateBoard();
-
     },
     runPhysics: function () {
         // check_meet use for checking kiss Eggs
@@ -271,6 +270,11 @@ const Board = React.createClass({
                     Math.pow(this.state.egg_pos[i].y_dir, 2));
 
                 this.state.egg_pos[i].speed = Math.floor(this.state.egg_pos[i].speed);
+
+                if (distance_dir === 0) {
+                    this.state.egg_pos[i].speed = 0;
+                    continue;
+                }
 
                 this.state.egg_pos[i].x_dir = this.state.egg_pos[i].x_dir / distance_dir;
                 this.state.egg_pos[i].y_dir = this.state.egg_pos[i].y_dir / distance_dir;

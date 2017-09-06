@@ -276,6 +276,10 @@ class ALKAKIGamePhase(Phase):
                 self.array_egg[i].speed = MathUtil.int(self.array_egg[i].speed)
                 distance_dir = math.sqrt(math.pow(self.array_egg[i].x_dir, 2) + math.pow(self.array_egg[i].y_dir, 2))
 
+                if distance_dir == 0:
+                    self.array_egg[i].speed = 0
+                    continue
+
                 self.array_egg[i].x_dir = self.array_egg[i].x_dir / distance_dir
                 self.array_egg[i].y_dir = self.array_egg[i].y_dir / distance_dir
 
