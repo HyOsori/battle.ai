@@ -33,22 +33,22 @@ class CustomAlkakiLogic(LogicHandler):
         return msg_type, {"response": "OK"}
 
     def loop_phase(self, msg_type, data):
+
+        my_arr = data["my_arr"]
+        enemy_arr = data["enemy_arr"]
+
         index = 0
-        my_arr = data['my_arr']
-        enemy_arr = data['enemy_arr']
+        direction = [enemy_arr[0][0] - my_arr[0][0], enemy_arr[0][1] - my_arr[0][1]]
+        force = int(20000)
 
-        direction = self.get_direction_depending_on_position(0, 0, 3, 3)
-        force = self.get_distance(my_arr[0][0], my_arr[0][1], enemy_arr[0][0], enemy_arr[0][1])
-
-        if force > 5:
-            force = 5
-
-        return_dict = {
+        message = {
             'index': index,
             'direction': direction,
             'force': force
         }
-        return msg_type, return_dict
+
+        return msg_type, message
+
 
     # Logic Side
     def get_direction_depending_on_position(self, x_prev, y_prev, x_next, y_next):
