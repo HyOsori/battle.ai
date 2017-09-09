@@ -151,7 +151,7 @@ class GameHandler:
         game_log.game_message_list = self.game_message_list
 
         db = DBHelper.instance().db
-        db.game_log_list.insert(game_log.__dict__)
+        result = db.game_log_list.insert(game_log.__dict__)
 
         for observer in self.room.observer_list:
             observer.room_out()
@@ -163,7 +163,8 @@ class GameHandler:
             for observer in observer_pool:
                 observer.notice_user_added(player._id)
 
-        game_log._id = str(game_log._id)
+        print(result)
+        game_log._id = str(result)
         game_log.game_message_list = None
         message = Message(GAME_LOG, ADD, game_log.__dict__)
         message = Message.dump_message(message)

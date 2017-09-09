@@ -57,7 +57,7 @@ class GameObserverHandler(tornado.websocket.WebSocketHandler):
         print("handle_match is called with type: " + match_type);
 
         if match_type == "gamelog":
-            self.handle_gamelog_match("59a6ec7c66f68806609e8377")
+            self.handle_gamelog_match(data["_id"])
             # self.handle_gamelog_match(data["_id"])
         elif match_type == USER:
             self.handle_user_match(data["players"])
@@ -111,6 +111,7 @@ class GameObserverHandler(tornado.websocket.WebSocketHandler):
 
         game_log = db_helper.db.game_log_list.find_one({"_id": ObjectId(_id)})
         if game_log is None:
+            print(game_log)
             return
 
         data = Message.dump_message(
@@ -119,7 +120,7 @@ class GameObserverHandler(tornado.websocket.WebSocketHandler):
         self.write_message(data.encode())
 
         for message in game_log["game_message_list"]:
-            # print(message)
+            print(message)
             self.write_message(message.encode())
         # data = Message.dump_message(Message(RESPONSE_ + MATCH, None, {USERS: game_log, ERROR: 0, SPEED: speed_list[int(data[SPEED])]}))
 

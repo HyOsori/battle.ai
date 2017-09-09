@@ -106,6 +106,7 @@ const Game = React.createClass({
 
         data.type = this.props.type;
         data.players = this.props.players;
+        data._id = this.props._id;
 
         json.data = data;
 
@@ -462,8 +463,10 @@ Egg.prototype.isMeet = function (x, y, rad, board) {
 function decodeData(str_data) {
     var decoded_str = str_data.replace(/&#39;/g, '\"');
     var match_data = jQuery.parseJSON(decoded_str);
+    console.log(match_data)
     var players = match_data.players;
     var type = match_data.type;
+    var _id = match_data._id
 
-    React.render(<Game players={ players } type={ type }/>, document.getElementById('Game'));
+    React.render(<Game players={ players } _id={ _id } type={ type }/>, document.getElementById('Game'));
 }

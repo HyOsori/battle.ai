@@ -39,7 +39,7 @@ class CustomAlkakiLogic(LogicHandler):
 
         index = 0
         direction = [enemy_arr[0][0] - my_arr[0][0], enemy_arr[0][1] - my_arr[0][1]]
-        force = int(20000)
+        force = int(25000)
 
         message = {
             'index': index,
