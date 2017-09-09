@@ -48,7 +48,11 @@ class IndexHandler(BaseHandler):
 
 class LoginPageHandler(BaseHandler):
     def get(self, *args, **kwargs):
-        self.render("login.html")
+        user = self.get_current_user()
+        if user is None:
+            self.render("login.html")
+        else:
+            self.redirect("/lobby")
 
 
 class LobbyPageHandler(BaseHandler):
