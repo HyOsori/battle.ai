@@ -69,8 +69,7 @@ class LobbyHandler(tornado.websocket.WebSocketHandler):
 
         lobby_user_pool = UserPool.instance().get_lobby_pool()
         for lobby_user in lobby_user_pool:
-            if lobby_user is not self.__instance:
-                lobby_user.send(message)
+            lobby_user.send(message)
 
     def init_user_list(self):
 
