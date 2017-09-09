@@ -32,10 +32,10 @@ ws.onmessage = function(evt){
     }
     else if(checker.msg == "user"){
       useradd(JSON.parse(evt.data));
+      userChatadd(JSON.parse(evt.data));
     }
 };
 ws.onclose = function(){
-
 
 };
 
@@ -93,6 +93,53 @@ function recvChat(JSON_data) {
   chatting_box.appendChild(li);
 }
 
+///////채팅 처음 추가시 누가 들어온지 알려줌
+function userChatadd(JSON_data) {
+    var chatter_box = document.getElementById("lobby_chat");
+    var list = document.createElement("li");
+    var namer = JSON_data.data;
+    var talk = namer + "님이 접속하셨습니다.";
+    list.appendChild(document.createTextNode(talk));
+    chatter_box.appendChild(list);
+}
+
+///////(아래) AImatch 시킬 경우 "POST"로 데이터 전송
+function AImatch(AI1, AI2) {
+  $.post("lobby/game/request", {type: "user", players:[AI1, AI2]},
+      function(val) {
+        location.replace("/game?type=" + "user" + "&player1=" + AI1 + "&player2=" + AI2)
+      });
+}
+
+///////(아래) log 눌렀을 경우 "POST" 로 데이터 전송
+function clickListGameLog(_id, player1, player2) {
+    var text = player1 + "와 " + player2 + "의 경기를 보시겠습니까?";
+    var checking = confirm(text);
+    if (checking == true) {
+        $.post("lobby/game/request", {type: "gamelog", _id: _id},
+            function (val) {
+                location.replace("/game?type=" + "gamelog" + "&_id=" + _id)
+            });
+    }
+}
+
+//////(아래) log 창에 처음 결과 나타낼때
+function firstrecvLog(JSON_data) {
+  var log_box = document.getElementById("lobby_log");
+  var data = JSON_data.data;
+  var vi = document.createElement("ul");
+  var text = "게임 로그 기록";
+  vi.appendChild(document.createTextNode(text));
+  log_box.appendChild(vi);
+  data.forEach(function(num){
+    var li = document.createElement("li");
+    li.addEventListener("click", function(){clickListGameLog(num._id, num.players[0], num.players[1])}, false);
+    text = "[" + "승자 : " + num.game_result["winner"][0] + "] " + num.players[0] + " VS. " + num.players[1] ;
+    li.appendChild(document.createTextNode(text));
+    log_box.appendChild(li);
+  });
+}
+
 ///////(아래)로그창에 나타내기
 function recvLog(JSON_data) {
     var log_box = document.getElementById("lobby_log");
@@ -117,69 +164,43 @@ function recvLog(JSON_data) {
         li.appendChild(document.createTextNode(text));
         log_box.appendChild(li);
     }
-
 }
 
-///////(아래) AImatch 시킬 경우 "POST"로 데이터 전송
-function AImatch(AI1, AI2) {
-  $.post("lobby/game/request", {type: "user", players:[AI1, AI2]},
-      function(val) {
-        location.replace("/game?type=" + "user" + "&player1=" + AI1 + "&player2=" + AI2)
-      });
-}
-
-///////(아래) log 눌렀을 경우 "POST" 로 데이터 전송
-function clickListGameLog(_id) {
-    $.post("lobby/game/request", {type: "gamelog", _id: _id},
-        function (val) {
-            location.replace("/game?type=" + "gamelog" + "&_id=" + _id)
-        });
-}
-
-//////(아래) log 창에 처음 결과 나타낼때
-function firstrecvLog(JSON_data) {
-  var log_box = document.getElementById("lobby_log");
-  var data = JSON_data.data;
-  var vi = document.createElement("li");
-  var up_text = "여태까지 진행된 경기";
-  vi.appendChild(document.createTextNode(up_text));
-  log_box.appendChild(vi);
-  data.forEach(function(num){
-    var li = document.createElement("li");
-    li.addEventListener("click", function(){clickListGameLog(num._id)}, false);
-    text = "[" + "승자 : " + num.game_result["winner"][0] + "] " + num.players[0] + " VS. " + num.players[1] ;
-    li.appendChild(document.createTextNode(text));
-    log_box.appendChild(li);
-  });
-}
-
-//////(아래) User 가 처음 들어왔을때
+//////(아래) AI : User 가 처음 들어왔을때
 function firstUser(JSON_data){
-  var log_box = document.getElementById("lobby_AIlist");
+  var AI_box = document.getElementById("lobby_AIlist");
   var data = JSON_data.data;
+  var vi = document.createElement("ul");
+  var text = "현재 접속한 멤버";
+  vi.appendChild(document.createTextNode(text));
+  AI_box.appendChild(vi);
   data.forEach(function(num){
     var li = document.createElement("li");
     li.addEventListener("click", function(){AI_versus(li, num)}, false);
     li.appendChild(document.createTextNode(num));
-    log_box.appendChild(li);
+    AI_box.appendChild(li);
   });
 }
 
-///////(아래) USER 가 add 되었을때
+///////(아래) AI : USER 가 add 되었을때
 function useradd(JSON_data){
-  var log_box = document.getElementById("lobby_AIlist");
+  var AI_box = document.getElementById("lobby_AIlist");
   var li = document.createElement("li");
   var data = JSON_data.data;
   li.addEventListener("click", function(){AI_versus(li, data)}, false);
   li.appendChild(document.createTextNode(data));
-  log_box.appendChild(li);
+  AI_box.appendChild(li);
 }
 
 ///////(아래) AI list 에서 매치시킬때 함수
 function Matcher(){
     if(AI_List1 != "" && AI_List2 != ""){
-        AImatch(AI_List1, AI_List2);
-        alert('매치 시작!!');
+        var text = AI_List1 + "와 " + AI_List2 + "를 대결시키겠습니까?";
+        var checking = confirm(text);
+        if (checking == true) {
+            AImatch(AI_List1, AI_List2);
+            alert('매치 시작!!');
+        }
     }
     else if (AI_List1 == "" && AI_List2 == ""){
         alert("두 명더 선택해 주십시오.");
@@ -220,10 +241,10 @@ function AI_versus(list, name){
 
 ///////(아래) AI list 클릭시 색 변환함수 (누른경우)
 function changeList_A(list){
-    list.style.background = "yellow";
+    list.style.background = "#eee";
 }
 
 ///////(아래) AI list 클릭시 색 변환함수 (푼경우)
 function changeList_B(list){
-    list.style.background = "red";
+    list.style.background = "#fff";
 }

@@ -1,12 +1,21 @@
+#header {
+    position: relative;
+    width: 100%;
+    height: 80px;
+    background-color: #009688;
+    box-shadow: 0 1px 0 rgba(0, 0, 0, .10196078);
+    padding: 5px;
+    margin-top: 0;
+}
 
 #wrapper_lobby {
-	background: #FFFAF0;
+	/*background: #FFFCF0;*/
 	margin:0;
 	padding:0;
 	position: absolute;
 	width: 100%;
-	top: 56px;
-	height: calc(100% - 112px);
+	top: 80px;
+	height: calc(100% - 160px);
 }
 
 #lobby {
@@ -26,8 +35,6 @@
 	float: left;
 	width: 60%;
 }
-
-
 
 #lobby_right_component {
 	float: right;
@@ -49,7 +56,7 @@
 }
 
 #lobby_log {
-	background: #E0FFFF;
+	background: #fff;
 	margin: auto;
 	top : 24px;
 	width : calc(100% - 48px);
@@ -58,90 +65,49 @@
 }
 
 #lobby_log li {
-	position: relative;
-    display: block;
-    padding: .4em .4em .4em .8em;
-    *padding: .4em;
-    margin: .5em 0 .5em 2.5em;
-    background: Red;
-    color: #444;
-    text-decoration: none;
-    transition: all .3s ease-out;
+	display: block;
+	width: 100%;
+	height: 34px;
+	padding: 6px 12px;
+	font-size: 14px;
+	line-height: 1.42857143;
+	color: #555;
+	background-color: #fff;
+	background-image: none;
+	border: 1px solid #ccc;
+	border-radius: 4px;
 }
 
-#lobby_log li:hover{
-	background: #eee;
+#lobby_log li:hover {
+	background : #eee;
 }
 
-#lobby_log li:before{
-	content: counter(li);
-    counter-increment: li;
-    position: absolute;
-    left: -2.5em;
-    top: 50%;
-    margin-top: -1em;
-    background: #fa8072;
-    height: 2em;
-    width: 2em;
-    line-height: 2em;
-    text-align: center;
-    font-weight: bold;
+#lobby_AIlist {
+	background: #E0FFFF;
+	margin: auto;
+	top : 24px;
+	width : calc(100% - 48px);
+	height: calc(100% - 36px);
+	overflow-y: auto;
 }
 
-#lobby_log li:after{
-	position: absolute;
-    content: '';
-    border: .5em solid transparent;
-    left: -1em;
-    top: 50%;
-    margin-top: -.5em;
-    transition: all .3s ease-out;
+#lobby_AIlist li {
+	display: block;
+	width: 100%;
+	height: 34px;
+	padding: 6px 12px;
+	font-size: 14px;
+	line-height: 1.42857143;
+	color: #555;
+	background-color: #fff;
+	background-image: none;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+
 }
 
-#lobby_log li:hover:after{
-	left: -.5em;
-    border-left-color: #fa8072;
-}
-
-#lobby_AIlist li{
-    position: relative;
-    display: block;
-    padding: .4em .4em .4em .8em;
-    *padding: .4em;
-    margin: .5em 0 .5em 2.5em;
-    background: #ddd;
-    color: #444;
-    text-decoration: none;
-    transition: all .3s ease-out;
-}
-
-#lobby_AIlist li:hover{
-    background: #eee;
-}
-
-#lobby_AIlist li:before{
-    content: counter(li);
-    counter-increment: li;
-    position: absolute;
-    left: -2.5em;
-    top: 50%;
-    margin-top: -1em;
-    background: #fa8072;
-    height: 2em;
-    width: 2em;
-    line-height: 2em;
-    text-align: center;
-    font-weight: bold;
-}
-
-#lobby_AIlist li:after{
-    position: absolute;
-    content: '';
-    border: .5em solid transparent;
-    left: -1em;
-    top: 50%;
-    margin-top: -.5em;
-    transition: all .3s ease-out;
+#lobby_AIlist li:hover {
+	background : #eee;
 }
 
 #lobby_chat {
@@ -177,15 +143,6 @@
 	height :15%;
 }
 
-#lobby_AIlist {
-	background: #ffd1cc;
-	margin: auto;
-	top : 24px;
-	width : calc(100% - 48px);
-	height: calc(100% - 36px);
-	overflow-y: auto;
-}
-
 #lobby_match {
 	background: #ccffe6;
 	margin: auto;
@@ -194,12 +151,6 @@
 	height: calc(100% - 36px);
 }
 
-#lobby_match button {
-	display: table;
-	margin-left: auto;
-	margin-right: auto;
-
-}
 
 #Chatting_Real {
 	background : #BBBBBB;
@@ -213,4 +164,54 @@
 	float : right;
 	flex-grow : 1;
 	height: 100%
+}
+
+#lobby_match text,
+#lobby_match text::after {
+  -webkit-transition: all 0.3s;
+    -moz-transition: all 0.3s;
+  -o-transition: all 0.3s;
+    transition: all 0.3s;
+}
+
+#lobby_match text {
+  background: none;
+  border: 3px solid #ccffa6;
+  border-radius: 5px;
+  color: #64991e;
+  display: block;
+	padding : 5%;
+  width : 100%;
+	height: 100%;
+	position: relative;
+	overflow: hidden;
+}
+
+
+#lobby_match text::before,
+#lobby_match text::after {
+  background: #64991e;
+  content: '';
+  position: absolute;
+  z-index: -1;
+}
+
+#lobby_match text:hover {
+  color: #2ecc71;
+    border: 3px solid #64991e;
+}
+
+#lobby_match text::after {
+  height: 100%;
+  left: -35%;
+  top: 0;
+  transform: skew(50deg);
+  transition-duration: 0.6s;
+  transform-origin: top left;
+  width: 0;
+}
+
+#lobby_match text :hover:after {
+  height: 100%;
+  width: 135%;
 }
