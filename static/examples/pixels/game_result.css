@@ -1,0 +1,12 @@
+#id_gameResults_ul {
+    overflow-y:scroll;
+}
+#id_gameResults_ul li {
+    border:2px solid black;
+}
+#id_gameResults_ul li .class_selected {
+    border-color:red;
+}
+#id_resultBoard_canvas {
+
+}

@@ -1,61 +1,24 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <link rel="stylesheet" type="text/css" href="{{ static_url('frame.css')}}" >
-        <link rel="stylesheet" type="text/css" href="{{ static_url('lobby.css')}}" >
-        <link rel="stylesheet" type="text/css" href="{{ static_url('ingame.css')}}" >
-        <link rel="stylesheet" type="text/css" href="{{ static_url('game_result.css')}}" >
-        <link rel="stylesheet" type="text/css" href="{{ static_url('alertify.core.css')}}" />
-        <link rel="stylesheet" type="text/css" href="{{ static_url('alertify.default.css')}}" />
-    </head>
-    <body>
-        <div id="id_container">
-			<h1 id="id_title">TITLE</h1>
-            <div id="id_gameMessage_second" class="class_inGame"></div>
-            <div id="id_context">
-				<div id="id_main">
-                    <div id="id_upperContainer" class="class_lobby">
-                        <button id="id_logTab_btn">Log</button>
-                        <button id="id_searchTab_btn">Search</button>
-                        <div id="id_options" class="class_lobby">
-                            <div id="id_setSpeed_text">Speed</div>
-                            <input type="range" id="id_setSpeed" class="class_lobby" max="4" min="0"/>
-                        </div>
-                    </div>
-					<ul id="id_log" class="class_lobby"></ul>
-                    <div id="id_search" class="class_lobby">
-                        <div id="id_searchBox">
-                            <input type="text" id="id_search_input" />
-                            <button id="id_search_btn">Search</button>
-                        </div>
-                        <ul id="id_searchResults_ul"></ul>
-                    </div>
-                    <div id ="id_canvasContainer" class="class_inGame class_gameResult">
-                        <canvas id="id_board_canvas"></canvas>
-                    </div>
-					<div id="id_messages" class="class_lobby"></div>
-				</div>
-				<div id="id_side">
-                    <div id="id_chart1" class="class_inGame"></div>
-                    <div id="id_chart2" class="class_inGame"></div>
-                    <ul id="id_dummyclient_ul" class="class_lobby"></ul>
-					<ul id="id_list_ul" class="class_lobby"></ul>
-					<ul id="id_gameResults_ul" class="class_gameResult"></ul>
-                    <div id="id_btnContainer">
-					    <button id="id_goToLobby_btn" class="class_gameResult">home</button>
-                        <button id="id_match_btn" class="class_lobby" disabled="true">Match</button>
-                    </div>
-				</div>
-			</div>
-		</div>
-        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
-        <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-        <script type="text/javascript" src="{{ static_url('pako.js') }}"></script>
-        <script type="text/javascript" src="{{ static_url('Queue.js') }}"></script>
-        <script type="text/javascript" src="{{ static_url('alertify.js') }}"></script>
-        <script type="text/javascript" src="{{ static_url('lobby.js') }}"></script>
-        <script type="text/javascript" src="{{ static_url('ingame_pixels.js') }}"></script>
-        <script type="text/javascript" src="{{ static_url('game_result_pixels.js') }}"></script>
-        <br><br>
-    </body>
-</html>
+{% extends "base.html" %}
+
+{% block head %}
+    <link rel="stylesheet" href="{{ static_url('_plugin/alertify.default.css')}}" >
+    <link rel="stylesheet" href="{{ static_url('_plugin/alertify.core.css')}}" >
+    <link rel="stylesheet" href="{{ static_url('game/game.css')}}" >
+{% end %}
+
+
+{% block body %}
+    <div id="Game"></div>
+{% end %}
+
+
+{% block bottom %}
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+    <script src="{{ static_url('_plugin/alertify.js') }}"></script>
+    <script src="{{ static_url('_plugin/Queue.js') }}"></script>
+    <script type="text/jsx" src="{{ static_url('game/game.js') }}"></script>
+    <script type="text/jsx">
+        var data = "{{ data }}";
+        decodeData(data);
+    </script>
+{% end %}

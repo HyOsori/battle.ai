@@ -1,0 +1,55 @@
+ul {
+    list-style:none;
+    padding:2px;
+    border:2px solid white;
+    border-radius:10px;
+    background-color:gainsboro;
+}
+li {
+    border:2px solid white;
+    padding:5px 10px 5px 10px;
+    border-radius:5px;
+    cursor:pointer;
+}
+li:hover {
+    background-color:whitesmoke;
+}
+button {
+    border:1px solid white;
+    background:gainsboro;
+    color:black;
+    border-radius:5px;
+}
+.class_title {
+    text-align:center;
+    padding:10px;
+}
+#id_setSpeed_text {
+    text-align:center;
+}
+#id_log {
+    overflow-y:scroll;
+}
+#id_log li {
+    text-align:left;
+}
+#id_playerList_ul {
+    overflow-y:scroll;
+}
+#id_playerList_ul li {
+    text-align:center;
+}
+#id_playerList_ul .class_selected {
+    background-color:whitesmoke;
+}
+#id_messages {
+    background:black;
+    color:white;
+    overflow-y:auto;
+    overflow-x:hidden;
+}
+#id_search {
+    border:2px solid white;
+    border-radius:10px;
+    background-color:gainsboro;
+}

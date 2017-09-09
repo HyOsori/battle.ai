@@ -18,9 +18,9 @@ class User:
 
 
 class Player(User):
-    def __init__(self, pid, conn):
+    def __init__(self, _id, conn):
         User.__init__(self, conn)
-        self.pid = pid
+        self._id = _id
         self.playing = False
 
     def __error_callback(self, future):
@@ -32,28 +32,30 @@ class Player(User):
         timeout_handle = self.io_loop.add_timeout(self.io_loop.time() + timeout, partial(self.__error_callback, future=future))
         future.add_done_callback(lambda r: self.io_loop.remove_timeout(timeout_handle))
         message = yield future
-        gen.Return(message)
+        return message.decode()
 
+    @gen.coroutine
     def read(self):
-        message = self.conn.read_bytes(buffer_size, partial=True)
-        return message
-
-    def get_pid(self):
-        return self.pid
+        message = yield self.conn.read_bytes(buffer_size, partial=True)
+        return message.decode()
 
     def send(self, data):
         try:
-            # temporary implementation
-            logging.debug("send type" + str(type(data)))
-            self.conn.write((data).encode())
+            self.conn.write(data.encode())
         except Exception as e:
-            logging.error(e.message)
+            logging.error(str(e))
+
+    def room_enter(self):
+        self.playing = True
+
+    def room_out(self):
+        self.playing = False
 
 
 class Observer(User):
     def __init__(self, conn):
         User.__init__(self, conn)
-        self.observer_flag = True
+        self.observer_flag = False
 
     def notice_user_added(self, added_player):
         if self.observer_flag:
@@ -78,11 +80,36 @@ class Observer(User):
         try:
             self.conn.write_message(data)
         except Exception as e:
-            logging.error(e.message)
+            logging.error(str(e))
 
     def room_enter(self):
         self.observer_flag = True
 
     def room_out(self):
         self.observer_flag = False
+
+
+class LobbyUser(User):
+    def __init__(self, conn):
+        super().__init__(conn)
+
+
+    def notify_gamelog_added(self):
+        pass
+
+    def notify_chat_update(self):
+        pass
+
+    def notify_ai_added(self):
+        pass
+
+    def notify_ai_deleted(self):
+        pass
+
+    def send(self, data):
+        try:
+            self.conn.write_message(data)
+        except Exception as e:
+            logging.error(str(e))
+
 

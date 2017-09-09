@@ -1,67 +1,92 @@
+'''
+battle.ai
+
+playground is ai battle framework for
+1:1:1:1: ... turn game.
+'''
+
 import os.path
 import sys
 import tornado.ioloop
-
-sys.path.insert(0,'../')
+import tornado.options
+import tornado.web
+import pymongo
+sys.path.insert(0, '../')
 # TODO : find out how to control path and error
 
-from server.handler.playerhandler import PlayerServer
-from server.handler.webhandler import WebServer
-from server.handler.webhandler import WebSocketServer, LogHandler
+from server.db.dbhelper import DBHelper
+from server.handler.playerhandler import PlayerHandler
+from server.handler.gameobserverhandler import GameObserverHandler
+from server.handler.observerhandler import ObserverHandler
 from server.conf.conf_reader import ConfigReader
+from server.handler.webpagehandler import *
+from server.handler.lobbyhandler import LobbyHandler
+from pymongo import MongoClient
 
-TCP_PORT = 9001
-WEB_PORT = 9000
 
-
-class MainServer:
+class Playground(tornado.web.Application):
     def __init__(self):
-
         # TODO: game_logic selection must be added, tcp_port, web_port, playing game will be argument of playground.py
 
-        self.player_list = dict()
-        self.attendee_list = dict()
+        self.game_server = PlayerHandler()
+        self.db = pymongo.MongoClient()
 
-        self.tcp_server = PlayerServer(self.attendee_list, self.player_list)
+        self.handler = [
 
-        db = None
-        # db = LogDB()
-        # db.open()
+            # websocket handler
+            (r"/websocket", ObserverHandler),
+            (r"/game/socket", GameObserverHandler),
+            (r"/lobby/socket", LobbyHandler),
 
-        self.config = ConfigReader()
+            # web page handler
+            (r"/", LoginPageHandler),
+            (r"/lobby", LobbyPageHandler),
+            (r"/mypage", MyPageHandler),
+            (r"/game", GamePageHandler),
 
-        self.app = tornado.web.Application(
-            [
-                (r"/websocket", WebSocketServer, dict(player_list=self.player_list, attendee_list=self.attendee_list, player_server=self.tcp_server, database=db)),
-                (r'/log', LogHandler, dict(database_driver=db)),
-                (r"/", WebServer),
-            ],
-            template_path=os.path.join(os.path.dirname(__file__), "./templates"),
-            static_path=os.path.join(os.path.dirname(__file__), "./static"),
+            # lobby request handler
+            (r"/lobby/game/request", MatchHandler),
+
+            # signup signin logout request
+            (r"/auth/signin", SignInHandler),
+            (r"/auth/signup", SignUpHandler),
+            (r"/auth/logout", LogoutHandler),
+        ]
+        self.setting = dict(
+            title=u"Battle.ai",
+            template_path=os.path.join(os.path.dirname(__file__), "templates"),
+            static_path=os.path.join(os.path.dirname(__file__), "static"),
+            # will be xsrf_cookies=True...... soon
+            cookie_secret="123",
+            login_url="/auth/login",
+            debug=True,
         )
+        super(Playground, self).__init__(self.handler, **self.setting)
+        self.db = MongoClient()["battle"]
 
-    def run(self):
-        '''
-        Start server
-        run webserver and tcpserver
-        webserver : manage attendee
-        tcpserever : manage ai_client
-        '''
+        DBHelper.instance().initialize(self.db)
 
-        config_value = self.config.read()
 
-        tcp_port = config_value["tcp_port"]
-        web_port = config_value["web_port"]
+def main():
 
-        io_loop = tornado.ioloop.IOLoop.current()
-        self.tcp_server.listen(tcp_port)
-        self.app.listen(web_port)
+    config = ConfigReader()
+    config_value = config.read()
 
-        print("******************* Battle.AI operate *******************")
-        print("                     ...... Created By GreedyOsori ......\n")
-        io_loop.start()
+    tcp_port = config_value["tcp_port"]
+    web_port = config_value["web_port"]
+
+    tornado.options.parse_command_line()
+    tornado.options.parse_config_file("my.conf")
+    app = Playground()
+
+    app.game_server.listen(tcp_port)
+    app.listen(web_port)
+
+    print("******************* Battle.AI operate *******************")
+    print("                     ...... Created By GreedyOsori ......\n")
+    print("Version 0.0")
+    tornado.ioloop.IOLoop.current().start()
 
 if __name__ == "__main__":
+    main()
 
-    main_server = MainServer()
-    main_server.run()

@@ -1,59 +1,74 @@
 #-*- coding:utf-8 -*-
 import json
+import tornado.iostream
 
 from server.string import *
 from tornado import gen
 from server.handler.gamehandler import GameHandler
-from game.pixels.PixelsGameLogic import PixelsGameLogic
+from server.gameobject.message import Message
+from game.omok.OmokGameLogic import OMOKGameLogic
+import traceback
+from game.alkaki.alkaki_gamelogic import ALKAKIGameLogic
 
 import server.debugger as logging
 
 
 class TurnGameHandler(GameHandler):
-    def __init__(self, room, players, observers, game_speed, game_logic = None, database = None):
-        game_logic = PixelsGameLogic(self)
-        super(TurnGameHandler, self).__init__(room, players, observers, game_logic)
-
-        # temporary implemenation
-        self.message_end = False
+    def __init__(self, room):
+        game = ALKAKIGameLogic(self)
+        super().__init__(room, game)
 
     @gen.coroutine
-    def _play_handler(self, player):
-        logging.debug("play handler is called")
+    def _play_handler(self):
+        logging.info("play handler is called")
         try:
-            self.game_logic.on_start(self.pid_list)
-            logging.debug("on start is done")
-            while True:
-                logging.debug("looping ...")
-                message = yield self.received_data
-                logging.debug("received data: " + str(message))
-                message = json.loads(message.decode())
+            self.game.on_ready(self._ids)
+            logging.info("on ready is done")
+            yield self.request_ready()
+            logging.info("request for ready is done")
+
+            self.game.on_start()
+            logging.info("on start is done")
+            while not self.game_end:
+                message = yield self.played.timeout_read()
+                yield self.delay_action()
+                logging.info("received data: " + str(message))
+                message = Message.load_message(message)
                 # TODO: message type check is in dude's code (callback function)
-                if message[MSG_TYPE] == self.current_msg_type:
-                    # temporary implementation ;; must be del
-                    # TODO: game_result + round_result = result ...
-                    if message[MSG_TYPE] == GAME_RESULT:
-                        logging.error("game result receive!!!!!!")
-                        break
-
-                    if message[MSG_TYPE] == "finish":
-                        if not self.message_end:
-                            self.message_end = True
-                        else:
-                            break
-
-
+                if message.msg_type == self.current_msg_type:
                     # correct message is come
-                    self.game_logic.on_action(self.played.get_pid(), message[DATA])
-                    # if res[MSG_TYPE] == FINISH:
-                    #     if self.game_end:
-                    #         self.send_round_result(self.round_result)
+                    self.game.on_action(self.played._id, message.data)
                 else:
-                    # TODO: error case classification
-                    logging.debug("error case1")
-                    pass
+                    self.handle_game_end(MESSAGE_TYPE_ERROR, {})
+        except TimeoutError:
+            self.handle_game_end(TIME_OUT)
+        except json.JSONDecodeError:
+            self.handle_game_end(NOT_JSON_DATA)
+        except tornado.iostream.StreamClosedError:
+            self.handle_game_end(CONNECTION_LOST)
         except Exception as e:
-            # TODO: error case classification
-            logging.debug(e.with_traceback())
-            logging.debug("error case2")
-            pass
+            traceback.print_tb(e)
+            logging.error("unexpected exception: " + str(repr(e)) + "  " + str(type(e)))
+            self.handle_game_end(UNEXPECTED_ERROR)
+
+    def request(self, _id, msg_type, data):
+        logging.info("request is called")
+        """
+        callback function
+        game logic call this function to request player's response
+        :param pid: player id
+        :param msg_type: message type
+        :param data: message data
+        """
+
+        for player in self.room.player_list:
+            if player._id == _id:
+                selected_player = player
+                break
+
+        self.current_msg_type = msg_type
+
+        data = Message.dump_message(Message(GAME_DATA, msg_type, data))
+        player.send(data)
+
+        self.played = player  # set current played player

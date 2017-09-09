@@ -30,12 +30,29 @@ ERROR = "error"
 ERROR_MSG = "error_msg"
 ROUND_RESULT = "round_result"
 GAME_RESULT = "game_result"
+GAME_MESSAGE_LIST = "game_message_list"
+END = "end"
+
+GAME_LOG = "gamelog"
+CHAT = "chat"
+AILIST = "ailist"
 
 PLAYERS = "players"
 
 READY = "ready"
 INIT = "init"
+ADD = "add"
+SEND = "send"
+RECEIVE = "receive"
+DELETE = "delete"
 FINISH = "finish"
 OK = "OK"
 NO = "NO"
+
+NORMAL_END = 0
+CONNECTION_LOST = 200
+TIME_OUT = 201
+NOT_JSON_DATA = 300
+MESSAGE_TYPE_ERROR = 301
+UNEXPECTED_ERROR = 400
 
