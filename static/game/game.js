@@ -59,7 +59,7 @@ const Game = React.createClass({
                             if (turn_data.isEmpty()) {
                                 clearInterval(drawing);
                                 alertify.alert('<b>' + data.data['winner'][0] + ' 승리!</b><br>잠시 후 로비로 돌아갑니다.');
-                                //setTimeout("window.location.replace('/lobby')", 3000);
+                                setTimeout("window.location.replace('/lobby')", 3000);
                                 return;
                             }
 
