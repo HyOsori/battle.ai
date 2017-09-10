@@ -37,11 +37,11 @@ configuration of this project is in file **my.conf**
 
 ## Battle.ai season1
 
-// TODO: (photo)
+Game Pixels
 
 ## Battle.ai season2
 
-// TODO: (description and photo)
+Sleep
 
 ## Contributor
 
